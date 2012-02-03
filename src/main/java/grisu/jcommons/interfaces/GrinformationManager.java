@@ -3,9 +3,21 @@ package grisu.jcommons.interfaces;
 import grisu.grin.YnfoManager;
 import grisu.grin.model.Grid;
 import grisu.grin.model.resources.Application;
+import grisu.grin.model.resources.Directory;
+import grisu.grin.model.resources.Group;
+import grisu.grin.model.resources.Package;
+import grisu.grin.model.resources.Queue;
 import grisu.grin.model.resources.Site;
+import grisu.grin.model.resources.Version;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.NotImplementedException;
+
+import com.google.common.base.Functions;
+import com.google.common.collect.Collections2;
 
 public class GrinformationManager implements InformationManager {
 
@@ -14,128 +26,170 @@ public class GrinformationManager implements InformationManager {
 	public GrinformationManager() {
 		YnfoManager ym = new YnfoManager(
 				"/home/markus/Workspaces/Goji/grin/src/main/resources/default_config.groovy");
+		// "/home/markus/Workspaces/Goji/grin/src/test/resources/test_2_sites.config.groovy");
 
 		grid = ym.getGrid();
 	}
 
-	public Application[] getAllApplicationsAtSite(Site site) {
+	public GrinformationManager(Grid grid) {
+		this.grid = grid;
+	}
 
-		grid.getResources(Application.class, site);
-		return null;
+	public GrinformationManager(Map<String, String> config) {
+		this();
+	}
+
+
+	public String[] getAllApplicationsAtSite(String site) {
+		Site s = grid.getSite(site);
+
+		Collection<Application> result = grid
+				.getResources(
+						Application.class, s);
+
+		return Collections2.transform(result, Functions.toStringFunction())
+				.toArray(new String[] {});
 	}
 
 	public String[] getAllApplicationsOnGrid() {
-		// TODO Auto-generated method stub
-		return null;
+
+		Collection<Application> result = grid.getApplications();
+
+		return Collections2.transform(result, Functions.toStringFunction())
+				.toArray(new String[] {});
+
 	}
+
 
 	public String[] getAllApplicationsOnGridForVO(String fqan) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		Group g = grid.getGroup(fqan);
 
-	public Map<String, GridResource> getAllGridResources() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		Collection<Application> result = grid
+				.getResources(Application.class, g);
 
-	public Map<String, String> getAllHosts() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections2.transform(result, Functions.toStringFunction())
+				.toArray(new String[] {});
 	}
 
 	public String[] getAllSites() {
-		// TODO Auto-generated method stub
-		return null;
+		Collection<Site> sites = grid.getSites();
+
+		return Collections2.transform(sites, Functions.toStringFunction())
+				.toArray(new String[] {});
 	}
 
 	public String[] getAllSubmissionLocations() {
-		// TODO Auto-generated method stub
-		return null;
+
+		Collection<Queue> queues = grid.getQueues();
+
+		return Collections2.transform(queues, Functions.toStringFunction())
+				.toArray(new String[] {});
 	}
 
-	public String[] getAllSubmissionLocations(String application, String version) {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<String> getAllSubmissionLocations(String application,
+			String version) {
+
+		Collection<Queue> queues = grid.getResources(Queue.class,
+				grid.getApplication(application), grid.getVersion(version));
+
+		return Collections2.transform(queues, Functions.toStringFunction());
 	}
 
-	public String[] getAllSubmissionLocationsForApplication(String application) {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<String> getAllSubmissionLocationsForApplication(
+			String application) {
+
+		Collection<Queue> queues = grid.getResources(Queue.class,
+				grid.getApplication(application));
+		return Collections2.transform(queues, Functions.toStringFunction());
+
 	}
 
-	public String[] getAllSubmissionLocationsForSite(String site) {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<Queue> getAllSubmissionLocationsForVO(String fqan) {
+
+		Collection<Queue> queues = grid.getResources(Queue.class,
+				grid.getGroup(fqan));
+
+		return queues;
 	}
 
-	public String[] getAllSubmissionLocationsForVO(String fqan) {
-		// TODO Auto-generated method stub
-		return null;
+
+	public Collection<String> getAllVersionsOfApplicationOnGrid(
+			String application) {
+		Collection<Version> versions = grid.getResources(Version.class,
+				grid.getApplication(application));
+		return Collections2.transform(versions, Functions.toStringFunction());
 	}
 
-	public String[] getAllVersionsOfApplicationOnGrid(String application) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public String[] getAllVersionsOfApplicationOnGridForVO(String application,
-			String vo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Map<String, String> getApplicationDetails(String application,
+	public Package getApplicationDetails(String application,
 			String version, String submissionLocation) {
-		// TODO Auto-generated method stub
-		return null;
+
+		Collection<Package> p = grid.getResources(Package.class,
+				grid.getApplication(application), grid.getVersion(version),
+				grid.getQueue(submissionLocation));
+
+		if ((p == null) || (p.size() == 0)) {
+			return null;
+		}
+
+		return p.iterator().next();
 	}
 
-	public String[] getApplicationsThatProvideExecutable(String executable) {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<Application> getApplicationsThatProvideExecutable(
+			String executable) {
+
+		Collection<Application> apps = grid.getResources(Application.class,
+				grid.getExecutable(executable));
+		return apps;
 	}
 
-	public Map<String, String[]> getDataLocationsForVO(String fqan) {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<Directory> getDataLocationsForVO(String fqan) {
+		Collection<Directory> directories = grid.getResources(Directory.class,
+				grid.getGroup(fqan));
+		return directories;
 	}
 
-	public GridResource getGridResource(String submissionLocation) {
-		// TODO Auto-generated method stub
-		return null;
+	public Queue getGridResource(String submissionLocation) {
+		return grid.getQueue(submissionLocation);
 	}
 
 	public String getJobmanagerOfQueueAtSite(String site, String queue) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
-	public String getSiteForHostOrUrl(String host_or_url) {
-		// TODO Auto-generated method stub
-		return null;
+	public Site getSiteForHostOrUrl(String host_or_url) {
+
+		return grid.getSiteForUrl(host_or_url);
 	}
 
-	public String[] getStagingFileSystemForSubmissionLocation(String subLoc) {
-		// TODO Auto-generated method stub
-		return null;
+	public Set<Directory> getStagingFileSystemForSubmissionLocation(
+			String subLoc) {
+		Queue queue = grid.getQueue(subLoc);
+
+		return queue.getDirectories();
 	}
 
-	public String[] getVersionsOfApplicationOnSite(String application,
+	public Collection<Version> getVersionsOfApplicationOnSite(
+			String application,
 			String site) {
-		// TODO Auto-generated method stub
-		return null;
+
+		Collection<Version> versions = grid.getResources(Version.class,
+				grid.getApplication(application), grid.getSite(site));
+
+		return versions;
+
 	}
 
-	public String[] getVersionsOfApplicationOnSubmissionLocation(
+	public Collection<Version> getVersionsOfApplicationOnSubmissionLocation(
 			String application, String submissionLocation) {
-		// TODO Auto-generated method stub
-		return null;
+
+		Collection<Version> versions = grid.getResources(Version.class,
+				grid.getApplication(application),
+				grid.getQueue(submissionLocation));
+
+		return versions;
+
 	}
 
-	public boolean isVolatileDataLocation(String host, String path, String fqan) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 }

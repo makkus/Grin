@@ -3,8 +3,6 @@ package grisu.grin
 import grisu.grin.model.Grid
 import grisu.grin.model.resources.*
 
-import com.google.common.collect.Sets
-
 
 
 
@@ -25,6 +23,7 @@ class YnfoManager  {
 	static void main (args) {
 
 		def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/main/resources/default_config.groovy')
+		//		def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/test/resources/test_2_sites.config.groovy')
 
 		Grid grid = ym.getGrid()
 
@@ -53,7 +52,7 @@ class YnfoManager  {
 		}
 
 		println 'Directories:'
-		for ( def dir : grid.getDirectories() ) {
+		for ( def dir : grid.getDirectorys() ) {
 			println '\t' + dir.getUrl()
 			printConnections(dir)
 		}
@@ -112,16 +111,7 @@ class YnfoManager  {
 				case Directory.class:
 					grid.addDirectory(object)
 					break
-				case Package.class:
-					if (! object.getGroups()) {
-						Set<Group> temp = Sets.newHashSet()
-						for (Queue q : object.getQueues()) {
-							temp.addAll(q.getGroups())
-						}
-						object.setGroups(temp)
-					}
-					grid.addPackage(object)
-					break
+
 				case Queue.class:
 					grid.addQueue(object)
 					break

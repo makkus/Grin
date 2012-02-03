@@ -1,8 +1,12 @@
 package grisu.grin.model;
 
 import grisu.grin.model.resources.AbstractResource;
+import grisu.grin.model.resources.Group;
+import grisu.grin.model.resources.Queue;
+import grisu.jcommons.constants.JobSubmissionProperty;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,18 +15,25 @@ import com.google.common.base.Predicate;
 
 public class Filters {
 
-	// private static class IsAccessibleForGroup implements
-	// Predicate<GroupRestrictions> {
-	// private final Group group;
-	//
-	// private IsAccessibleForGroup(final Group group) {
-	// this.group = group;
-	// }
-	//
-	// public boolean apply(final GroupRestrictions s) {
-	// return s.getGroups().contains(group);
-	// }
-	// }
+	private static class AcceptsJobFilter implements Predicate<Queue> {
+
+		private final Map<JobSubmissionProperty, String> jobProps;
+		private final Group group;
+
+		public AcceptsJobFilter(Map<JobSubmissionProperty, String> p, Group g) {
+			this.jobProps = p;
+			this.group = g;
+		}
+		public boolean apply(Queue q) {
+
+			if (!q.getGroups().contains(q)) {
+				return false;
+			}
+
+			return q.acceptsJob(jobProps);
+		}
+
+	}
 
 	private static class ResourceFilter implements Predicate<AbstractResource> {
 
@@ -36,8 +47,10 @@ public class Filters {
 
 			Collection<AbstractResource> r = resource.getConnections();
 
-			if (r.contains(resource)) {
-				return true;
+			for (AbstractResource ar : this.filters) {
+				if (r.contains(ar)) {
+					return true;
+				}
 			}
 
 			return false;
@@ -47,8 +60,13 @@ public class Filters {
 
 	private static Logger myLogger = LoggerFactory.getLogger(Filters.class);
 
+	public static Predicate<Queue> acceptsJob(
+			Map<JobSubmissionProperty, String> jobProps, Group group) {
+		return new AcceptsJobFilter(jobProps, group);
+	}
+
 	public static Predicate<AbstractResource> filterResource(
-			AbstractResource[] o) {
+			AbstractResource... o) {
 		return new ResourceFilter(o);
 	}
 }

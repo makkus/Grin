@@ -1,5 +1,7 @@
 package grisu.grin.model.resources;
 
+import grisu.jcommons.constants.Constants;
+
 import java.util.Set;
 
 import com.google.common.base.Objects;
@@ -7,6 +9,13 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
 
 public class Group extends AbstractResource implements Comparable<Group> {
+
+	public static Group NO_VO_GROUP = new Group(VO.NON_VO,
+			Constants.NON_VO_FQAN);
+
+	public static Group create(VO vo, String fqan) {
+		return new Group(vo, fqan);
+	}
 
 	private VO vo;
 	private String fqan;
@@ -47,6 +56,10 @@ public class Group extends AbstractResource implements Comparable<Group> {
 
 	public String getFqan() {
 		return fqan;
+	}
+
+	public String getRole() {
+		return null;
 	}
 
 	public VO getVO() {

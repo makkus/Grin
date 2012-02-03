@@ -1,4 +1,5 @@
 import grisu.grin.model.resources.*
+import grisu.jcommons.constants.JobSubmissionProperty
 
 
 
@@ -66,20 +67,16 @@ canterbury_home = new Directory(
 		path:"/~/"
 		)
 
+globus4 = Middleware.create("Globus", "4.0.0");
+globus5 = Middleware.create("Globus", "5.0")
+globus5_2 = Middleware.create("Globus", "5.2");
+
 // gateways
 gram5 = new Gateway(
 		site:auckland,
 		host:"gram5.ceres.auckland.ac.nz"
 		)
 		
-// queues
-default_gram5 = new Queue(
-		gateway:gram5,
-		name:'defaultQueue',
-		groups:[nesi],
-		directories:[auckland_home]
-		)
-
 // applications
 java = new Application(
 		name:'Java'
@@ -89,46 +86,58 @@ python = new Application(
 		name:'Python'
 		)
 
+// executables
+exe_java = Executable.create('java')
+exe_javac = Executable.create('javac')
+exe_python = Executable.create('python')
+
+mod_java = Module.create('java')
+
 // packages
 // groups is optional, if not set, groups of all queues will be used
 java15_nesi = new Package(
 		application:java,
 		version: new Version('1.5.0'),
-		groups: [nesi],
-		queues: [default_gram5]
 		)
 
 // packages
-//java15 = new Package(
-//		application:java,
-//		version:new Version('1.5.0'),
-//		queues: [default_gram5]
-//		)
-//
-//java16 = new Package(
-//	application:java,
-//	version:new Version('1.6.0'),
-//	queues: [default_gram5]
-//	)
+java15 = new Package(
+		application:java,
+		version:new Version('1.5.0'),
+		)
 
-//java17 = new Package(
-//	application:java,
-//	version:new Version('1.7.0'),
-//	queues: [default_gram5],
-//	groups: [grid_dev]
-//	)
+java16 = new Package(
+	application:java,
+	version:new Version('1.6.0'),
+	)
+
+java17 = new Package(
+	application:java,
+	version:new Version('1.7.0'),
+	)
 
 java172 = new Package(
 	application:java,
 	version:new Version('1.7.0'),
-	groups: [nesi],
-	queues: [default_gram5]
+	executables: [exe_java, exe_javac],
+	module: mod_java
 	)
 
 
 python = new Package(
 		application:python,
 		version:new Version('2.6'),
-		queues: [default_gram5]
+		executables: [exe_python]
 		)
 		
+// queues
+default_gram5 = new Queue(
+		gateway:gram5,
+		name:'defaultQueue',
+		groups:[nesi],
+		directories:[auckland_home],
+		packages:[java17],
+		noCpus:6,
+		memory:1073741824
+		)
+

@@ -1,10 +1,19 @@
 package grisu.grin.model.resources;
 
+import grisu.jcommons.constants.Constants;
+
 import java.util.Set;
 
 import com.google.common.collect.Sets;
 
 public class Version extends AbstractResource implements Comparable<Version> {
+
+	public static Version ANY_VERSION = new Version(
+			Constants.NO_VERSION_INDICATOR_STRING);
+
+	public static Version create(String applicationVersion) {
+		return new Version(applicationVersion);
+	}
 
 	private String version;
 

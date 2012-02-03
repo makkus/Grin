@@ -10,8 +10,8 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
-public class FileSystem extends AbstractResource implements
-		Comparable<FileSystem> {
+public class FileSystem extends AbstractPhysicalResource implements
+Comparable<FileSystem> {
 
 	public static final int DEFAULT_PORT = 2811;
 	public static final String DEFAULT_PROTOCOL = "gsiftp";
@@ -88,6 +88,11 @@ public class FileSystem extends AbstractResource implements
 	}
 
 	@Override
+	public String getContactString() {
+		return getUrl();
+	}
+
+	@Override
 	public Set<AbstractResource> getDirectConnections() {
 
 		Set<AbstractResource> result = Sets.newHashSet();
@@ -111,6 +116,7 @@ public class FileSystem extends AbstractResource implements
 		return protocol;
 	}
 
+	@Override
 	public Site getSite() {
 		return this.site;
 	}

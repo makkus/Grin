@@ -1,9 +1,16 @@
 package grisu.jcommons.interfaces;
 
 import grisu.grin.model.resources.Application;
+import grisu.grin.model.resources.Directory;
+import grisu.grin.model.resources.Package;
+import grisu.grin.model.resources.Queue;
 import grisu.grin.model.resources.Site;
+import grisu.grin.model.resources.Version;
+import grisu.jcommons.constants.JobSubmissionProperty;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * An information manager provides Grisu with information about the grid and
@@ -16,13 +23,26 @@ import java.util.Map;
 public interface InformationManager {
 
 	/**
+	 * Returns all the queues that are able to execute a job with the specified
+	 * job properties.
+	 * 
+	 * @param jobProps
+	 *            the job properties
+	 * @param group
+	 *            the group for which the job is going to be submitted
+	 * @return the queues.
+	 */
+	public Collection<Queue> findQueues(
+			Map<JobSubmissionProperty, String> jobProps, String group);
+
+	/**
 	 * Returns the names of all the applications at the site.
 	 * 
 	 * @param site
 	 *            name of the site
 	 * @return names of the applications at the site
 	 */
-	Application[] getAllApplicationsAtSite(Site site);
+	String[] getAllApplicationsAtSite(String site);
 
 	/**
 	 * Returns all the available applications on the Grid.
@@ -30,6 +50,9 @@ public interface InformationManager {
 	 * @return all the applications on the Grid
 	 */
 	String[] getAllApplicationsOnGrid();
+
+
+
 
 	/**
 	 * Calculates all the applications that are available for the specified VO
@@ -40,27 +63,6 @@ public interface InformationManager {
 	 * @return all available applications
 	 */
 	String[] getAllApplicationsOnGridForVO(String fqan);
-
-	/**
-	 * Calculates all GridResources grid-wide and returns a map of (unique)
-	 * submission location and the associated GridResource.
-	 * 
-	 * @return the map
-	 */
-	public Map<String, GridResource> getAllGridResources();
-
-	/**
-	 * Returns a map of all hostnames gridwide and the sites they belong to as
-	 * value. Main purpose of this method is to increase the site lookup speed
-	 * for hosts on the Grid
-	 * <p>
-	 * 
-	 * The returned map will have this format: ngdata.hpsc.csiro.au -> CSIRO-ASC
-	 * ngdata.ivec.org -> iVEC
-	 * 
-	 * @return all hostnames/sites
-	 */
-	Map<String, String> getAllHosts();
 
 	/**
 	 * Return all the names of all the sites from MDS.
@@ -87,7 +89,9 @@ public interface InformationManager {
 	 * @return submission locations of sites which have the software application
 	 *         installed
 	 */
-	String[] getAllSubmissionLocations(String application, String version);
+	Collection<String> getAllSubmissionLocations(String application,
+			String version);
+
 
 	/**
 	 * Returns all the submissionlocations for the given application. The entry
@@ -104,16 +108,8 @@ public interface InformationManager {
 	 *            name of the application
 	 * @return all the submission queues for the given application.
 	 */
-	String[] getAllSubmissionLocationsForApplication(String application);
-
-	/**
-	 * Returns a list of all submissionlocations for the specified site.
-	 * 
-	 * @param site
-	 *            the name of the site
-	 * @return the submissionLocations
-	 */
-	String[] getAllSubmissionLocationsForSite(String site);
+	Collection<String> getAllSubmissionLocationsForApplication(
+			String application);
 
 	/**
 	 * Returns all submission locations or a specific VO.
@@ -122,7 +118,7 @@ public interface InformationManager {
 	 *            the vo
 	 * @return the submission locations
 	 */
-	String[] getAllSubmissionLocationsForVO(String fqan);
+	Collection<Queue> getAllSubmissionLocationsForVO(String fqan);
 
 	/**
 	 * Returns the list of available versions of the software application on the
@@ -133,19 +129,7 @@ public interface InformationManager {
 	 * @return a string array of versions of the software application on the
 	 *         Grid
 	 */
-	String[] getAllVersionsOfApplicationOnGrid(String application);
-
-	/**
-	 * Calculates all version of an application for a certain VO.
-	 * 
-	 * @param application
-	 *            the application
-	 * @param vo
-	 *            the vo
-	 * @return all versions
-	 */
-	String[] getAllVersionsOfApplicationOnGridForVO(String application,
-			String vo);
+	Collection<String> getAllVersionsOfApplicationOnGrid(String application);
 
 	/**
 	 * Returns a map of the attribute details of the given application at the
@@ -162,7 +146,7 @@ public interface InformationManager {
 	 * @return a map of the attribute details of the given application at the
 	 *         site.
 	 */
-	Map<String, String> getApplicationDetails(String application,
+	Package getApplicationDetails(String application,
 			String version, String submissionLocation);
 
 	/**
@@ -173,19 +157,18 @@ public interface InformationManager {
 	 *            the executable
 	 * @return the codes
 	 */
-	String[] getApplicationsThatProvideExecutable(String executable);
+	Collection<Application> getApplicationsThatProvideExecutable(
+			String executable);
 
 	/**
 	 * Returns all the data locations (mount points) on the grid available for
 	 * the given VO.
 	 * 
-	 * The key is the protocol & hostname, the values are paths.
-	 * 
 	 * @param fqan
 	 *            fully qualified attribute name of the VO
 	 * @return all the data locations for the VO
 	 */
-	Map<String, String[]> getDataLocationsForVO(String fqan);
+	Collection<Directory> getDataLocationsForVO(String fqan);
 
 	/**
 	 * Returns the GridResource object for the submissionLocation string.
@@ -197,7 +180,8 @@ public interface InformationManager {
 	 *            the submission location string
 	 * @return the grid resource
 	 */
-	public GridResource getGridResource(String submissionLocation);
+	public Queue getGridResource(String submissionLocation);
+
 
 	/**
 	 * Returns the jobmanager that submits to the specified queue/site.
@@ -217,9 +201,9 @@ public interface InformationManager {
 	 *            the host or the service's URI
 	 * @return the name of the site where this host or URL belongs
 	 */
-	String getSiteForHostOrUrl(String host_or_url);
+	Site getSiteForHostOrUrl(String host_or_url);
 
-	String[] getStagingFileSystemForSubmissionLocation(String subLoc);
+	Set<Directory> getStagingFileSystemForSubmissionLocation(String subLoc);
 
 	/**
 	 * Returns the list of available versions of the software application at a
@@ -232,7 +216,8 @@ public interface InformationManager {
 	 * @return an array of string representing the available versions of the
 	 *         software application at the site
 	 */
-	String[] getVersionsOfApplicationOnSite(String application, String site);
+	Collection<Version> getVersionsOfApplicationOnSite(String application,
+			String site);
 
 	/**
 	 * Returns the list of available versions of the software application at a
@@ -245,25 +230,9 @@ public interface InformationManager {
 	 * @return an array of string representing the available versions of the
 	 *         software application at the submissionlocation
 	 */
-	String[] getVersionsOfApplicationOnSubmissionLocation(String application,
+	Collection<Version> getVersionsOfApplicationOnSubmissionLocation(
+			String application,
 			String submissionLocation);
 
-	/**
-	 * Returns whether the specified datalocation is volatile (which basically
-	 * means that it is a filesystem that is used for running jobs) or whether
-	 * it is one that is used to store static data (like finished jobs) by the
-	 * user.
-	 * 
-	 * @param host
-	 *            the host url as returned by the key part of
-	 *            {@link #getDataLocationsForVO(String)}
-	 * @param path
-	 *            the path as returned by the value part of
-	 *            {@link #getDataLocationsForVO(String)}
-	 * @param fqan
-	 *            the fqan (in order to identify above datalocation uniquely)
-	 * @return whether the datalocation is volatile
-	 */
-	boolean isVolatileDataLocation(String host, String path, String fqan);
 
 }

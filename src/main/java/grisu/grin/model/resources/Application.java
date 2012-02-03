@@ -1,12 +1,21 @@
 package grisu.grin.model.resources;
 
+import grisu.jcommons.constants.Constants;
+
 import java.util.Set;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 public class Application extends AbstractResource implements
-		Comparable<Application> {
+Comparable<Application> {
+
+	public static final Application GENERIC_APPLICATION = new Application(
+			Constants.GENERIC_APPLICATION_NAME);
+
+	public static Application create(String application) {
+		return new Application(application);
+	}
 
 	private String name;
 

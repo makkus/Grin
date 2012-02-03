@@ -19,8 +19,8 @@ import com.google.common.collect.Sets;
  * @author Markus Binsteiner
  * 
  */
-public class Directory extends AbstractResource implements
-		Comparable<Directory>, GroupRestrictions {
+public class Directory extends AbstractPhysicalResource implements
+Comparable<Directory>, GroupRestrictions {
 
 	private static String fixMdsLegacies(String path) {
 
@@ -51,6 +51,8 @@ public class Directory extends AbstractResource implements
 	private String path;
 	private Collection<Group> groups;
 	private String alias;
+
+	private boolean isVolatile = false;
 
 	private Directory() {
 	}
@@ -105,6 +107,11 @@ public class Directory extends AbstractResource implements
 	}
 
 	@Override
+	public String getContactString() {
+		return getUrl();
+	}
+
+	@Override
 	public Set<AbstractResource> getDirectConnections() {
 
 		Set<AbstractResource> result = Sets.newHashSet();
@@ -119,6 +126,10 @@ public class Directory extends AbstractResource implements
 
 	public Collection<Group> getGroups() {
 		return groups;
+	}
+
+	public String getHost() {
+		return getFilesystem().getHost();
 	}
 
 	public String getPath() {
@@ -158,6 +169,11 @@ public class Directory extends AbstractResource implements
 		}
 	}
 
+	@Override
+	public Site getSite() {
+		return getFilesystem().getSite();
+	}
+
 	public String getUrl() {
 		return filesystem.toString() + path;
 	}
@@ -165,6 +181,10 @@ public class Directory extends AbstractResource implements
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(filesystem, path, groups);
+	}
+
+	public boolean isVolatile() {
+		return isVolatile;
 	}
 
 	private void setAlias(String alias) {
@@ -181,6 +201,10 @@ public class Directory extends AbstractResource implements
 
 	private void setPath(String path) {
 		this.path = path;
+	}
+
+	private void setVolatile(boolean v) {
+		this.isVolatile = v;
 	}
 
 	@Override

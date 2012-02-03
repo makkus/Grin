@@ -8,6 +8,8 @@ import com.google.common.collect.Sets;
 
 public class Site extends AbstractResource implements Comparable<Site> {
 
+	public static final Site ANY_SITE = new Site("any");
+
 	private String name;
 
 	private Site() {

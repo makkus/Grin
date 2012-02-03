@@ -51,7 +51,7 @@ public abstract class AbstractResource {
 
 	}
 
-	public abstract Set<AbstractResource> getDirectConnections();
+	protected abstract Set<AbstractResource> getDirectConnections();
 
 	public final void popluateConnections() {
 
