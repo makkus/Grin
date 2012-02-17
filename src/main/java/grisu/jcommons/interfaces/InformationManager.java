@@ -1,15 +1,13 @@
 package grisu.jcommons.interfaces;
 
-import grisu.grin.model.resources.Application;
-import grisu.grin.model.resources.Directory;
-import grisu.grin.model.resources.Package;
-import grisu.grin.model.resources.Queue;
-import grisu.grin.model.resources.Site;
-import grisu.grin.model.resources.Version;
-import grisu.jcommons.constants.JobSubmissionProperty;
+import grisu.jcommons.model.info.Application;
+import grisu.jcommons.model.info.Directory;
+import grisu.jcommons.model.info.Package;
+import grisu.jcommons.model.info.Queue;
+import grisu.jcommons.model.info.Site;
+import grisu.jcommons.model.info.Version;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,18 +20,19 @@ import java.util.Set;
  */
 public interface InformationManager {
 
-	/**
-	 * Returns all the queues that are able to execute a job with the specified
-	 * job properties.
-	 * 
-	 * @param jobProps
-	 *            the job properties
-	 * @param group
-	 *            the group for which the job is going to be submitted
-	 * @return the queues.
-	 */
-	public Collection<Queue> findQueues(
-			Map<JobSubmissionProperty, String> jobProps, String group);
+	// /**
+	// * Returns all the queues that are able to execute a job with the
+	// specified
+	// * job properties.
+	// *
+	// * @param jobProps
+	// * the job properties
+	// * @param group
+	// * the group for which the job is going to be submitted
+	// * @return the queues.
+	// */
+	// public Collection<Queue> findQueues(
+	// Map<JobSubmissionProperty, String> jobProps, String group);
 
 	/**
 	 * Returns the names of all the applications at the site.

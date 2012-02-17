@@ -1,11 +1,11 @@
 package grisu.grin.model;
 
 
-import grisu.grin.model.resources.Directory;
-import grisu.grin.model.resources.FileSystem;
-import grisu.grin.model.resources.Group;
-import grisu.grin.model.resources.Queue;
-import grisu.grin.model.resources.Site;
+import grisu.jcommons.model.info.Directory;
+import grisu.jcommons.model.info.FileSystem;
+import grisu.jcommons.model.info.Group;
+import grisu.jcommons.model.info.Queue;
+import grisu.jcommons.model.info.Site;
 
 import java.util.Collection;
 import java.util.Map;

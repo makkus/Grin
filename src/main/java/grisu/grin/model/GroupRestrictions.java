@@ -1,6 +1,6 @@
 package grisu.grin.model;
 
-import grisu.grin.model.resources.Group;
+import grisu.jcommons.model.info.Group;
 
 import java.util.Collection;
 

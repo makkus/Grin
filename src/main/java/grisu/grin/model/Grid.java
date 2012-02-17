@@ -1,24 +1,27 @@
 package grisu.grin.model;
 
-import grisu.grin.model.resources.AbstractPhysicalResource;
-import grisu.grin.model.resources.AbstractResource;
-import grisu.grin.model.resources.Application;
-import grisu.grin.model.resources.Directory;
-import grisu.grin.model.resources.Executable;
-import grisu.grin.model.resources.FileSystem;
-import grisu.grin.model.resources.Gateway;
-import grisu.grin.model.resources.Group;
-import grisu.grin.model.resources.Middleware;
-import grisu.grin.model.resources.Package;
-import grisu.grin.model.resources.Queue;
-import grisu.grin.model.resources.Site;
-import grisu.grin.model.resources.VO;
-import grisu.grin.model.resources.Version;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.constants.JobSubmissionProperty;
+import grisu.jcommons.model.info.AbstractPhysicalResource;
+import grisu.jcommons.model.info.AbstractResource;
+import grisu.jcommons.model.info.Application;
+import grisu.jcommons.model.info.Directory;
+import grisu.jcommons.model.info.Executable;
+import grisu.jcommons.model.info.FileSystem;
+import grisu.jcommons.model.info.Filters;
+import grisu.jcommons.model.info.Gateway;
+import grisu.jcommons.model.info.Group;
+import grisu.jcommons.model.info.Middleware;
+import grisu.jcommons.model.info.Package;
+import grisu.jcommons.model.info.Queue;
+import grisu.jcommons.model.info.Site;
+import grisu.jcommons.model.info.VO;
+import grisu.jcommons.model.info.Version;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,18 +37,29 @@ public class Grid {
 
 	public static final Logger myLogger = LoggerFactory.getLogger(Grid.class);
 
-	private final Set<FileSystem> filesystems = Sets.newHashSet();
-	private final Set<Directory> directories = Sets.newHashSet();
-	private final Set<Site> sites = Sets.newHashSet();
-	private final Set<Gateway> gateways = Sets.newHashSet();
-	private final Set<Queue> queues = Sets.newHashSet();
-	private final Set<Application> applications = Sets.newHashSet();
-	private final Set<Package> packages = Sets.newHashSet();
-	private final Set<Group> groups = Sets.newHashSet();
-	private final Set<VO> vos = Sets.newHashSet();
-	private final Set<Version> versions = Sets.newHashSet();
-	private final Set<Executable> executables = Sets.newTreeSet();
-	private final Set<Middleware> middlewares = Sets.newTreeSet();
+	private final Set<FileSystem> filesystems = Collections
+			.synchronizedSet(new HashSet<FileSystem>());
+	private final Set<Directory> directories = Collections
+			.synchronizedSet(new HashSet<Directory>());
+	private final Set<Site> sites = Collections
+			.synchronizedSet(new HashSet<Site>());
+	private final Set<Gateway> gateways = Collections
+			.synchronizedSet(new HashSet<Gateway>());
+	private final Set<Queue> queues = Collections
+			.synchronizedSet(new HashSet<Queue>());
+	private final Set<Application> applications = Collections
+			.synchronizedSet(new HashSet<Application>());
+	private final Set<Package> packages = Collections
+			.synchronizedSet(new HashSet<Package>());
+	private final Set<Group> groups = Collections
+			.synchronizedSet(new HashSet<Group>());
+	private final Set<VO> vos = Collections.synchronizedSet(new HashSet<VO>());
+	private final Set<Version> versions = Collections
+			.synchronizedSet(new HashSet<Version>());
+	private final Set<Executable> executables = Collections
+			.synchronizedSet(new HashSet<Executable>());
+	private final Set<Middleware> middlewares = Collections
+			.synchronizedSet(new HashSet<Middleware>());
 
 	private void addApplication(Application a) {
 		applications.add(a);
@@ -103,8 +117,9 @@ public class Grid {
 	public void addQueue(Queue q) {
 		q.getPackages().add(Package.GENERIC);
 		addGateway(q.getGateway());
-		if (q.getPackages() != null) {
-			for (Package p : q.getPackages()) {
+		final Collection<Package> temp = Sets.newHashSet(q.getPackages());
+		if (temp != null) {
+			for (Package p : temp) {
 				Application app = p.getApplication();
 				Package any_version_package = new Package(app,
 						Version.ANY_VERSION);

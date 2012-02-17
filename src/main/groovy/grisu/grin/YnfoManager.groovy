@@ -2,6 +2,7 @@ package grisu.grin
 
 import grisu.grin.model.Grid
 import grisu.grin.model.resources.*
+import grisu.jcommons.model.info.*
 
 
 
@@ -106,6 +107,12 @@ class YnfoManager  {
 
 			def name = e.key
 			def object = e.value
+
+			if ( object instanceof AbstractResource ) {
+				//println 'setting alias: '+name
+				object.setAlias(name)
+			}
+
 			switch(object.class) {
 
 				case Directory.class:

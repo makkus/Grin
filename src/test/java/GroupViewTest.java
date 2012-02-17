@@ -1,6 +1,6 @@
 import grisu.grin.YnfoManager;
 import grisu.grin.model.Grid;
-import grisu.grin.model.resources.Group;
+import grisu.jcommons.model.info.Group;
 
 import org.junit.After;
 import org.junit.AfterClass;

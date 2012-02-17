@@ -2,13 +2,13 @@ package grisu.jcommons.interfaces;
 
 import grisu.grin.YnfoManager;
 import grisu.grin.model.Grid;
-import grisu.grin.model.resources.Application;
-import grisu.grin.model.resources.Directory;
-import grisu.grin.model.resources.Group;
-import grisu.grin.model.resources.Package;
-import grisu.grin.model.resources.Queue;
-import grisu.grin.model.resources.Site;
-import grisu.grin.model.resources.Version;
+import grisu.jcommons.model.info.Application;
+import grisu.jcommons.model.info.Directory;
+import grisu.jcommons.model.info.Group;
+import grisu.jcommons.model.info.Package;
+import grisu.jcommons.model.info.Queue;
+import grisu.jcommons.model.info.Site;
+import grisu.jcommons.model.info.Version;
 
 import java.util.Collection;
 import java.util.Map;

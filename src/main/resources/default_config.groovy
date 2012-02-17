@@ -1,5 +1,4 @@
-import grisu.grin.model.resources.*
-import grisu.jcommons.constants.JobSubmissionProperty
+import grisu.jcommons.model.info.*
 
 
 
@@ -42,6 +41,16 @@ auckland_gram5 = new FileSystem(
 		site:auckland
 		)
 
+auckland_df = new FileSystem(
+		host:'df.auckland.ac.nz',
+		site:auckland
+		)
+
+auckland_ng2 = new FileSystem(
+		host:'ng2.auckland.ac.nz',
+		site:auckland
+		)
+
 canterbury_df = new FileSystem(
 		host:'df.canterbury.ac.nz',
 		site:canterbury
@@ -49,16 +58,29 @@ canterbury_df = new FileSystem(
 
 
 // directories
+auckland_ng2_home = new Directory(
+		filesystem:auckland_ng2,
+		shared:true)
+
 auckland_home = new Directory(
 		filesystem:auckland_gram5,
 		groups:[nesi],
-		path:"/~/"
+		path:"/~/",
+		volatileDirectory:true
 		)
 
 auckland_tmp = new Directory(
 		filesystem:auckland_gram5,
 		groups:[nesi],
-		path:"/tmp"
+		path:"/tmp",
+		volatileDirectory:true
+		)
+
+auckland_df_home = new Directory(
+		filesystem:auckland_df,
+		groups:[nesi],
+		path:"/~/",
+		volatileDirectory:false
 		)
 
 canterbury_home = new Directory(
@@ -75,6 +97,12 @@ globus5_2 = Middleware.create("Globus", "5.2");
 gram5 = new Gateway(
 		site:auckland,
 		host:"gram5.ceres.auckland.ac.nz"
+		)
+
+ng2 = new Gateway(
+		site:auckland,
+		host:"ng2.auckland.ac.nz",
+		middleware:globus4
 		)
 		
 // applications
@@ -133,7 +161,7 @@ python = new Package(
 // queues
 default_gram5 = new Queue(
 		gateway:gram5,
-		name:'defaultQueue',
+		name:'default',
 		groups:[nesi],
 		directories:[auckland_home],
 		packages:[java17],
@@ -141,3 +169,9 @@ default_gram5 = new Queue(
 		memory:1073741824
 		)
 
+default_ng2 = new Queue(
+		gateway:ng2,
+		groups:[Group.NO_VO_GROUP],
+		name:'route@er171.ceres.auckland.ac.nz',
+		directories:[auckland_ng2_home]
+		)
