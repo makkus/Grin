@@ -5,14 +5,13 @@ import grisu.jcommons.model.info.*
 
 // sites
 
-auckland = new Site(
+testbed = new Site(
 	name = 'Testbed'
 	)
 
 // vos
-
-nz = new VO(
-	voName = 'nz',
+test = new VO(
+	voName = 'test',
 	host = 'voms.test.bestgrid.org',
 	port = 15000,
 	hostDN = '/C=nz/O=org/O=nesi/OU=test/OU=local/CN=voms.test.bestgrid.org'
@@ -20,13 +19,13 @@ nz = new VO(
 
 // groups
 nesi = new Group(
-		vo = nz,
-		fqan = "/nz/nesi"
+		vo = test,
+		fqan = "/test/nesi"
 		)
 
 test = new Group(
-		vo = nz,
-		fqan = "/nz/nesi/test"
+		vo = test,
+		fqan = "/test/nesi/test"
 		)
 
 // filesystems
@@ -46,13 +45,13 @@ akl_home = new Directory(
 		shared:false,
 		volatileDirectory:false)
 
-gram52 = Middleware.create("Globus", "5.2");
+gram52 = Middleware.get("Globus", "5.2");
 
 // gateways
-gram52 = new Gateway(
-		site:auckland,
+testbed_gram52 = new Gateway(
+		site:testbed,
 		host:'globus.test.nesi.org.nz',
-		middleware:gram53
+		middleware:gram52
 		)
 		
 // applications
@@ -65,32 +64,30 @@ python = new Application(
 		)
 
 // executables
-exe_java = Executable.create('java')
-exe_javac = Executable.create('javac')
-exe_python = Executable.create('python')
+exe_java = Executable.get('java')
+exe_javac = Executable.get('javac')
+exe_python = Executable.get('python')
 
 // packages
 java15 = new Package(
 		application:java,
-		version: new Version('1.5.0'),
+		version: Version.get('1.5.0'),
 		executables: [exe_java, exe_javac]
 		)
 
 
 python26 = new Package(
 		application:python,
-		version:new Version('2.6'),
+		version:Version.get('2.6'),
 		executables: [exe_python]
 		)
 		
 // queues
 batch = new Queue(
-		gateway:gram52,
+		gateway:testbed_gram52,
 		name:'batch',
 		groups:[nesi],
 		directories:[akl_home],
-		packages:[java15,python26],
-		noCpus:6,
-		memory:1073741824
+		packages:[java15,python26]
 		)
 

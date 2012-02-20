@@ -23,7 +23,7 @@ class YnfoManager  {
 
 	static void main (args) {
 
-		def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/main/resources/default_config.groovy')
+		def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/main/resources/nesi.groovy')
 		//		def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/test/resources/test_2_sites.config.groovy')
 
 		Grid grid = ym.getGrid()
