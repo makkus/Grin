@@ -24,6 +24,7 @@ class YnfoManager  {
 	static void main (args) {
 
 		def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/main/resources/nesi.groovy')
+		//		def ym = new YnfoManager(null)
 		//		def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/test/resources/test_2_sites.config.groovy')
 
 		Grid grid = ym.getGrid()
@@ -96,11 +97,14 @@ class YnfoManager  {
 
 	public YnfoManager(def pathToConfig) {
 
-		this(new ConfigSlurper().parse(new File(pathToConfig).toURL()))
-	}
+		def config
+		if ( ! pathToConfig ) {
+			InputStream is = getClass().getResourceAsStream('/testbed.groovy')
+			config = new ConfigSlurper().parse(is.getText())
+		} else {
+			config = new ConfigSlurper().parse(new File(pathToConfig).toURL())
+		}
 
-
-	public YnfoManager(ConfigObject config) {
 
 
 		for (def e in config) {

@@ -1,13 +1,17 @@
 package grisu.jcommons.interfaces;
 
+import grisu.jcommons.constants.JobSubmissionProperty;
+import grisu.jcommons.model.info.AbstractResource;
 import grisu.jcommons.model.info.Application;
 import grisu.jcommons.model.info.Directory;
 import grisu.jcommons.model.info.Package;
 import grisu.jcommons.model.info.Queue;
 import grisu.jcommons.model.info.Site;
+import grisu.jcommons.model.info.VO;
 import grisu.jcommons.model.info.Version;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,6 +39,18 @@ public interface InformationManager {
 	// Map<JobSubmissionProperty, String> jobProps, String group);
 
 	/**
+	 * Finds all queues in the grid that can run a job with the specified
+	 * properties and fqan.
+	 * 
+	 * @param job
+	 *            the job properties
+	 * @param fqan
+	 *            the fqan
+	 * @return all queues
+	 */
+	Collection<Queue> findQueues(Map<JobSubmissionProperty, String> job, String fqan);
+
+	/**
 	 * Returns the names of all the applications at the site.
 	 * 
 	 * @param site
@@ -50,9 +66,6 @@ public interface InformationManager {
 	 */
 	String[] getAllApplicationsOnGrid();
 
-
-
-
 	/**
 	 * Calculates all the applications that are available for the specified VO
 	 * grid-wide.
@@ -62,6 +75,7 @@ public interface InformationManager {
 	 * @return all available applications
 	 */
 	String[] getAllApplicationsOnGridForVO(String fqan);
+
 
 	/**
 	 * Return all the names of all the sites from MDS.
@@ -91,7 +105,6 @@ public interface InformationManager {
 	Collection<String> getAllSubmissionLocations(String application,
 			String version);
 
-
 	/**
 	 * Returns all the submissionlocations for the given application. The entry
 	 * for the submissionlocations are in this format:
@@ -109,6 +122,7 @@ public interface InformationManager {
 	 */
 	Collection<String> getAllSubmissionLocationsForApplication(
 			String application);
+
 
 	/**
 	 * Returns all submission locations or a specific VO.
@@ -129,6 +143,13 @@ public interface InformationManager {
 	 *         Grid
 	 */
 	Collection<String> getAllVersionsOfApplicationOnGrid(String application);
+
+	/**
+	 * Returns all VOs that are used.
+	 * 
+	 * @return the VOs
+	 */
+	Set<VO> getAllVOs();
 
 	/**
 	 * Returns a map of the attribute details of the given application at the
@@ -181,7 +202,6 @@ public interface InformationManager {
 	 */
 	public Queue getGridResource(String submissionLocation);
 
-
 	/**
 	 * Returns the jobmanager that submits to the specified queue/site.
 	 * 
@@ -192,6 +212,24 @@ public interface InformationManager {
 	 * @return the jobmanager
 	 */
 	String getJobmanagerOfQueueAtSite(String site, String queue);
+
+	/**
+	 * Checks whether there is a resource of the specified type and name (result of the toString() method) and returns it.
+	 *
+	 * @param type the type of the resource
+	 * @param name the name of the resource
+	 * @return the resource or null if it can't be found
+	 */
+	<T extends AbstractResource> T getResource(Class<T> type, String name);
+
+	/**
+	 * Finds all resources of the specified type that have connections to the filters specified.
+	 * @param resourceClass the type of resources you look for
+	 * @param filters the resources that have direct connections to the resources you look for
+	 * @return all matching resources
+	 */
+	public <T extends AbstractResource> Collection<T> getResources(
+			Class<T> resourceClass, AbstractResource... filters);
 
 	/**
 	 * Returns the name of the site where this host or URL belongs.
@@ -230,8 +268,11 @@ public interface InformationManager {
 	 *         software application at the submissionlocation
 	 */
 	Collection<Version> getVersionsOfApplicationOnSubmissionLocation(
-			String application,
-			String submissionLocation);
+			String application, String submissionLocation);
 
+	/**
+	 * Forces a refresh of all information
+	 */
+	void refresh();
 
 }

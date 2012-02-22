@@ -1,8 +1,6 @@
 import grisu.jcommons.model.info.*
 
 
-
-
 // sites
 
 testbed = new Site(
@@ -33,7 +31,7 @@ akl_fs = new FileSystem(
 		host:'globus.test.nesi.org.nz',
 		protocol:'gsiftp',
 		port:2811,
-		site:auckland
+		site:testbed
 		)
 
 
