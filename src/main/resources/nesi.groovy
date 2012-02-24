@@ -1,7 +1,3 @@
-import grisu.jcommons.model.info.Application;
-
-import grisu.jcommons.model.info.Application;
-
 import grisu.jcommons.model.info.*
 
 
@@ -131,7 +127,7 @@ canterbury_ng2_fs = new FileSystem(
 	)
 
 
-// directories
+// directories (make sure to always have a trailing slash for the path element
 
 auckland_home = new Directory(
 		filesystem:auckland_gram5_fs,
@@ -159,17 +155,15 @@ auckland_acsrc_group = new Directory(
 		filesystem:auckland_gram5_fs,
 		groups:[uoa_acsrc],
 		volatileDirectory:false,
-		path:"/home/grid-acsrc"
+		path:"/home/grid-acsrc/"
 		)
 
 auckland_sbs_group = new Directory(
 		filesystem:auckland_gram5_fs,
 		groups:[uoa_sbs],
 		volatileDirectory:false,
-		path:"/home/grid-sbs"
+		path:"/home/grid-sbs/"
 		)
-
-
 
 canterbury_ng1_home = new Directory(
 	filesystem:canterbury_ng1_fs,
@@ -254,12 +248,32 @@ mr_bayes_3_1_2 = new Package(
 		)
 		
 // queues
+
+/** example:
+<id> = new Queue(
+		gateway:<gateway>,	// required
+		name:'<queuename>',	// required
+		groups: [<list_of_groups>], // at least one value required
+		directories:[<list_of_directories>], // at least one value required
+		packages:[<list_of_packages>], // optional, default is just generic package
+		description:'Description of the queue', // optional, default: 'n/a'
+		hosts:<number_of_hosts_for_this_queue>, // optional, default: Integer.MAX_VALUE
+		memoryInBytes:<long_value_for_memory>, // optional, default: Long.MAX_VALUE
+		noCpus:<total_no_of_cpus>, 				// optional, default: Integer.MAX_VALUE
+		virtualMemoryInBytes:<long_value_for_memory>, // optional, default: Long.MAX_VALUE
+		walltimeInMinutes:<walltime>, // optional, default: Integer.MAX_VALUE
+		cpusPerHost:<min_number_of_cpus_per_host> // optional, default: Integer.MAX_VALUE
+*/	
+
 default_gram5 = new Queue(
 		gateway:gram5,
 		name:'default',
 		groups:[nesi],
 		directories:[auckland_home],
-		packages:[python_2_6, r_2_10_0, octave_3_0_5]
+		packages:[python_2_6, r_2_10_0, octave_3_0_5],
+		description:'Suitable for any jobs by NeSI members',
+		hosts:21,
+		noCpus:252
 		)
 
 uoa_gold_ce = new Queue(

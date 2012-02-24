@@ -51,11 +51,11 @@ public class GrinformationManager implements InformationManager {
 		this.grid = new YnfoManager(path).getGrid();
 	}
 
-
 	public Collection<Queue> findQueues(Map<JobSubmissionProperty, String> job,
 			String fqan) {
 		return grid.findQueues(job, fqan);
 	}
+
 
 	public String[] getAllApplicationsAtSite(String site) {
 		Site s = grid.getSite(site);
@@ -68,7 +68,6 @@ public class GrinformationManager implements InformationManager {
 				.toArray(new String[] {});
 	}
 
-
 	public String[] getAllApplicationsOnGrid() {
 
 		Collection<Application> result = grid.getApplications();
@@ -77,6 +76,7 @@ public class GrinformationManager implements InformationManager {
 				.toArray(new String[] {});
 
 	}
+
 
 	public String[] getAllApplicationsOnGridForVO(String fqan) {
 		Group g = grid.getGroup(fqan);
@@ -121,7 +121,6 @@ public class GrinformationManager implements InformationManager {
 
 	}
 
-
 	public Collection<Queue> getAllSubmissionLocationsForVO(String fqan) {
 
 		Collection<Queue> queues = grid.getResources(Queue.class,
@@ -137,6 +136,7 @@ public class GrinformationManager implements InformationManager {
 				grid.getApplication(application));
 		return Collections2.transform(versions, Functions.toStringFunction());
 	}
+
 
 	public Set<VO> getAllVOs() {
 		return grid.getVos();
@@ -168,6 +168,10 @@ public class GrinformationManager implements InformationManager {
 		Collection<Directory> directories = grid.getResources(Directory.class,
 				grid.getGroup(fqan));
 		return directories;
+	}
+
+	public Grid getGrid() {
+		return this.grid;
 	}
 
 	public Queue getGridResource(String submissionLocation) {

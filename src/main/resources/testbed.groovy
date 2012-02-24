@@ -21,11 +21,6 @@ nesi = new Group(
 		fqan = "/test/nesi"
 		)
 
-test = new Group(
-		vo = test,
-		fqan = "/test/nesi/test"
-		)
-
 // filesystems
 akl_fs = new FileSystem(
 		host:'globus.test.nesi.org.nz',
