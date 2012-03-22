@@ -24,6 +24,11 @@ nesi = new Group(
 		fqan = "/nz/nesi"
 		)
 
+demo = new Group(
+		vo = nz,
+		fqan = "/nz/demo"
+		)
+
 grid_dev = new Group(
 		vo = nz,
 		fqan = "/nz/grid-dev"
@@ -59,9 +64,19 @@ uoa_stats = new Group(
 		fqan = '/nz/uoa/stats'
 		)
 
+uoa_wtccc = new Group(
+		vo = nz,
+		fqan = '/nz/uoa/stats/wtccc'
+		)
+
 uoa_comp_chem = new Group(
 		vo = nz,
 		fqan = '/nz/uoa/comp-chem'
+		)
+
+uoa_gaussian = new Group(
+		vo = nz,
+		fqan = '/nz/uoa/comp-chem/gaussian'
 		)
 
 uoa_comp_evol = new Group(
@@ -72,6 +87,11 @@ uoa_comp_evol = new Group(
 uoa_eng_sci = new Group(
 		vo = nz,
 		fqan = '/nz/uoa/engineering-science'
+		)
+
+uoa_epigen = new Group(
+		vo = nz,
+		fqan = '/nz/epigen'
 		)
 
 uoa_qoptics = new Group(
@@ -106,6 +126,11 @@ auckland_gram5_fs = new FileSystem(
 		site:auckland
 		)
 
+auckland_gram52_fs = new FileSystem(
+	host:'gram52.ceres.auckland.ac.nz',
+	site:auckland
+	)
+
 auckland_df_fs = new FileSystem(
 		host:'df.auckland.ac.nz',
 		site:auckland
@@ -116,13 +141,28 @@ auckland_ng2_fs = new FileSystem(
 		site:auckland
 		)
 
+auckland_pan_fs = new FileSystem(
+		host:'pandora.nesi.org.nz',
+		site:auckland
+		)
+
 canterbury_ng1_fs = new FileSystem(
 	host:'ng1.canterbury.ac.nz',
 	site:canterbury
 	)
 
 canterbury_ng2_fs = new FileSystem(
-	host:'ng1.canterbury.ac.nz',
+	host:'ng2.canterbury.ac.nz',
+	site:canterbury
+	)
+
+canterbury_ng2sge_fs = new FileSystem(
+	host:'ng2sge.canterbury.ac.nz',
+	site:canterbury
+	)
+
+canterbury_ng2hpc_fs = new FileSystem(
+	host:'ng2hpc.canterbury.ac.nz',
 	site:canterbury
 	)
 
@@ -131,11 +171,25 @@ canterbury_ng2_fs = new FileSystem(
 
 auckland_home = new Directory(
 		filesystem:auckland_gram5_fs,
-		groups:[nesi,uoa_vs_jobs,uoa_mech_eng],
+		groups:[demo, grid_dev, nesi, uoa, uoa_comp_chem, uoa_gaussian, uoa_comp_evol, uoa_eng_sci, uoa_math, uoa_mech_eng, uoa_qoptics, uoa_stats, uoa_vs_jobs],
 		path:"/~/",
 		volatileDirectory:true
 		)
 
+auckland_home_gt52 = new Directory(
+	filesystem:auckland_gram52_fs,
+	groups:[nesi],
+	path:"/~/",
+	volatileDirectory:true
+	)
+
+auckland_pandora = new Directory(
+	filesystem:auckland_pan_fs,
+	groups:[nesi],
+	volatileDirectory:true
+	)
+	
+	
 auckland_df_home = new Directory(
 		filesystem:auckland_df_fs,
 		groups:[nesi],
@@ -164,6 +218,12 @@ auckland_sbs_group = new Directory(
 		volatileDirectory:false,
 		path:"/home/grid-sbs/"
 		)
+
+auckland_ng2_home = new Directory(
+	filesystem:auckland_ng2_fs,
+	groups:[nesi],
+	path:"/~/"
+	)
 
 canterbury_ng1_home = new Directory(
 	filesystem:canterbury_ng1_fs,
@@ -201,51 +261,224 @@ canterbury_ng1 = new Gateway(
 		middleware:globus5
 		)
 
+// Applications
+
+abaqus = Application.get('Abaqus')
+beast = Application.get('BEAST')
+best = Application.get('BEST')
+bayesphylogenies = Application.get('BayesPhylogenies')
+blender = Application.get('Blender')
+clustalw = Application.get('ClustalW')
+clustalwparallel = Application.get('ClustalW Parallel')
+gold = Application.get('Gold')
+java = Application.get('Java')
+lamarc = Application.get('LAMARC')
+meme = Application.get('MEME')
+modeltest = Application.get('ModelTest')
+mrbayes = Application.get('MrBayes')
+paup = Application.get('PAUP*')
+r = Application.get('R')
+rmpisnow = Application.get('RMPISNOW')
+unixcommands = Application.get('UnixCommands')
+ilog = Application.get('ilog')
+mpiblast = Application.get('mpiBLAST')
+octave = Application.get('octave')
+python = Application.get('python')
+szybki = Application.get('szybki')
+
+
 
 // packages
+abaqus_68ef2 = new Package(
+		application:abaqus,
+		version:Version.get('6.8-EF2'),
+		executables:Executable.get('abaqus')
+		)
+		
+beast_1_6_1 = new Package(
+	application: beast,
+	version:Version.get('1.6.1'),
+	executables:[Executable.get('beast')]
+	)
 
-unixcommands_5_2_1 = new Package(
-		application:Application.get('UnixCommands'),
-		version:Version.get('5.2.1'),
+best_2_3_1 = new Package(
+	application:best,
+	version:Version.get('2.3.1')
+	)
+
+bayesphylogenies_1_0 = new Package(
+	application:bayesphylogenies,
+	version:Version.get('1.0')
+	)
+
+blender_2_49a = new Package(
+	application:blender,
+	version:Version.get('2.49a'),
+	executables:[Executable.get('blender')]
+	)
+
+clustalw_1_83 = new Package(
+	application:clustalw,
+	version:Version.get('1.83')
+	)
+
+clustalwparallel_0_13 = new Package(
+	application:clustalwparallel,
+	version:Version.get('0.13')
+	)
+	
+gold_5_1 = new Package(
+	application:gold,
+	version:Version.get('5.1'),
+	executables:[Executable.get('parallel_gold_auto')]
+	
+ilog_12_2 = new Package(
+	application:ilog,
+	version:Version.get('12.2'),
+	executables:[Executable.get('oplrun')]
+	)
+	
+java_1_6 = new Package(
+	application:java,
+	version:Version.get('1.6'),
+	executables:Executable.getList('java', 'javac')
+	)
+
+lamarc_2_1 = new Package(
+	application:lamarc,
+	version:Version.get('2.1')
+	)
+
+meme_4_1 = new Package(
+	application:meme,
+	version:Version.get('4.1.0')
+	)
+
+modeltest_3_7 = new Package(
+	application:modeltest,
+	version:Version.get('3.7')
+	)
+
+mpiblast_1_5 = new Package(
+	application:mpiblast,
+	version:Version.get('1.5.0'),
+	executables:[Executable.get('mpiblast')]
+	)
+
+mr_bayes_3_1_2 = new Package(
+	application:mrbayes,
+	version:Version.get('3.1.2'),
+	executables:[Executable.get('mb')]
+	)
+
+octave_3_0_3 = new Package(
+	application:octave,
+	version:Version.get('3.0.3'),
+	executables:[Executable.get('octave')]
+	)
+
+octave_3_0_5 = new Package(
+	application:octave,
+	version:Version.get('3.0.5'),
+	executables:[Executable.get('octave')]
+	)
+
+paup_4_0_beta = new Package(
+	application:paup,
+	version:Version.get('4.0 beta')
+	)
+
+python_2_4 = new Package(
+	application: python,
+	version:Version.get('2.4'),
+	executables:[Executable.get('python')]
+	)
+
+python_2_4 = new Package(
+	application: python,
+	version:Version.get('2.5'),
+	executables:[Executable.get('python')]
+	)
+
+python_2_6 = new Package(
+	application: python,
+	version:Version.get('2.6'),
+	executables:[Executable.get('python2.6')]
+	)
+
+python_2_6_2 = new Package(
+	application: python,
+	version:Version.get('2.6.2'),
+	executables:[Executable.get('python2.6')]
+	)
+
+r_2_5 = new Package(
+	application:r,
+	version:Version.get('2.5.0'),
+	executables:[Executable.get('R')]
+	)
+
+r_2_9 = new Package(
+	application:r,
+	version:Version.get('2.9.0'),
+	executables:[Executable.get('R')]
+	)
+
+r_2_10 = new Package(
+	application:r,
+	version:Version.get('2.10.0'),
+	executables:[Executable.get('R')]
+	)
+
+r_2_11 = new Package(
+	application:r,
+	version:Version.get('2.11.0'),
+	executables:[Executable.get('R')]
+	)
+
+r_2_13_1 = new Package(
+	application:r,
+	version:Version.get('2.13.1'),
+	executables:[Executable.get('R')]
+	)
+
+r_2_14 = new Package(
+	application:r,
+	version:Version.get('2.14.0'),
+	executables:[Executable.get('R')]
+	)
+
+rmpisnow_2_9 = new Package(
+		application:rmpisnow,
+		version:Version.get('2.9.0'),
+		executables:[Executable.get('RMPISNOW')]
+		)
+
+rmpisnow_2_11 = new Package(
+	application:rmpisnow,
+	version:Version.get('2.11.0'),
+	executables:[Executable.get('RMPISNOW')]
+	)
+
+rmpisnow_2_13_1 = new Package(
+	application:rmpisnow,
+	version:Version.get('2.13.1'),
+	executables:[Executable.get('RMPISNOW')]
+	)
+
+szybki_1_3_4 = new Package(
+		application:szybki,
+		version:Version.get('1.3.4'),
+		executables:[Executable.get('szybki')]
+		)
+
+unixcommands_5 = new Package(
+		application:unixcommands,
+		version:Version.get('5'),
 		executables:Executable.getList('ls', 'cat', 'diff', 'echo','pwd')
 		)
 		
 
-beast_1_6_1 = new Package(
-		application: Application.get('BEAST'),
-		version:Version.get('1.6.1'),
-		executables:[Executable.get('beast')]
-		)
-
-python_2_6 = new Package(
-		application: Application.get('python'),
-		version:Version.get('2.6'),
-		executables:[Executable.get('python')]
-		)
-
-r_2_10_0 = new Package(
-		application:Application.get('R'),
-		version:Version.get('2.10.0'),
-		executables:[Executable.get('R')]
-		)
-
-octave_3_0_5 = new Package(
-		application:Application.get('Octave'),
-		version:Version.get('3.0.5'),
-		executables:[Executable.get('octave')]
-		)
-
-gold_5_1 = new Package(
-		application:Application.get("Gold"),
-		version:Version.get('5.1'),
-		executables:[Executable.get('parallel_gold_auto')]
-		)
-
-mr_bayes_3_1_2 = new Package(
-		application:Application.get('MrBayes'),
-		version:Version.get('3.1.2'),
-		executables:[Executable.get('mb')]
-		)
 		
 // queues
 
@@ -259,22 +492,24 @@ mr_bayes_3_1_2 = new Package(
 		description:'Description of the queue', // optional, default: 'n/a'
 		hosts:<number_of_hosts_for_this_queue>, // optional, default: Integer.MAX_VALUE
 		memoryInBytes:<long_value_for_memory>, // optional, default: Long.MAX_VALUE
-		noCpus:<total_no_of_cpus>, 				// optional, default: Integer.MAX_VALUE
+		cpus:<total_no_of_cpus>, 				// optional, default: Integer.MAX_VALUE
 		virtualMemoryInBytes:<long_value_for_memory>, // optional, default: Long.MAX_VALUE
 		walltimeInMinutes:<walltime>, // optional, default: Integer.MAX_VALUE
 		cpusPerHost:<min_number_of_cpus_per_host>, // optional, default: Integer.MAX_VALUE
 		clockspeedInHz:<clockspeed>, // optional, default: Integer.MAX_VALUE
 */	
 
+auckland_default_packages = [beast_1_6_1, java_1_6, mrbayes_3_1_2, r_2_9, r_2_10, rmpisnow_2_9, unixcommands_5, octave_3_0_3, octave_3_0_5, python_2_4, python_2_6]
+
 default_gram5 = new Queue(
 		gateway:gram5,
 		name:'default',
-		groups:[nesi],
+		groups:[demo, grid_dev, nesi, uoa_virt_screening, uoa_acsrc, uoa_vs_jobs, uoa_sbs],
 		directories:[auckland_home],
-		packages:[python_2_6, r_2_10_0, octave_3_0_5],
+		packages:auckland_default_packages,
 		description:'Suitable for any jobs by NeSI members',
 		hosts:21,
-		noCpus:252,
+		cpus:252,
 		cpusPerHost:12,
 		memoryInBytes:25265145118,
 		virtualMemoryInBytes:25265145118
@@ -285,6 +520,7 @@ uoa_gpu = new Queue(
 		name:'gpu',
 		groups:[nesi],
 		directories:[auckland_home],
+		packages:auckland_default_packages,
 		description:'Suitable for any jobs using the CUDA GPU framework. If you would like to use an alternative framework please contact eresearch-admin@list.auckland.ac.nz',
 		hosts:2,
 		cpus:16,
@@ -306,7 +542,8 @@ uoa_mech_ce = new Queue(
 		gateway:gram5,
 		name:'uoamech',
 		groups:[uoa_mech_eng],
-		directories:[auckland_home]
+		directories:[auckland_home],
+		packages:auckland_default_packages
 		)
 
 uoa_math_ce = new Queue(
@@ -314,6 +551,7 @@ uoa_math_ce = new Queue(
 		name:'uoamath',
 		groups:[uoa_math],
 		directories:[auckland_home],
+		packages:auckland_default_packages,
 		hosts:1,
 		cpus:40,
 		cpusPerHost:40,
@@ -327,6 +565,7 @@ uoa_stats_ce = new Queue(
 		gateway:gram5,
 		name:'uoastats',
 		groups:[uoa_stats],
+		packages:auckland_default_packages,
 		directories:[auckland_home],
 		hosts:1,
 		cpus:40,
@@ -342,6 +581,7 @@ uoa_comp_evol_ce = new Queue(
 		name:'uoaevol',
 		groups:[uoa_comp_evol],
 		directories:[auckland_home], 
+		packages:auckland_default_packages,
 		hosts:5,
 		cpusPerHost:12,
 		cpus:60,
@@ -355,7 +595,8 @@ uoa_comp_chem_ce = new Queue(
 		gateway:gram5,
 		name:'uoacompchem',
 		groups:[uoa_comp_chem],
-		directories:[auckland_home]
+		directories:[auckland_home],
+		packages:auckland_default_packages
 		)
 
 uoa_eng_sci_ce = new Queue(
@@ -363,6 +604,7 @@ uoa_eng_sci_ce = new Queue(
 		name:'uoaengsci',
 		groups:[uoa_eng_sci],
 		directories:[auckland_home],
+		packages:auckland_default_packages,
 		hosts:2,
 		cpusPerHost:12,
 		cpus:24,
@@ -377,6 +619,7 @@ uoa_q_optics_ce = new Queue(
 		name:'uoaqoptics',
 		groups:[uoa_qoptics],
 		directories:[auckland_home],
+		packages:auckland_default_packages,
 		hosts:4,
 		cpusPerHost:12,
 		cpus:48,
@@ -390,5 +633,6 @@ small_canterbury_ng2 = new Queue(
 		gateway:canterbury_ng2,
 		groups:[nesi],
 		name:'small',
-		directories:[canterbury_ng2_home]
+		directories:[canterbury_ng2_home], 
+		packages:
 		)

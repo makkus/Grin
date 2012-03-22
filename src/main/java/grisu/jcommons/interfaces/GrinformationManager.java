@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Functions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
 public class GrinformationManager implements InformationManager {
@@ -123,10 +124,18 @@ public class GrinformationManager implements InformationManager {
 
 	public Collection<Queue> getAllSubmissionLocationsForVO(String fqan) {
 
-		Collection<Queue> queues = grid.getResources(Queue.class,
-				grid.getGroup(fqan));
+		final Group group = grid.getGroup(fqan);
+		Collection<Queue> queues = grid.getResources(Queue.class, group);
 
-		return queues;
+		// filter queues again, because recursive connections can include groups
+		// that belong to Directories
+		return Collections2.filter(queues, new Predicate<Queue>() {
+
+			public boolean apply(Queue input) {
+				return input.getGroups().contains(group);
+			}
+		});
+
 	}
 
 

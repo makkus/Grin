@@ -56,12 +56,26 @@ python = new Application(
 		name:'Python'
 		)
 
+unixcommands = new Application(
+		name:'UnixCommands'
+		)
+
 // executables
 exe_java = Executable.get('java')
 exe_javac = Executable.get('javac')
 exe_python = Executable.get('python')
+exe_cat = Executable.get('cat')
+exe_ls = Executable.get('ls')
+exe_diff = Executable.get('diff')
+exe_echo = Executable.get('echo')
+exe_sh = Executable.get('sh')
 
 // packages
+unixcommands_01 = new Package(
+		application:unixcommands,
+		version: Version.get('0.1'),
+		executables: [exe_cat, exe_ls, exe_diff, exe_echo, exe_sh]
+		)
 java15 = new Package(
 		application:java,
 		version: Version.get('1.5.0'),
@@ -81,6 +95,6 @@ batch = new Queue(
 		name:'batch',
 		groups:[nesi],
 		directories:[akl_home],
-		packages:[java15,python26]
+		packages:[java15,python26,unixcommands_01]
 		)
 
