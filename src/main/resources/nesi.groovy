@@ -1,3 +1,5 @@
+import com.google.common.collect.Sets;
+
 import grisu.jcommons.model.info.*
 
 
@@ -16,6 +18,12 @@ nz = new VO(
 	host = 'voms.bestgrid.org',
 	port = 15000,
 	hostDN = '/C=NZ/O=The University of Auckland/OU=BeSTGRID/CN=voms.bestgrid.org'
+	)
+arcs = new VO(
+	voName = 'ARCS',
+	host = 'vomrs.arcs.org.au',
+	port = 15001,
+	hostDN = '/C=AU/O=APACGrid/OU=ARCS/CN=vomrs.arcs.org.au'
 	)
 
 // groups
@@ -120,6 +128,16 @@ uoa_sbs = new Group(
 		fqan = '/nz/virtual-screening/sbs-structural-biology'
 		)
 
+bestgrid = new Group(
+		vo = arcs,
+		fqan = '/ARCS/BeSTGRID'
+		)
+
+uoc = new Group(
+		vo = arcs,
+		fqan = '/ARCS/LocalAccounts/CanterburyHPC'
+		)
+
 // filesystems
 auckland_gram5_fs = new FileSystem(
 		host:'gram5.ceres.auckland.ac.nz',
@@ -136,10 +154,10 @@ auckland_df_fs = new FileSystem(
 		site:auckland
 		)
 
-auckland_ng2_fs = new FileSystem(
-		host:'ng2.auckland.ac.nz',
-		site:auckland
-		)
+//auckland_ng2_fs = new FileSystem(
+//		host:'ng2.auckland.ac.nz',
+//		site:auckland
+//		)
 
 auckland_pan_fs = new FileSystem(
 		host:'pandora.nesi.org.nz',
@@ -166,6 +184,10 @@ canterbury_ng2hpc_fs = new FileSystem(
 	site:canterbury
 	)
 
+canterbury_gram5p7_fs = new FileSystem(
+	host:'gram5p7.canterbury.ac.nz',
+	site:canterbury
+	)
 
 // directories (make sure to always have a trailing slash for the path element
 
@@ -219,32 +241,56 @@ auckland_sbs_group = new Directory(
 		path:"/home/grid-sbs/"
 		)
 
-auckland_ng2_home = new Directory(
-	filesystem:auckland_ng2_fs,
-	groups:[nesi],
-	path:"/~/"
-	)
+//auckland_ng2_home = new Directory(
+//	filesystem:auckland_ng2_fs,
+//	groups:[nesi],
+//	path:"/~/"
+//	)
 
 canterbury_ng1_home = new Directory(
 	filesystem:canterbury_ng1_fs,
 	groups:[nesi],
-	path:"/~/"
+	path:"/~/",
+	volatileDirectory:true
 	)
 
 canterbury_ng2_home = new Directory(
 	filesystem:canterbury_ng2_fs,
 	groups:[nesi],
-	path:"/~/"
+	path:"/~/",
+	volatileDirectory:true
 	)
 
-globus4 = Middleware.get("Globus", "4.0.0");
+canterbury_gram5p7_home = new Directory(
+	filesystem:canterbury_gram5p7_fs,
+	groups:[bestgrid, uoc],
+	path:"/~/",
+	volatileDirectory:true
+	)
+
+canterbury_ng2sge_home = new Directory(
+	filesystem:canterbury_ng2sge_fs,
+	groups:[bestgrid],
+	path:"/~/",
+	volatileDirectory:true
+	)
+
+canterbury_ng2hpc_home = new Directory(
+	filesystem:canterbury_ng2hpc_fs,
+	groups:[bestgrid, uoc],
+	path:"/~/",
+	volatileDirectory:true
+	)
+
+globus4 = Middleware.get("Globus", "4.0.0")
 globus5 = Middleware.get("Globus", "5.0")
-globus5_2 = Middleware.get("Globus", "5.2");
+
 
 // gateways
 gram5 = new Gateway(
 	site:auckland,
-	host:"gram5.ceres.auckland.ac.nz"
+	host:"gram5.ceres.auckland.ac.nz",
+	middleware:globus5
 	)
 
 
@@ -261,38 +307,65 @@ canterbury_ng1 = new Gateway(
 		middleware:globus5
 		)
 
+canterbury_ng2sge = new Gateway(
+		site:canterbury,
+		host:"ng2sge.canterbury.ac.nz",
+		middleware:globus4
+		)
+
+canterbury_gram5p7 = new Gateway(
+	site:canterbury,
+	host:"gram5p7.canterbury.ac.nz",
+	middleware:globus5
+	)
+
+canterbury_ng2hpc = new Gateway(
+	site:canterbury,
+	host:'ng2hpc.canterbury.ac.nz',
+	middleware:globus4
+	)
+
+
+
+
 // Applications
 
 abaqus = Application.get('Abaqus')
 beast = Application.get('BEAST')
 best = Application.get('BEST')
 bayesphylogenies = Application.get('BayesPhylogenies')
+blast = Application.get('BLAST')
 blender = Application.get('Blender')
 clustalw = Application.get('ClustalW')
 clustalwparallel = Application.get('ClustalW Parallel')
 gold = Application.get('Gold')
+infernal = Application.get('infernal')
 java = Application.get('Java')
 lamarc = Application.get('LAMARC')
 meme = Application.get('MEME')
 modeltest = Application.get('ModelTest')
 mrbayes = Application.get('MrBayes')
+namd = Application.get('NAMD')
 paup = Application.get('PAUP*')
+parswms = Application.get('PARSWMS')
 r = Application.get('R')
 rmpisnow = Application.get('RMPISNOW')
+sas = Application.get('SAS')
 unixcommands = Application.get('UnixCommands')
 ilog = Application.get('ilog')
 mpiblast = Application.get('mpiBLAST')
 octave = Application.get('octave')
 python = Application.get('python')
 szybki = Application.get('szybki')
-
+teiresias = Application.get('teiresias')
+wrf = Application.get('WRF')
 
 
 // packages
 abaqus_68ef2 = new Package(
 		application:abaqus,
 		version:Version.get('6.8-EF2'),
-		executables:Executable.get('abaqus')
+		executables:[Executable.get('abaqus')]
 		)
 		
 beast_1_6_1 = new Package(
@@ -304,6 +377,11 @@ beast_1_6_1 = new Package(
 best_2_3_1 = new Package(
 	application:best,
 	version:Version.get('2.3.1')
+	)
+
+blast_2_2_21 = new Package(
+	application:blast,
+	version:Version.get('2.2.21')
 	)
 
 bayesphylogenies_1_0 = new Package(
@@ -331,11 +409,17 @@ gold_5_1 = new Package(
 	application:gold,
 	version:Version.get('5.1'),
 	executables:[Executable.get('parallel_gold_auto')]
+	)
 	
 ilog_12_2 = new Package(
 	application:ilog,
 	version:Version.get('12.2'),
 	executables:[Executable.get('oplrun')]
+	)
+
+infernal_1_0 = new Package(
+	application:infernal,
+	version:Version.get('1.0')
 	)
 	
 java_1_6 = new Package(
@@ -365,10 +449,20 @@ mpiblast_1_5 = new Package(
 	executables:[Executable.get('mpiblast')]
 	)
 
+mpiblast_1_6 = new Package(
+	application:mpiblast,
+	version:Version.get('1.6.0')
+	)
+
 mr_bayes_3_1_2 = new Package(
 	application:mrbayes,
 	version:Version.get('3.1.2'),
 	executables:[Executable.get('mb')]
+	)
+
+namd_2_6 = new Package(
+	application:namd,
+	version:Version.get('2.6')
 	)
 
 octave_3_0_3 = new Package(
@@ -383,6 +477,11 @@ octave_3_0_5 = new Package(
 	executables:[Executable.get('octave')]
 	)
 
+parswms_aug06 = new Package(
+	application:parswms,
+	version:Version.get('Aug06')
+	)
+
 paup_4_0_beta = new Package(
 	application:paup,
 	version:Version.get('4.0 beta')
@@ -394,7 +493,7 @@ python_2_4 = new Package(
 	executables:[Executable.get('python')]
 	)
 
-python_2_4 = new Package(
+python_2_5 = new Package(
 	application: python,
 	version:Version.get('2.5'),
 	executables:[Executable.get('python')]
@@ -466,10 +565,20 @@ rmpisnow_2_13_1 = new Package(
 	executables:[Executable.get('RMPISNOW')]
 	)
 
+sas_9_2 = new Package(
+		application:sas,
+		version:Version.get('9.2')
+		)
+
 szybki_1_3_4 = new Package(
 		application:szybki,
 		version:Version.get('1.3.4'),
 		executables:[Executable.get('szybki')]
+		)
+
+teiresias_18aug2004 = new Package(
+		application:teiresias,
+		version:Version.get('18AUG2004')
 		)
 
 unixcommands_5 = new Package(
@@ -478,7 +587,10 @@ unixcommands_5 = new Package(
 		executables:Executable.getList('ls', 'cat', 'diff', 'echo','pwd')
 		)
 		
-
+wrf_1_0 = new Package(
+		application:wrf,
+		version:Version.get('1.0')
+		)
 		
 // queues
 
@@ -499,7 +611,16 @@ unixcommands_5 = new Package(
 		clockspeedInHz:<clockspeed>, // optional, default: Integer.MAX_VALUE
 */	
 
-auckland_default_packages = [beast_1_6_1, java_1_6, mrbayes_3_1_2, r_2_9, r_2_10, rmpisnow_2_9, unixcommands_5, octave_3_0_3, octave_3_0_5, python_2_4, python_2_6]
+auckland_default_packages = [beast_1_6_1, java_1_6, mr_bayes_3_1_2, r_2_9, r_2_10, rmpisnow_2_9, unixcommands_5, octave_3_0_3, octave_3_0_5, python_2_4, python_2_6]
+
+gram5p7_common_packages = [mr_bayes_3_1_2, bayesphylogenies_1_0, modeltest_3_7, beast_1_6_1, clustalw_1_83, clustalwparallel_0_13, paup_4_0_beta, unixcommands_5, blast_2_2_21, mpiblast_1_6, teiresias_18aug2004, java_1_6]
+gram5p7_aix = [sas_9_2, namd_2_6, wrf_1_0, r_2_5, parswms_aug06, python_2_6_2, best_2_3_1] + gram5p7_common_packages 
+gram5p7_linux = [lamarc_2_1, r_2_14, meme_4_1, infernal_1_0, python_2_6] + gram5p7_common_packages
+
+ng2sge_local_software = [mr_bayes_3_1_2, r_2_11, rmpisnow_2_11, unixcommands_5]
+small_ngcompute = [mr_bayes_3_1_2, bayesphylogenies_1_0, lamarc_2_1, modeltest_3_7, beast_1_6_1, clustalw_1_83, clustalwparallel_0_13, paup_4_0_beta, unixcommands_5, java_1_6, meme_4_1, blender_2_49a, r_2_13_1, rmpisnow_2_13_1, python_2_4, best_2_3_1]
+
+ng2hpc_local_software = [beast_1_6_1, best_2_3_1, blast_2_2_21, bayesphylogenies_1_0, clustalw_1_83, clustalwparallel_0_13, java_1_6, lamarc_2_1, meme_4_1, modeltest_3_7, mr_bayes_3_1_2, namd_2_6, parswms_aug06, paup_4_0_beta, r_2_11, r_2_13_1, r_2_5, r_2_14, sas_9_2, unixcommands_5, wrf_1_0, infernal_1_0, mpiblast_1_6, python_2_4, python_2_5, python_2_6, python_2_6_2, teiresias_18aug2004]
 
 default_gram5 = new Queue(
 		gateway:gram5,
@@ -629,10 +750,59 @@ uoa_q_optics_ce = new Queue(
 		description:'Queue for engineering sciences cluster'
 		)
 
+canterbury_p7aix = new Queue(
+		gateway:canterbury_gram5p7,
+		directories:[canterbury_gram5p7_home],
+		name:'p7aix',
+		groups:[bestgrid, uoc],
+		packages:gram5p7_aix,
+		hosts:11,
+		cpus:352,
+		cpusPerHost:32,
+		memoryInBytes:137438953472,
+		virtualMemoryInBytes:137438953472,
+		clockspeedInHz:3300000000,
+		walltimeInMinutes:4320,
+		description:'Power7 running AIX, 32 CPUs and 128MB RAM per node, InfiniBand - for memory intensive or parallel jobs. 72 hours wall clock limit.'
+		)
+
+canterbury_p7linux = new Queue(
+		gateway:canterbury_gram5p7,
+		directories:[canterbury_gram5p7_home],
+		name:'p7linux',
+		groups:[bestgrid, uoc],
+		packages:gram5p7_linux,
+		hosts:2,
+		cpus:64,
+		cpusPerHost:32,
+		memoryInBytes:137438953472,
+		virtualMemoryInBytes:137438953472,
+		clockspeedInHz:3300000000,
+		walltimeInMinutes:4320,
+		description:'Power7 running SLES 11.1 Linux, 32 CPUs and 128MB RAM per node - for memory intensive or parallel jobs. 72 hours wall clock limit.'
+		)
+
+canterbury_dev8_1 = new Queue(
+		gateway:canterbury_ng2hpc,
+		directories:[canterbury_ng2hpc_home],
+		name:'dev8_1',
+		groups:[uoc],
+		packages:ng2hpc_local_software
+		)
+		
+		
+
 small_canterbury_ng2 = new Queue(
 		gateway:canterbury_ng2,
 		groups:[nesi],
 		name:'small',
 		directories:[canterbury_ng2_home], 
-		packages:
+		packages: small_ngcompute,
+		hosts:1,
+		cpus:4,
+		cpusPerHost:4,
+		memoryInBytes:2147483648,
+		virtualMemoryInBytes:2147483648,
+		clockspeedInHz:3000000000,
+		description:'Suitable for testing and serial jobs'
 		)
