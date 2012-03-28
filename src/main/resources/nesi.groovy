@@ -460,6 +460,12 @@ mr_bayes_3_1_2 = new Package(
 	executables:[Executable.get('mb')]
 	)
 
+mr_bayes_3_2_1 = new Package(
+	application:mrbayes,
+	version:Version.get('3.2.1'),
+	executables:[Executable.get('mb')]
+	)
+
 namd_2_6 = new Package(
 	application:namd,
 	version:Version.get('2.6')
@@ -613,7 +619,7 @@ wrf_1_0 = new Package(
 
 auckland_default_packages = [beast_1_6_1, java_1_6, mr_bayes_3_1_2, r_2_9, r_2_10, rmpisnow_2_9, unixcommands_5, octave_3_0_3, octave_3_0_5, python_2_4, python_2_6]
 
-gram5p7_common_packages = [mr_bayes_3_1_2, bayesphylogenies_1_0, modeltest_3_7, beast_1_6_1, clustalw_1_83, clustalwparallel_0_13, paup_4_0_beta, unixcommands_5, blast_2_2_21, mpiblast_1_6, teiresias_18aug2004, java_1_6]
+gram5p7_common_packages = [mr_bayes_3_2_1, bayesphylogenies_1_0, modeltest_3_7, beast_1_6_1, clustalw_1_83, clustalwparallel_0_13, paup_4_0_beta, unixcommands_5, blast_2_2_21, mpiblast_1_6, teiresias_18aug2004, java_1_6]
 gram5p7_aix = [sas_9_2, namd_2_6, wrf_1_0, r_2_5, parswms_aug06, python_2_6_2, best_2_3_1] + gram5p7_common_packages 
 gram5p7_linux = [lamarc_2_1, r_2_14, meme_4_1, infernal_1_0, python_2_6] + gram5p7_common_packages
 
@@ -763,7 +769,7 @@ canterbury_p7aix = new Queue(
 		virtualMemoryInBytes:137438953472,
 		clockspeedInHz:3300000000,
 		walltimeInMinutes:4320,
-		description:'Power7 running AIX, 32 CPUs and 128MB RAM per node, InfiniBand - for memory intensive or parallel jobs. 72 hours wall clock limit.'
+		description:'Power7 running AIX, 32 CPUs and 128GB RAM per node, InfiniBand - for memory intensive or parallel jobs. 72 hours wall clock limit.'
 		)
 
 canterbury_p7linux = new Queue(
@@ -779,7 +785,7 @@ canterbury_p7linux = new Queue(
 		virtualMemoryInBytes:137438953472,
 		clockspeedInHz:3300000000,
 		walltimeInMinutes:4320,
-		description:'Power7 running SLES 11.1 Linux, 32 CPUs and 128MB RAM per node - for memory intensive or parallel jobs. 72 hours wall clock limit.'
+		description:'Power7 running SLES 11.1 Linux, 32 CPUs and 128GB RAM per node - for memory intensive or parallel jobs. 72 hours wall clock limit.'
 		)
 
 canterbury_dev8_1 = new Queue(

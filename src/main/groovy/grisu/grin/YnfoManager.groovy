@@ -2,6 +2,7 @@ package grisu.grin
 
 import grisu.grin.model.Grid
 import grisu.grin.model.resources.*
+import grisu.jcommons.configuration.CommonGridProperties
 import grisu.jcommons.model.info.*
 
 
@@ -98,8 +99,16 @@ class YnfoManager  {
 	public YnfoManager(def pathToConfig) {
 
 		def config
+
 		if ( ! pathToConfig ) {
+			pathToConfig = CommonGridProperties.getDefault().getGridInfoConfig()
+		}
+
+		if ( ! pathToConfig || "testbed".equals(pathToConfig) ) {
 			InputStream is = getClass().getResourceAsStream('/testbed.groovy')
+			config = new ConfigSlurper().parse(is.getText())
+		} else if ("nesi".equals(pathToConfig)) {
+			InputStream is = getClass().getResourceAsStream('/nesi.groovy')
 			config = new ConfigSlurper().parse(is.getText())
 		} else {
 			config = new ConfigSlurper().parse(new File(pathToConfig).toURL())
