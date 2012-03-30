@@ -21,6 +21,12 @@ nesi = new Group(
 		fqan = "/test/nesi"
 		)
 
+// groups
+demo = new Group(
+		vo = test,
+		fqan = "/test/demo"
+		)
+
 // filesystems
 akl_fs = new FileSystem(
 		host:'globus.test.nesi.org.nz',
@@ -33,7 +39,7 @@ akl_fs = new FileSystem(
 // directories
 akl_home = new Directory(
 		filesystem:akl_fs,
-		groups:[nesi],
+		groups:[nesi, demo],
 		path:"/~/",
 		shared:false,
 		volatileDirectory:false)
@@ -91,10 +97,18 @@ python26 = new Package(
 		
 // queues
 batch = new Queue(
-		gateway:testbed_gram52,
-		name:'batch',
-		groups:[nesi],
-		directories:[akl_home],
-		packages:[java15,python26,unixcommands_01]
-		)
+	gateway:testbed_gram52,
+	name:'batch',
+	groups:[nesi,demo],
+	directories:[akl_home],
+	packages:[java15,python26,unixcommands_01]
+	)
+
+test1 = new Queue(
+	gateway:testbed_gram52,
+	name:'test1',
+	groups:[nesi],
+	directories:[akl_home],
+	packages:[java15]
+	)
 
