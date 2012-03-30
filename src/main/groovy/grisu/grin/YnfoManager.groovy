@@ -3,6 +3,7 @@ package grisu.grin
 import grisu.grin.model.Grid
 import grisu.grin.model.resources.*
 import grisu.jcommons.configuration.CommonGridProperties
+import grisu.jcommons.constants.GridEnvironment
 import grisu.jcommons.model.info.*
 
 
@@ -96,12 +97,25 @@ class YnfoManager  {
 
 	def grid = new Grid()
 
+	public YnfoManager() {
+		this(null)
+	}
+
 	public YnfoManager(def pathToConfig) {
 
 		def config
 
+		// try to get config from environment
 		if ( ! pathToConfig ) {
 			pathToConfig = CommonGridProperties.getDefault().getGridInfoConfig()
+		}
+
+		// check whether there is default "grid.groovy" file somewhwere
+		if ( ! pathToConfig ) {
+			File file = GridEnvironment.getGridInfoConfigFile()
+			if ( file.exists ) {
+				pathToConfig = file.getAbsolutePath()
+			}
 		}
 
 		if ( ! pathToConfig || "testbed".equals(pathToConfig) ) {
