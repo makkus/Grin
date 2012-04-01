@@ -113,7 +113,7 @@ class YnfoManager  {
 		// check whether there is default "grid.groovy" file somewhwere
 		if ( ! pathToConfig ) {
 			File file = GridEnvironment.getGridInfoConfigFile()
-			if ( file.exists ) {
+			if ( file.exists() ) {
 				pathToConfig = file.getAbsolutePath()
 			}
 		}
