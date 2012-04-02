@@ -16,6 +16,8 @@ test = new VO(
 	)
 
 // groups
+none = Group.NO_VO_GROUP
+
 nesi = new Group(
 		vo = test,
 		fqan = "/test/nesi"
@@ -39,7 +41,7 @@ akl_fs = new FileSystem(
 // directories
 akl_home = new Directory(
 		filesystem:akl_fs,
-		groups:[nesi, demo],
+		groups:[nesi, demo, none],
 		path:"/~/",
 		shared:false,
 		volatileDirectory:false)
@@ -107,7 +109,7 @@ batch = new Queue(
 test1 = new Queue(
 	gateway:testbed_gram52,
 	name:'test1',
-	groups:[nesi],
+	groups:[nesi, none],
 	directories:[akl_home],
 	packages:[java15]
 	)

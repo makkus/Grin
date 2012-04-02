@@ -54,6 +54,7 @@ public class GrinformationManager implements InformationManager {
 
 	public Collection<Queue> findQueues(Map<JobSubmissionProperty, String> job,
 			String fqan) {
+
 		return grid.findQueues(job, fqan);
 	}
 
