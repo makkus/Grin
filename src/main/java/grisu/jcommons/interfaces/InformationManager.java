@@ -271,7 +271,9 @@ public interface InformationManager {
 			String application, String submissionLocation);
 
 	/**
-	 * Forces a refresh of all information
+	 * Forces a refresh of all information.
+	 * 
+	 * This might happen asynchronously.
 	 */
 	void refresh();
 

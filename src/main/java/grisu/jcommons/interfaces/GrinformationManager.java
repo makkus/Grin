@@ -31,38 +31,38 @@ public class GrinformationManager implements InformationManager {
 	static final Logger myLogger = LoggerFactory
 			.getLogger(GrinformationManager.class.getName());
 
-	private Grid grid;
+	private YnfoManager ym;
 
 	private final String path;
 
 
-	public GrinformationManager(Grid grid) {
-		this.grid = grid;
-		this.path = null;
-	}
+	// public GrinformationManager(Grid grid) {
+	// this.grid = grid;
+	// this.path = null;
+	// }
 
 	public GrinformationManager(Map<String, String> config) {
 		this(config.get("path"));
 
-		myLogger.debug("Ynfomanager created.");
 	}
 
 	public GrinformationManager(String path) {
 		this.path = path;
-		this.grid = new YnfoManager(path).getGrid();
+		refresh();
+		myLogger.debug("Grinformationmanager created.");
 	}
 
 	public Collection<Queue> findQueues(Map<JobSubmissionProperty, String> job,
 			String fqan) {
 
-		return grid.findQueues(job, fqan);
+		return getGrid().findQueues(job, fqan);
 	}
 
 
 	public String[] getAllApplicationsAtSite(String site) {
-		Site s = grid.getSite(site);
+		Site s = getGrid().getSite(site);
 
-		Collection<Application> result = grid
+		Collection<Application> result = getGrid()
 				.getResources(
 						Application.class, s);
 
@@ -72,7 +72,7 @@ public class GrinformationManager implements InformationManager {
 
 	public String[] getAllApplicationsOnGrid() {
 
-		Collection<Application> result = grid.getApplications();
+		Collection<Application> result = getGrid().getApplications();
 
 		return Collections2.transform(result, Functions.toStringFunction())
 				.toArray(new String[] {});
@@ -81,9 +81,9 @@ public class GrinformationManager implements InformationManager {
 
 
 	public String[] getAllApplicationsOnGridForVO(String fqan) {
-		Group g = grid.getGroup(fqan);
+		Group g = getGrid().getGroup(fqan);
 
-		Collection<Application> result = grid
+		Collection<Application> result = getGrid()
 				.getResources(Application.class, g);
 
 		return Collections2.transform(result, Functions.toStringFunction())
@@ -91,7 +91,7 @@ public class GrinformationManager implements InformationManager {
 	}
 
 	public String[] getAllSites() {
-		Collection<Site> sites = grid.getSites();
+		Collection<Site> sites = getGrid().getSites();
 
 		return Collections2.transform(sites, Functions.toStringFunction())
 				.toArray(new String[] {});
@@ -99,7 +99,7 @@ public class GrinformationManager implements InformationManager {
 
 	public String[] getAllSubmissionLocations() {
 
-		Collection<Queue> queues = grid.getQueues();
+		Collection<Queue> queues = getGrid().getQueues();
 
 		return Collections2.transform(queues, Functions.toStringFunction())
 				.toArray(new String[] {});
@@ -108,8 +108,9 @@ public class GrinformationManager implements InformationManager {
 	public Collection<String> getAllSubmissionLocations(String application,
 			String version) {
 
-		Collection<Queue> queues = grid.getResources(Queue.class,
-				grid.getApplication(application), grid.getVersion(version));
+		Collection<Queue> queues = getGrid().getResources(Queue.class,
+				getGrid().getApplication(application),
+				getGrid().getVersion(version));
 
 		return Collections2.transform(queues, Functions.toStringFunction());
 	}
@@ -117,16 +118,16 @@ public class GrinformationManager implements InformationManager {
 	public Collection<String> getAllSubmissionLocationsForApplication(
 			String application) {
 
-		Collection<Queue> queues = grid.getResources(Queue.class,
-				grid.getApplication(application));
+		Collection<Queue> queues = getGrid().getResources(Queue.class,
+				getGrid().getApplication(application));
 		return Collections2.transform(queues, Functions.toStringFunction());
 
 	}
 
 	public Collection<Queue> getAllSubmissionLocationsForVO(String fqan) {
 
-		final Group group = grid.getGroup(fqan);
-		Collection<Queue> queues = grid.getResources(Queue.class, group);
+		final Group group = getGrid().getGroup(fqan);
+		Collection<Queue> queues = getGrid().getResources(Queue.class, group);
 
 		// filter queues again, because recursive connections can include groups
 		// that belong to Directories
@@ -142,22 +143,23 @@ public class GrinformationManager implements InformationManager {
 
 	public Collection<String> getAllVersionsOfApplicationOnGrid(
 			String application) {
-		Collection<Version> versions = grid.getResources(Version.class,
-				grid.getApplication(application));
+		Collection<Version> versions = getGrid().getResources(Version.class,
+				getGrid().getApplication(application));
 		return Collections2.transform(versions, Functions.toStringFunction());
 	}
 
 
 	public Set<VO> getAllVOs() {
-		return grid.getVos();
+		return getGrid().getVos();
 	}
 
 	public Package getApplicationDetails(String application,
 			String version, String submissionLocation) {
 
-		Collection<Package> p = grid.getResources(Package.class,
-				grid.getApplication(application), grid.getVersion(version),
-				grid.getQueue(submissionLocation));
+		Collection<Package> p = getGrid().getResources(Package.class,
+				getGrid().getApplication(application),
+				getGrid().getVersion(version),
+				getGrid().getQueue(submissionLocation));
 
 		if ((p == null) || (p.size() == 0)) {
 			return null;
@@ -169,23 +171,23 @@ public class GrinformationManager implements InformationManager {
 	public Collection<Application> getApplicationsThatProvideExecutable(
 			String executable) {
 
-		Collection<Application> apps = grid.getResources(Application.class,
-				grid.getExecutable(executable));
+		Collection<Application> apps = getGrid().getResources(
+				Application.class, getGrid().getExecutable(executable));
 		return apps;
 	}
 
 	public Collection<Directory> getDataLocationsForVO(String fqan) {
-		Collection<Directory> directories = grid.getResources(Directory.class,
-				grid.getGroup(fqan));
+		Collection<Directory> directories = getGrid().getResources(
+				Directory.class, getGrid().getGroup(fqan));
 		return directories;
 	}
 
 	public Grid getGrid() {
-		return this.grid;
+		return ym.getGrid();
 	}
 
 	public Queue getGridResource(String submissionLocation) {
-		return grid.getQueue(submissionLocation);
+		return getGrid().getQueue(submissionLocation);
 	}
 
 	public String getJobmanagerOfQueueAtSite(String site, String queue) {
@@ -207,7 +209,7 @@ public class GrinformationManager implements InformationManager {
 		}
 
 		try {
-			Collection<T> result = (Collection<T>) m.invoke(grid);
+			Collection<T> result = (Collection<T>) m.invoke(getGrid());
 
 			for (AbstractResource ar : result) {
 				if (ar.toString().equals(name)) {
@@ -228,18 +230,18 @@ public class GrinformationManager implements InformationManager {
 	public <T extends AbstractResource> Collection<T> getResources(
 			Class<T> resourceClass, AbstractResource... filters) {
 
-		return grid.getResources(resourceClass, filters);
+		return getGrid().getResources(resourceClass, filters);
 	}
 
 
 	public Site getSiteForHostOrUrl(String host_or_url) {
 
-		return grid.getSiteForUrl(host_or_url);
+		return getGrid().getSiteForUrl(host_or_url);
 	}
 
 	public Set<Directory> getStagingFileSystemForSubmissionLocation(
 			String subLoc) {
-		Queue queue = grid.getQueue(subLoc);
+		Queue queue = getGrid().getQueue(subLoc);
 
 		return queue.getDirectories();
 	}
@@ -247,8 +249,8 @@ public class GrinformationManager implements InformationManager {
 	public Collection<Version> getVersionsOfApplicationOnSite(
 			String application, String site) {
 
-		Collection<Version> versions = grid.getResources(Version.class,
-				grid.getApplication(application), grid.getSite(site));
+		Collection<Version> versions = getGrid().getResources(Version.class,
+				getGrid().getApplication(application), getGrid().getSite(site));
 
 		return versions;
 
@@ -257,19 +259,21 @@ public class GrinformationManager implements InformationManager {
 	public Collection<Version> getVersionsOfApplicationOnSubmissionLocation(
 			String application, String submissionLocation) {
 
-		Collection<Version> versions = grid.getResources(Version.class,
-				grid.getApplication(application),
-				grid.getQueue(submissionLocation));
+		Collection<Version> versions = getGrid().getResources(Version.class,
+				getGrid().getApplication(application),
+				getGrid().getQueue(submissionLocation));
 
 		return versions;
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see grisu.jcommons.interfaces.InformationManager#refresh()
+	 */
 	public void refresh() {
-		if (path != null) {
-			grid = new YnfoManager(path).getGrid();
-		}
-
+		ym.refresh();
 	}
 
 }
