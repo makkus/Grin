@@ -17,7 +17,7 @@ nz = new VO(
 	voName = 'nz',
 	host = 'voms.bestgrid.org',
 	port = 15000,
-	hostDN = '/C=NZ/O=The University of Auckland/OU=BeSTGRID/CN=voms.bestgrid.org'
+	hostDN = '/C=NZ/O=BeSTGRID/OU=The University of Auckland/CN=voms.bestgrid.org'
 	)
 arcs = new VO(
 	voName = 'ARCS',
