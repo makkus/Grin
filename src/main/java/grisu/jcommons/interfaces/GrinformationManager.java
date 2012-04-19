@@ -31,7 +31,7 @@ public class GrinformationManager implements InformationManager {
 	static final Logger myLogger = LoggerFactory
 			.getLogger(GrinformationManager.class.getName());
 
-	private YnfoManager ym;
+	private final YnfoManager ym;
 
 	private final String path;
 
@@ -48,7 +48,7 @@ public class GrinformationManager implements InformationManager {
 
 	public GrinformationManager(String path) {
 		this.path = path;
-		refresh();
+		ym = new YnfoManager(path);
 		myLogger.debug("Grinformationmanager created.");
 	}
 
