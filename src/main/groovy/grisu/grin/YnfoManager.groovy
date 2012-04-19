@@ -5,11 +5,11 @@ import grisu.grin.model.resources.*
 import grisu.jcommons.configuration.CommonGridProperties
 import grisu.jcommons.constants.GridEnvironment
 import grisu.jcommons.model.info.*
-import groovy.util.logging.Log
+import groovy.util.logging.Slf4j
 
 
 
-@Log('myLogger')
+@Slf4j('myLogger')
 class YnfoManager  {
 
 	static void printConnections(def res) {
