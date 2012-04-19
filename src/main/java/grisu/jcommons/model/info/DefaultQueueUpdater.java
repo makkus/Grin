@@ -4,6 +4,9 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Sets;
 
 public class DefaultQueueUpdater implements QueueUpdater {
@@ -18,6 +21,8 @@ public class DefaultQueueUpdater implements QueueUpdater {
 			updateQueues();
 		}
 	}
+
+	public static Logger myLogger = LoggerFactory.getLogger(DefaultQueueUpdater.class);
 
 	private final Set<Queue> queues = Sets.newHashSet();
 
@@ -57,7 +62,7 @@ public class DefaultQueueUpdater implements QueueUpdater {
 	}
 
 	private void updateQueue(Queue q) {
-		System.out.println("Updating queue: " + q.getName());
+		myLogger.debug("Updating dynamic properties of queue: " + q.getName());
 	}
 
 	private synchronized void updateQueues() {
