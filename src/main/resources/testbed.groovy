@@ -1,6 +1,7 @@
 import grisu.jcommons.model.info.*
 
 
+
 // sites
 
 testbed = new Site(
@@ -96,6 +97,9 @@ python26 = new Package(
 		version:Version.get('2.6'),
 		executables: [exe_python]
 		)
+
+// updaters
+defaultUpdater = new DefaultQueueUpdater()
 		
 // queues
 batch = new Queue(
@@ -103,7 +107,8 @@ batch = new Queue(
 	name:'batch',
 	groups:[nesi,demo],
 	directories:[akl_home],
-	packages:[java15,python26,unixcommands_01]
+	packages:[java15,python26,unixcommands_01],
+	updater:defaultUpdater
 	)
 
 test1 = new Queue(
@@ -111,6 +116,7 @@ test1 = new Queue(
 	name:'test1',
 	groups:[nesi, none],
 	directories:[akl_home],
-	packages:[java15]
+	packages:[java15],
+	updater:defaultUpdater
 	)
 

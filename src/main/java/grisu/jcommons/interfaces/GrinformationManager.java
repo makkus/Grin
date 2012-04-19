@@ -43,11 +43,11 @@ public class GrinformationManager implements InformationManager {
 
 	public GrinformationManager(Map<String, String> config) {
 		this(config.get("path"));
-
 	}
 
 	public GrinformationManager(String path) {
 		this.path = path;
+
 		ym = new YnfoManager(path);
 		myLogger.debug("Grinformationmanager created.");
 	}
