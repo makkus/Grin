@@ -46,7 +46,7 @@ public class DefaultQueueUpdater implements QueueUpdater {
 		}
 
 		updateTask = new UpdateQueueTimerTask();
-		timer.scheduleAtFixedRate(updateTask, 1, delay_in_seconds);
+		timer.scheduleAtFixedRate(updateTask, 1, delay_in_seconds * 1000);
 	}
 
 	public void stopInfoUpdate() {
