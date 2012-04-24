@@ -175,15 +175,22 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(queues)) {
 			return Lists.newArrayList();
 		}
+
+		Collection<grisu.jcommons.model.info.Queue> filtered = Collections2
+				.filter(queues,
+						new Predicate<grisu.jcommons.model.info.Queue>() {
+
+					public boolean apply(grisu.jcommons.model.info.Queue input) {
+						return input.getGroups().contains(group);
+					}
+				});
+
+		if (CollectionUtils.isEmpty(filtered)) {
+			return Lists.newArrayList();
+		}
 		// filter queues again, because recursive connections can include groups
 		// that belong to Directories
-		return mapperFacade.mapAsList(Collections2.filter(queues,
-				new Predicate<grisu.jcommons.model.info.Queue>() {
-
-			public boolean apply(grisu.jcommons.model.info.Queue input) {
-				return input.getGroups().contains(group);
-			}
-		}), Queue.class);
+		return mapperFacade.mapAsList(filtered, Queue.class);
 
 	}
 
