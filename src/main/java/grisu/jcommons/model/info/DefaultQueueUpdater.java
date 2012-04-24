@@ -36,14 +36,23 @@ public class DefaultQueueUpdater implements QueueUpdater {
 		startInfoUpdate(delay_in_seconds);
 	}
 
+	/* (non-Javadoc)
+	 * @see grisu.jcommons.model.info.QueueUpdater#addQueue(grisu.jcommons.model.info.Queue)
+	 */
 	public void addQueue(Queue q) {
 		this.queues.add(q);
 	}
 
+	/* (non-Javadoc)
+	 * @see grisu.jcommons.model.info.QueueUpdater#removeQueue(grisu.jcommons.model.info.Queue)
+	 */
 	public void removeQueue(Queue q) {
 		this.queues.remove(q);
 	}
 
+	/* (non-Javadoc)
+	 * @see grisu.jcommons.model.info.QueueUpdater#startInfoUpdate(int)
+	 */
 	public void startInfoUpdate(int delay_in_seconds) {
 		this.delay_in_seconds = delay_in_seconds;
 		if (updateTask != null) {
@@ -54,6 +63,9 @@ public class DefaultQueueUpdater implements QueueUpdater {
 		timer.scheduleAtFixedRate(updateTask, 1, delay_in_seconds * 1000);
 	}
 
+	/* (non-Javadoc)
+	 * @see grisu.jcommons.model.info.QueueUpdater#stopInfoUpdate()
+	 */
 	public void stopInfoUpdate() {
 		if (updateTask != null) {
 			updateTask.cancel();

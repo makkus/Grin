@@ -4,32 +4,55 @@ import grisu.grin.YnfoManager;
 import grisu.grin.model.Grid;
 import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.jcommons.model.info.AbstractResource;
-import grisu.jcommons.model.info.Application;
-import grisu.jcommons.model.info.Directory;
-import grisu.jcommons.model.info.Group;
-import grisu.jcommons.model.info.Package;
-import grisu.jcommons.model.info.Queue;
-import grisu.jcommons.model.info.Site;
-import grisu.jcommons.model.info.VO;
-import grisu.jcommons.model.info.Version;
+import grisu.model.info.dto.Application;
+import grisu.model.info.dto.Directory;
+import grisu.model.info.dto.Package;
+import grisu.model.info.dto.Queue;
+import grisu.model.info.dto.Site;
+import grisu.model.info.dto.VO;
+import grisu.model.info.dto.Version;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class GrinformationManager implements InformationManager {
 
 	static final Logger myLogger = LoggerFactory
 			.getLogger(GrinformationManager.class.getName());
+
+	private static final MapperFactory factory = new DefaultMapperFactory.Builder()
+	.build();
+
+	private static final MapperFacade mapperFacade = factory.getMapperFacade();
+
+	public static void main (String[] args) {
+
+		GrinformationManager gm = new GrinformationManager("testbed");
+
+		for (VO vo : gm.getAllVOs()) {
+			System.out.println("VO: " + vo);
+		}
+
+
+		System.exit(0);
+	}
 
 	private final YnfoManager ym;
 
@@ -52,149 +75,202 @@ public class GrinformationManager implements InformationManager {
 		myLogger.debug("Grinformationmanager created.");
 	}
 
-	public Collection<Queue> findQueues(Map<JobSubmissionProperty, String> job,
+	public List<Queue> findQueues(Map<JobSubmissionProperty, String> job,
 			String fqan) {
 
-		return getGrid().findQueues(job, fqan);
+		Collection<grisu.jcommons.model.info.Queue> queues = getGrid()
+				.findQueues(job, fqan);
+		if (CollectionUtils.isEmpty(queues)) {
+			return Lists.newArrayList();
+		}
+		return mapperFacade.mapAsList(queues,
+				Queue.class);
 	}
 
 
-	public String[] getAllApplicationsAtSite(String site) {
-		Site s = getGrid().getSite(site);
+	public List<Application> getAllApplicationsAtSite(String site) {
+		grisu.jcommons.model.info.Site s = getGrid().getSite(site);
 
-		Collection<Application> result = getGrid()
-				.getResources(
-						Application.class, s);
+		Collection<grisu.jcommons.model.info.Application> result = getGrid()
+				.getResources(grisu.jcommons.model.info.Application.class, s);
 
-		return Collections2.transform(result, Functions.toStringFunction())
-				.toArray(new String[] {});
+		if (CollectionUtils.isEmpty(result)) {
+			return Lists.newArrayList();
+		}
+		List<Application> apps = mapperFacade.mapAsList(result,
+				Application.class);
+		return apps;
 	}
 
-	public String[] getAllApplicationsOnGrid() {
+	public List<Application> getAllApplicationsOnGrid() {
 
-		Collection<Application> result = getGrid().getApplications();
+		Collection<grisu.jcommons.model.info.Application> result = getGrid()
+				.getApplications();
+		if (CollectionUtils.isEmpty(result)) {
+			return Lists.newArrayList();
+		}
 
-		return Collections2.transform(result, Functions.toStringFunction())
-				.toArray(new String[] {});
+		return mapperFacade.mapAsList(result, Application.class);
 
 	}
 
 
-	public String[] getAllApplicationsOnGridForVO(String fqan) {
-		Group g = getGrid().getGroup(fqan);
+	public List<Application> getAllApplicationsOnGridForVO(String fqan) {
+		grisu.jcommons.model.info.Group g = getGrid().getGroup(fqan);
 
-		Collection<Application> result = getGrid()
-				.getResources(Application.class, g);
+		Collection<grisu.jcommons.model.info.Application> result = getGrid()
+				.getResources(grisu.jcommons.model.info.Application.class, g);
+		if (CollectionUtils.isEmpty(result)) {
+			return Lists.newArrayList();
+		}
 
-		return Collections2.transform(result, Functions.toStringFunction())
-				.toArray(new String[] {});
+		return mapperFacade.mapAsList(result, Application.class);
 	}
 
-	public String[] getAllSites() {
-		Collection<Site> sites = getGrid().getSites();
+	public List<Queue> getAllQueues() {
 
-		return Collections2.transform(sites, Functions.toStringFunction())
-				.toArray(new String[] {});
+		Collection<grisu.jcommons.model.info.Queue> queues = getGrid()
+				.getQueues();
+		if (CollectionUtils.isEmpty(queues)) {
+			return Lists.newArrayList();
+		}
+
+		return mapperFacade.mapAsList(queues, Queue.class);
+
 	}
 
-	public String[] getAllSubmissionLocations() {
-
-		Collection<Queue> queues = getGrid().getQueues();
-
-		return Collections2.transform(queues, Functions.toStringFunction())
-				.toArray(new String[] {});
-	}
-
-	public Collection<String> getAllSubmissionLocations(String application,
+	public Collection<Queue> getAllQueues(String application,
 			String version) {
 
-		Collection<Queue> queues = getGrid().getResources(Queue.class,
-				getGrid().getApplication(application),
-				getGrid().getVersion(version));
+		Collection<grisu.jcommons.model.info.Queue> queues = getGrid()
+				.getResources(grisu.jcommons.model.info.Queue.class,
+						getGrid().getApplication(application),
+						getGrid().getVersion(version));
+		if (CollectionUtils.isEmpty(queues)) {
+			return Lists.newArrayList();
+		}
 
-		return Collections2.transform(queues, Functions.toStringFunction());
+		return mapperFacade.mapAsList(queues, Queue.class);
 	}
 
-	public Collection<String> getAllSubmissionLocationsForApplication(
+	public List<Queue> getAllQueuesForApplication(
 			String application) {
 
-		Collection<Queue> queues = getGrid().getResources(Queue.class,
-				getGrid().getApplication(application));
-		return Collections2.transform(queues, Functions.toStringFunction());
+		Collection<grisu.jcommons.model.info.Queue> queues = getGrid()
+				.getResources(grisu.jcommons.model.info.Queue.class,
+						getGrid().getApplication(application));
+		if (CollectionUtils.isEmpty(queues)) {
+			return Lists.newArrayList();
+		}
 
+		return mapperFacade.mapAsList(queues, Queue.class);
 	}
 
-	public Collection<Queue> getAllSubmissionLocationsForVO(String fqan) {
+	public List<Queue> getAllQueuesForVO(String fqan) {
 
-		final Group group = getGrid().getGroup(fqan);
-		Collection<Queue> queues = getGrid().getResources(Queue.class, group);
+		final grisu.jcommons.model.info.Group group = getGrid().getGroup(fqan);
+		Collection<grisu.jcommons.model.info.Queue> queues = getGrid()
+				.getResources(grisu.jcommons.model.info.Queue.class, group);
 
+		if (CollectionUtils.isEmpty(queues)) {
+			return Lists.newArrayList();
+		}
 		// filter queues again, because recursive connections can include groups
 		// that belong to Directories
-		return Collections2.filter(queues, new Predicate<Queue>() {
+		return mapperFacade.mapAsList(Collections2.filter(queues,
+				new Predicate<grisu.jcommons.model.info.Queue>() {
 
-			public boolean apply(Queue input) {
+			public boolean apply(grisu.jcommons.model.info.Queue input) {
 				return input.getGroups().contains(group);
 			}
-		});
+		}), Queue.class);
 
 	}
 
+	public List<Site> getAllSites() {
+		Collection<grisu.jcommons.model.info.Site> sites = getGrid().getSites();
+		if (CollectionUtils.isEmpty(sites)) {
+			return Lists.newArrayList();
+		}
 
-	public Collection<String> getAllVersionsOfApplicationOnGrid(
+		return mapperFacade.mapAsList(sites, Site.class);
+	}
+
+
+	public List<Version> getAllVersionsOfApplicationOnGrid(
 			String application) {
-		Collection<Version> versions = getGrid().getResources(Version.class,
-				getGrid().getApplication(application));
-		return Collections2.transform(versions, Functions.toStringFunction());
+		Collection<grisu.jcommons.model.info.Version> versions = getGrid()
+				.getResources(grisu.jcommons.model.info.Version.class,
+						getGrid().getApplication(application));
+		if (CollectionUtils.isEmpty(versions)) {
+			return Lists.newArrayList();
+		}
+
+		return mapperFacade.mapAsList(versions, Version.class);
 	}
 
 
 	public Set<VO> getAllVOs() {
-		return getGrid().getVos();
-	}
-
-	public Package getApplicationDetails(String application,
-			String version, String submissionLocation) {
-
-		Collection<Package> p = getGrid().getResources(Package.class,
-				getGrid().getApplication(application),
-				getGrid().getVersion(version),
-				getGrid().getQueue(submissionLocation));
-
-		if ((p == null) || (p.size() == 0)) {
-			return null;
+		Set<grisu.jcommons.model.info.VO> vos = getGrid().getVos();
+		if (CollectionUtils.isEmpty(vos)) {
+			return Sets.newHashSet();
 		}
 
-		return p.iterator().next();
+		return mapperFacade.mapAsSet(vos, VO.class);
 	}
 
-	public Collection<Application> getApplicationsThatProvideExecutable(
+	public List<Application> getApplicationsThatProvideExecutable(
 			String executable) {
 
-		Collection<Application> apps = getGrid().getResources(
-				Application.class, getGrid().getExecutable(executable));
-		return apps;
+		Collection<grisu.jcommons.model.info.Application> apps = getGrid()
+				.getResources(grisu.jcommons.model.info.Application.class,
+						getGrid().getExecutable(executable));
+		if (CollectionUtils.isEmpty(apps)) {
+			return Lists.newArrayList();
+		}
+		return mapperFacade.mapAsList(apps, Application.class);
 	}
 
-	public Collection<Directory> getDataLocationsForVO(String fqan) {
-		Collection<Directory> directories = getGrid().getResources(
-				Directory.class, getGrid().getGroup(fqan));
-		return directories;
+	public List<Directory> getDirectoriesForVO(String fqan) {
+		Collection<grisu.jcommons.model.info.Directory> directories = getGrid()
+				.getResources(grisu.jcommons.model.info.Directory.class,
+						getGrid().getGroup(fqan));
+		if (CollectionUtils.isEmpty(directories)) {
+			return Lists.newArrayList();
+		}
+		return mapperFacade.mapAsList(directories, Directory.class);
 	}
 
 	public Grid getGrid() {
 		return ym.getGrid();
 	}
 
-	public Queue getGridResource(String submissionLocation) {
-		return getGrid().getQueue(submissionLocation);
-	}
-
 	public String getJobmanagerOfQueueAtSite(String site, String queue) {
 		throw new NotImplementedException();
 	}
 
-	public <T extends AbstractResource> T getResource(Class<T> type, String name) {
+	public Package getPackage(String application,
+			String version, String submissionLocation) {
+
+		Collection<grisu.jcommons.model.info.Package> p = getGrid()
+				.getResources(grisu.jcommons.model.info.Package.class,
+						getGrid().getApplication(application),
+						getGrid().getVersion(version),
+						getGrid().getQueue(submissionLocation));
+
+		if ((p == null) || (p.size() == 0)) {
+			return null;
+		}
+
+		return mapperFacade.map(p.iterator().next(), Package.class);
+	}
+
+	public Queue getQueue(String submissionLocation) {
+		return mapperFacade.map(getGrid().getQueue(submissionLocation),
+				Queue.class);
+	}
+
+	public <T> T getResource(Class<T> type, String name) {
 
 		String filterName = type.getSimpleName();
 
@@ -209,11 +285,12 @@ public class GrinformationManager implements InformationManager {
 		}
 
 		try {
-			Collection<T> result = (Collection<T>) m.invoke(getGrid());
+			Collection<AbstractResource> result = (Collection<AbstractResource>) m
+					.invoke(getGrid());
 
 			for (AbstractResource ar : result) {
 				if (ar.toString().equals(name)) {
-					return (T) ar;
+					return mapperFacade.map(ar, type);
 				}
 			}
 
@@ -236,34 +313,46 @@ public class GrinformationManager implements InformationManager {
 
 	public Site getSiteForHostOrUrl(String host_or_url) {
 
-		return getGrid().getSiteForUrl(host_or_url);
+		return mapperFacade.map(getGrid().getSiteForUrl(host_or_url),
+				Site.class);
 	}
 
 	public Set<Directory> getStagingFileSystemForSubmissionLocation(
 			String subLoc) {
-		Queue queue = getGrid().getQueue(subLoc);
+		grisu.jcommons.model.info.Queue queue = getGrid().getQueue(subLoc);
+		if ((queue == null) || CollectionUtils.isEmpty(queue.getDirectories())) {
+			return Sets.newLinkedHashSet();
+		}
 
-		return queue.getDirectories();
+		return mapperFacade.mapAsSet(queue.getDirectories(), Directory.class);
 	}
 
-	public Collection<Version> getVersionsOfApplicationOnSite(
+	public List<Version> getVersionsOfApplicationOnSite(
 			String application, String site) {
 
-		Collection<Version> versions = getGrid().getResources(Version.class,
-				getGrid().getApplication(application), getGrid().getSite(site));
+		Collection<grisu.jcommons.model.info.Version> versions = getGrid()
+				.getResources(grisu.jcommons.model.info.Version.class,
+						getGrid().getApplication(application), getGrid().getSite(site));
 
-		return versions;
+		if (CollectionUtils.isEmpty(versions)) {
+			return Lists.newArrayList();
+		}
+		return mapperFacade.mapAsList(versions, Version.class);
 
 	}
 
-	public Collection<Version> getVersionsOfApplicationOnSubmissionLocation(
+	public List<Version> getVersionsOfApplicationOnSubmissionLocation(
 			String application, String submissionLocation) {
 
-		Collection<Version> versions = getGrid().getResources(Version.class,
-				getGrid().getApplication(application),
-				getGrid().getQueue(submissionLocation));
+		Collection<grisu.jcommons.model.info.Version> versions = getGrid()
+				.getResources(grisu.jcommons.model.info.Version.class,
+						getGrid().getApplication(application),
+						getGrid().getQueue(submissionLocation));
 
-		return versions;
+		if (CollectionUtils.isEmpty(versions)) {
+			return Lists.newArrayList();
+		}
+		return mapperFacade.mapAsList(versions, Version.class);
 
 	}
 

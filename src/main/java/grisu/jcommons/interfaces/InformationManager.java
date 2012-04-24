@@ -1,16 +1,16 @@
 package grisu.jcommons.interfaces;
 
 import grisu.jcommons.constants.JobSubmissionProperty;
-import grisu.jcommons.model.info.AbstractResource;
-import grisu.jcommons.model.info.Application;
-import grisu.jcommons.model.info.Directory;
-import grisu.jcommons.model.info.Package;
-import grisu.jcommons.model.info.Queue;
-import grisu.jcommons.model.info.Site;
-import grisu.jcommons.model.info.VO;
-import grisu.jcommons.model.info.Version;
+import grisu.model.info.dto.Application;
+import grisu.model.info.dto.Directory;
+import grisu.model.info.dto.Package;
+import grisu.model.info.dto.Queue;
+import grisu.model.info.dto.Site;
+import grisu.model.info.dto.VO;
+import grisu.model.info.dto.Version;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,23 +48,23 @@ public interface InformationManager {
 	 *            the fqan
 	 * @return all queues
 	 */
-	Collection<Queue> findQueues(Map<JobSubmissionProperty, String> job, String fqan);
+	List<Queue> findQueues(Map<JobSubmissionProperty, String> job, String fqan);
 
 	/**
 	 * Returns the names of all the applications at the site.
 	 * 
 	 * @param site
 	 *            name of the site
-	 * @return names of the applications at the site
+	 * @return application objects at the site
 	 */
-	String[] getAllApplicationsAtSite(String site);
+	List<Application> getAllApplicationsAtSite(String site);
 
 	/**
 	 * Returns all the available applications on the Grid.
 	 * 
 	 * @return all the applications on the Grid
 	 */
-	String[] getAllApplicationsOnGrid();
+	List<Application> getAllApplicationsOnGrid();
 
 	/**
 	 * Calculates all the applications that are available for the specified VO
@@ -74,22 +74,15 @@ public interface InformationManager {
 	 *            the vo
 	 * @return all available applications
 	 */
-	String[] getAllApplicationsOnGridForVO(String fqan);
+	List<Application> getAllApplicationsOnGridForVO(String fqan);
 
-
-	/**
-	 * Return all the names of all the sites from MDS.
-	 * 
-	 * @return names of all the sites from MDS
-	 */
-	String[] getAllSites();
 
 	/**
 	 * Returns all submission locations on all the sites from MDS.
 	 * 
 	 * @return all the available submissionlocations on the Grid
 	 */
-	String[] getAllSubmissionLocations();
+	List<Queue> getAllQueues();
 
 	/**
 	 * Returns all the submission locations of all the sites that have the given
@@ -102,7 +95,7 @@ public interface InformationManager {
 	 * @return submission locations of sites which have the software application
 	 *         installed
 	 */
-	Collection<String> getAllSubmissionLocations(String application,
+	Collection<Queue> getAllQueues(String application,
 			String version);
 
 	/**
@@ -120,9 +113,8 @@ public interface InformationManager {
 	 *            name of the application
 	 * @return all the submission queues for the given application.
 	 */
-	Collection<String> getAllSubmissionLocationsForApplication(
+	List<Queue> getAllQueuesForApplication(
 			String application);
-
 
 	/**
 	 * Returns all submission locations or a specific VO.
@@ -131,7 +123,15 @@ public interface InformationManager {
 	 *            the vo
 	 * @return the submission locations
 	 */
-	Collection<Queue> getAllSubmissionLocationsForVO(String fqan);
+	Collection<Queue> getAllQueuesForVO(String fqan);
+
+
+	/**
+	 * Return all the names of all the sites from MDS.
+	 * 
+	 * @return all the sites from MDS
+	 */
+	List<Site> getAllSites();
 
 	/**
 	 * Returns the list of available versions of the software application on the
@@ -142,7 +142,7 @@ public interface InformationManager {
 	 * @return a string array of versions of the software application on the
 	 *         Grid
 	 */
-	Collection<String> getAllVersionsOfApplicationOnGrid(String application);
+	List<Version> getAllVersionsOfApplicationOnGrid(String application);
 
 	/**
 	 * Returns all VOs that are used.
@@ -150,6 +150,38 @@ public interface InformationManager {
 	 * @return the VOs
 	 */
 	Set<VO> getAllVOs();
+
+	/**
+	 * Returns an array of Strings with codes that provide the specified
+	 * executable.
+	 * 
+	 * @param executable
+	 *            the executable
+	 * @return the codes
+	 */
+	List<Application> getApplicationsThatProvideExecutable(
+			String executable);
+
+	/**
+	 * Returns all the data locations (mount points) on the grid available for
+	 * the given VO.
+	 * 
+	 * @param fqan
+	 *            fully qualified attribute name of the VO
+	 * @return all the data locations for the VO
+	 */
+	List<Directory> getDirectoriesForVO(String fqan);
+
+	/**
+	 * Returns the jobmanager that submits to the specified queue/site.
+	 * 
+	 * @param site
+	 *            the site
+	 * @param queue
+	 *            the queue
+	 * @return the jobmanager
+	 */
+	String getJobmanagerOfQueueAtSite(String site, String queue);
 
 	/**
 	 * Returns a map of the attribute details of the given application at the
@@ -166,29 +198,8 @@ public interface InformationManager {
 	 * @return a map of the attribute details of the given application at the
 	 *         site.
 	 */
-	Package getApplicationDetails(String application,
+	Package getPackage(String application,
 			String version, String submissionLocation);
-
-	/**
-	 * Returns an array of Strings with codes that provide the specified
-	 * executable.
-	 * 
-	 * @param executable
-	 *            the executable
-	 * @return the codes
-	 */
-	Collection<Application> getApplicationsThatProvideExecutable(
-			String executable);
-
-	/**
-	 * Returns all the data locations (mount points) on the grid available for
-	 * the given VO.
-	 * 
-	 * @param fqan
-	 *            fully qualified attribute name of the VO
-	 * @return all the data locations for the VO
-	 */
-	Collection<Directory> getDataLocationsForVO(String fqan);
 
 	/**
 	 * Returns the GridResource object for the submissionLocation string.
@@ -200,18 +211,7 @@ public interface InformationManager {
 	 *            the submission location string
 	 * @return the grid resource
 	 */
-	public Queue getGridResource(String submissionLocation);
-
-	/**
-	 * Returns the jobmanager that submits to the specified queue/site.
-	 * 
-	 * @param site
-	 *            the site
-	 * @param queue
-	 *            the queue
-	 * @return the jobmanager
-	 */
-	String getJobmanagerOfQueueAtSite(String site, String queue);
+	public Queue getQueue(String submissionLocation);
 
 	/**
 	 * Checks whether there is a resource of the specified type and name (result of the toString() method) and returns it.
@@ -220,16 +220,16 @@ public interface InformationManager {
 	 * @param name the name of the resource
 	 * @return the resource or null if it can't be found
 	 */
-	<T extends AbstractResource> T getResource(Class<T> type, String name);
+	<T> T getResource(Class<T> type, String name);
 
-	/**
-	 * Finds all resources of the specified type that have connections to the filters specified.
-	 * @param resourceClass the type of resources you look for
-	 * @param filters the resources that have direct connections to the resources you look for
-	 * @return all matching resources
-	 */
-	public <T extends AbstractResource> Collection<T> getResources(
-			Class<T> resourceClass, AbstractResource... filters);
+	//	/**
+	//	 * Finds all resources of the specified type that have connections to the filters specified.
+	//	 * @param resourceClass the type of resources you look for
+	//	 * @param filters the resources that have direct connections to the resources you look for
+	//	 * @return all matching resources
+	//	 */
+	//	public <T extends AbstractResource> Collection<T> getResources(
+	// Class<T> resourceClass, AbstractResource... filters);
 
 	/**
 	 * Returns the name of the site where this host or URL belongs.
@@ -253,7 +253,7 @@ public interface InformationManager {
 	 * @return an array of string representing the available versions of the
 	 *         software application at the site
 	 */
-	Collection<Version> getVersionsOfApplicationOnSite(String application,
+	List<Version> getVersionsOfApplicationOnSite(String application,
 			String site);
 
 	/**
@@ -267,7 +267,7 @@ public interface InformationManager {
 	 * @return an array of string representing the available versions of the
 	 *         software application at the submissionlocation
 	 */
-	Collection<Version> getVersionsOfApplicationOnSubmissionLocation(
+	List<Version> getVersionsOfApplicationOnSubmissionLocation(
 			String application, String submissionLocation);
 
 	/**
