@@ -341,9 +341,12 @@ public class GrinformationManager implements InformationManager {
 				.getResources(grisu.jcommons.model.info.Version.class,
 						getGrid().getApplication(application), getGrid().getSite(site));
 
+		versions.remove(Version.ANY_VERSION);
+
 		if (CollectionUtils.isEmpty(versions)) {
 			return Lists.newArrayList();
 		}
+
 		return mapperFacade.mapAsList(versions, Version.class);
 
 	}
@@ -356,9 +359,12 @@ public class GrinformationManager implements InformationManager {
 						getGrid().getApplication(application),
 						getGrid().getQueue(submissionLocation));
 
+		versions.remove(Version.ANY_VERSION);
+
 		if (CollectionUtils.isEmpty(versions)) {
 			return Lists.newArrayList();
 		}
+
 		return mapperFacade.mapAsList(versions, Version.class);
 
 	}

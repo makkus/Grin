@@ -80,6 +80,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 
 	public boolean acceptsJob(Map<JobSubmissionProperty, String> jobProperties) {
 
+
 		for (JobSubmissionProperty p : jobProperties.keySet()) {
 			switch (p) {
 			case WALLTIME_IN_MINUTES:
@@ -124,6 +125,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 			}
 
 		}
+
 
 		return true;
 
@@ -324,10 +326,12 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 			if (app.equalsIgnoreCase(tempApp)) {
 				if (StringUtils.isBlank(version)
 						|| Constants.NO_VERSION_INDICATOR_STRING
-								.equals(version)) {
+						.equals(version)) {
 					return true;
 				}
-				return version.equalsIgnoreCase(tempVersion);
+				if (version.equalsIgnoreCase(tempVersion)) {
+					return true;
+				}
 			}
 
 		}

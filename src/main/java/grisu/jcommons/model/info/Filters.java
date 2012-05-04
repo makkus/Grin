@@ -27,7 +27,6 @@ public class Filters {
 			if (!q.getGroups().contains(group)) {
 				return false;
 			}
-
 			return q.acceptsJob(jobProps);
 		}
 
