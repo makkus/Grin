@@ -58,7 +58,6 @@ public class GrinformationManager implements InformationManager {
 
 	private final String path;
 
-
 	// public GrinformationManager(Grid grid) {
 	// this.grid = grid;
 	// this.path = null;
@@ -375,7 +374,7 @@ public class GrinformationManager implements InformationManager {
 	 * @see grisu.jcommons.interfaces.InformationManager#refresh()
 	 */
 	public void refresh() {
-		ym.refresh();
+		ym.refreshAndWait();
 	}
 
 }
