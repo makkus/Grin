@@ -39,11 +39,25 @@ akl_fs = new FileSystem(
 		site:testbed
 		)
 
+df = new FileSystem(
+		host:'irods-dev.ceres.auckland.ac.nz',
+		protocol:'gsiftp',
+		port:2811,
+		site:testbed
+		)
+
 
 // directories
 akl_home = new Directory(
 		filesystem:akl_fs,
 		groups:[nesi, demo, none],
+		path:"/~/",
+		shared:false,
+		volatileDirectory:false)
+
+df_home = new Directory(
+		filesystem:df,
+		groups:[none],
 		path:"/~/",
 		shared:false,
 		volatileDirectory:false)
