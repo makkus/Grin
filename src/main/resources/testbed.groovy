@@ -1,4 +1,5 @@
 import grisu.jcommons.model.info.*
+import grisu.jcommons.utils.WalltimeUtils;
 
 
 
@@ -55,7 +56,7 @@ testbed_gram52 = new Gateway(
 		host:'globus.test.nesi.org.nz',
 		middleware:gram52
 		)
-		
+
 // applications
 java = new Application(
 		name:'Java'
@@ -100,7 +101,7 @@ python26 = new Package(
 
 // updaters
 defaultUpdater = new DefaultQueueUpdater()
-		
+
 // queues
 batch = new Queue(
 	gateway:testbed_gram52,
@@ -117,6 +118,7 @@ test1 = new Queue(
 	groups:[nesi, none],
 	directories:[akl_home],
 	packages:[java15],
-	updater:defaultUpdater
+	updater:defaultUpdater,
+	walltimeInMinutes:10
 	)
 
