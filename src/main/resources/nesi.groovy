@@ -106,7 +106,7 @@ uoa_qoptics = new Group(
 		vo = nz,
 		fqan = '/nz/uoa/quantum-optics'
 		)
-		
+
 
 uoa_virt_screening = new Group(
 		vo = nz,
@@ -129,8 +129,8 @@ uoa_sbs = new Group(
 		)
 
 bestgrid = new Group(
-		vo = arcs,
-		fqan = '/ARCS/BeSTGRID'
+		vo = nz,
+		fqan = '/nz/bestgrid'
 		)
 
 uoc = new Group(
@@ -210,8 +210,8 @@ auckland_pandora = new Directory(
 	groups:[nesi],
 	volatileDirectory:true
 	)
-	
-	
+
+
 auckland_df_home = new Directory(
 		filesystem:auckland_df_fs,
 		groups:[nesi],
@@ -367,7 +367,7 @@ abaqus_68ef2 = new Package(
 		version:Version.get('6.8-EF2'),
 		executables:[Executable.get('abaqus')]
 		)
-		
+
 beast_1_6_1 = new Package(
 	application: beast,
 	version:Version.get('1.6.1'),
@@ -404,13 +404,13 @@ clustalwparallel_0_13 = new Package(
 	application:clustalwparallel,
 	version:Version.get('0.13')
 	)
-	
+
 gold_5_1 = new Package(
 	application:gold,
 	version:Version.get('5.1'),
 	executables:[Executable.get('parallel_gold_auto')]
 	)
-	
+
 ilog_12_2 = new Package(
 	application:ilog,
 	version:Version.get('12.2'),
@@ -421,7 +421,7 @@ infernal_1_0 = new Package(
 	application:infernal,
 	version:Version.get('1.0')
 	)
-	
+
 java_1_6 = new Package(
 	application:java,
 	version:Version.get('1.6'),
@@ -592,12 +592,12 @@ unixcommands_5 = new Package(
 		version:Version.get('5'),
 		executables:Executable.getList('ls', 'cat', 'diff', 'echo','pwd')
 		)
-		
+
 wrf_1_0 = new Package(
 		application:wrf,
 		version:Version.get('1.0')
 		)
-		
+
 // queues
 
 /** example:
@@ -615,12 +615,12 @@ wrf_1_0 = new Package(
 		walltimeInMinutes:<walltime>, // optional, default: Integer.MAX_VALUE
 		cpusPerHost:<min_number_of_cpus_per_host>, // optional, default: Integer.MAX_VALUE
 		clockspeedInHz:<clockspeed>, // optional, default: Integer.MAX_VALUE
-*/	
+*/
 
 auckland_default_packages = [beast_1_6_1, java_1_6, mr_bayes_3_1_2, r_2_9, r_2_10, rmpisnow_2_9, unixcommands_5, octave_3_0_3, octave_3_0_5, python_2_4, python_2_6]
 
 gram5p7_common_packages = [mr_bayes_3_2_1, bayesphylogenies_1_0, modeltest_3_7, beast_1_6_1, clustalw_1_83, clustalwparallel_0_13, paup_4_0_beta, unixcommands_5, blast_2_2_21, mpiblast_1_6, teiresias_18aug2004, java_1_6]
-gram5p7_aix = [sas_9_2, namd_2_6, wrf_1_0, r_2_5, parswms_aug06, python_2_6_2, best_2_3_1] + gram5p7_common_packages 
+gram5p7_aix = [sas_9_2, namd_2_6, wrf_1_0, r_2_5, parswms_aug06, python_2_6_2, best_2_3_1] + gram5p7_common_packages
 gram5p7_linux = [lamarc_2_1, r_2_14, meme_4_1, infernal_1_0, python_2_6] + gram5p7_common_packages
 
 ng2sge_local_software = [mr_bayes_3_1_2, r_2_11, rmpisnow_2_11, unixcommands_5]
@@ -664,7 +664,7 @@ uoa_gold_ce = new Queue(
 		directories:[auckland_home],
 		packages:[gold_5_1]
 		)
-		
+
 uoa_mech_ce = new Queue(
 		gateway:gram5,
 		name:'uoamech',
@@ -707,13 +707,13 @@ uoa_comp_evol_ce = new Queue(
 		gateway:gram5,
 		name:'uoaevol',
 		groups:[uoa_comp_evol],
-		directories:[auckland_home], 
+		directories:[auckland_home],
 		packages:auckland_default_packages,
 		hosts:5,
 		cpusPerHost:12,
 		cpus:60,
 		memoryInBytes:10468982784,
-		virtualMemoryInBytes:10468982784, 
+		virtualMemoryInBytes:10468982784,
 		clockspeedInHz:2600000000,
 		description:'Queue for computational evolution cluster'
 		)
@@ -795,14 +795,14 @@ canterbury_dev8_1 = new Queue(
 		groups:[uoc],
 		packages:ng2hpc_local_software
 		)
-		
-		
+
+
 
 small_canterbury_ng2 = new Queue(
 		gateway:canterbury_ng2,
 		groups:[nesi],
 		name:'small',
-		directories:[canterbury_ng2_home], 
+		directories:[canterbury_ng2_home],
 		packages: small_ngcompute,
 		hosts:1,
 		cpus:4,

@@ -47,7 +47,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 	// other queue properties, not considered when calculating whether a job
 	// would run on this queue or not
 	private String description = "n/a";
-	private Integer clockspeedInHz = Integer.MAX_VALUE;
+	private Long clockspeedInHz = Long.MAX_VALUE;
 
 	private final List<DynamicInfo> dynamicInfo = Lists.newLinkedList();
 
@@ -150,7 +150,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 						Version.get(version)));
 	}
 
-	public Integer getClockspeedInHz() {
+	public Long getClockspeedInHz() {
 		return clockspeedInHz;
 	}
 
@@ -340,7 +340,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 
 	}
 
-	public void setClockspeedInHz(Integer clockspeedInHz) {
+	public void setClockspeedInHz(Long clockspeedInHz) {
 		this.clockspeedInHz = clockspeedInHz;
 	}
 
