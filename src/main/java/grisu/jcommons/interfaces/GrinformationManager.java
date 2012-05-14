@@ -37,11 +37,6 @@ public class GrinformationManager implements InformationManager {
 	static final Logger myLogger = LoggerFactory
 			.getLogger(GrinformationManager.class.getName());
 
-	private static final MapperFactory factory = new DefaultMapperFactory.Builder()
-	.build();
-
-	private static final MapperFacade mapperFacade = factory.getMapperFacade();
-
 	public static void main (String[] args) {
 
 		GrinformationManager gm = new GrinformationManager("testbed");
@@ -54,21 +49,38 @@ public class GrinformationManager implements InformationManager {
 		System.exit(0);
 	}
 
+	//	private final MapperFactory factory;
+
 	private final YnfoManager ym;
 
+	private MapperFacade mapperFacade = null;
+
 	private final String path;
+
+	public GrinformationManager(Map<String, String> config) {
+		this(config.get("path"));
+	}
 
 	// public GrinformationManager(Grid grid) {
 	// this.grid = grid;
 	// this.path = null;
 	// }
 
-	public GrinformationManager(Map<String, String> config) {
-		this(config.get("path"));
-	}
-
 	public GrinformationManager(String path) {
 		this.path = path;
+
+		//		factory = new DefaultMapperFactory.Builder().build();
+
+		// // configure mapper
+		// factory.registerClassMap(ClassMapBuilder
+		// .map(grisu.jcommons.model.info.Queue.class, Queue.class)
+		// .byDefault().toClassMap());
+		// factory.registerClassMap(ClassMapBuilder
+		// .map(grisu.jcommons.model.info.Application.class,
+		// Application.class).byDefault().toClassMap());
+		//
+		// factory.build();
+		//		mapperFacade = factory.getMapperFacade();
 
 		ym = new YnfoManager(path);
 		myLogger.debug("Grinformationmanager created.");
@@ -82,10 +94,8 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(queues)) {
 			return Lists.newArrayList();
 		}
-		return mapperFacade.mapAsList(queues,
-				Queue.class);
+		return getMapperFacade().mapAsList(queues, Queue.class);
 	}
-
 
 	public List<Application> getAllApplicationsAtSite(String site) {
 		grisu.jcommons.model.info.Site s = getGrid().getSite(site);
@@ -96,7 +106,7 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(result)) {
 			return Lists.newArrayList();
 		}
-		List<Application> apps = mapperFacade.mapAsList(result,
+		List<Application> apps = getMapperFacade().mapAsList(result,
 				Application.class);
 		return apps;
 	}
@@ -109,7 +119,7 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return mapperFacade.mapAsList(result, Application.class);
+		return getMapperFacade().mapAsList(result, Application.class);
 
 	}
 
@@ -123,7 +133,7 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return mapperFacade.mapAsList(result, Application.class);
+		return getMapperFacade().mapAsList(result, Application.class);
 	}
 
 	public List<Queue> getAllQueues() {
@@ -134,9 +144,10 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return mapperFacade.mapAsList(queues, Queue.class);
+		return getMapperFacade().mapAsList(queues, Queue.class);
 
 	}
+
 
 	public Collection<Queue> getAllQueues(String application,
 			String version) {
@@ -149,7 +160,7 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return mapperFacade.mapAsList(queues, Queue.class);
+		return getMapperFacade().mapAsList(queues, Queue.class);
 	}
 
 	public List<Queue> getAllQueuesForApplication(
@@ -162,7 +173,7 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return mapperFacade.mapAsList(queues, Queue.class);
+		return getMapperFacade().mapAsList(queues, Queue.class);
 	}
 
 	public List<Queue> getAllQueuesForVO(String fqan) {
@@ -189,7 +200,7 @@ public class GrinformationManager implements InformationManager {
 		}
 		// filter queues again, because recursive connections can include groups
 		// that belong to Directories
-		return mapperFacade.mapAsList(filtered, Queue.class);
+		return getMapperFacade().mapAsList(filtered, Queue.class);
 
 	}
 
@@ -199,9 +210,8 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return mapperFacade.mapAsList(sites, Site.class);
+		return getMapperFacade().mapAsList(sites, Site.class);
 	}
-
 
 	public List<Version> getAllVersionsOfApplicationOnGrid(
 			String application) {
@@ -212,9 +222,8 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return mapperFacade.mapAsList(versions, Version.class);
+		return getMapperFacade().mapAsList(versions, Version.class);
 	}
-
 
 	public Set<VO> getAllVOs() {
 		Set<grisu.jcommons.model.info.VO> vos = getGrid().getVos();
@@ -222,8 +231,9 @@ public class GrinformationManager implements InformationManager {
 			return Sets.newHashSet();
 		}
 
-		return mapperFacade.mapAsSet(vos, VO.class);
+		return getMapperFacade().mapAsSet(vos, VO.class);
 	}
+
 
 	public List<Application> getApplicationsThatProvideExecutable(
 			String executable) {
@@ -234,8 +244,9 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(apps)) {
 			return Lists.newArrayList();
 		}
-		return mapperFacade.mapAsList(apps, Application.class);
+		return getMapperFacade().mapAsList(apps, Application.class);
 	}
+
 
 	public List<Directory> getDirectoriesForVO(String fqan) {
 		Collection<grisu.jcommons.model.info.Directory> directories = getGrid()
@@ -244,7 +255,7 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(directories)) {
 			return Lists.newArrayList();
 		}
-		return mapperFacade.mapAsList(directories, Directory.class);
+		return getMapperFacade().mapAsList(directories, Directory.class);
 	}
 
 	public Grid getGrid() {
@@ -253,6 +264,15 @@ public class GrinformationManager implements InformationManager {
 
 	public String getJobmanagerOfQueueAtSite(String site, String queue) {
 		throw new NotImplementedException();
+	}
+
+
+	private synchronized MapperFacade getMapperFacade() {
+		if (mapperFacade == null) {
+			MapperFactory f = new DefaultMapperFactory.Builder().build();
+			mapperFacade = f.getMapperFacade();
+		}
+		return mapperFacade;
 	}
 
 	public Package getPackage(String application,
@@ -268,11 +288,11 @@ public class GrinformationManager implements InformationManager {
 			return null;
 		}
 
-		return mapperFacade.map(p.iterator().next(), Package.class);
+		return getMapperFacade().map(p.iterator().next(), Package.class);
 	}
 
 	public Queue getQueue(String submissionLocation) {
-		return mapperFacade.map(getGrid().getQueue(submissionLocation),
+		return getMapperFacade().map(getGrid().getQueue(submissionLocation),
 				Queue.class);
 	}
 
@@ -296,7 +316,7 @@ public class GrinformationManager implements InformationManager {
 
 			for (AbstractResource ar : result) {
 				if (ar.toString().equals(name)) {
-					return mapperFacade.map(ar, type);
+					return getMapperFacade().map(ar, type);
 				}
 			}
 
@@ -319,7 +339,7 @@ public class GrinformationManager implements InformationManager {
 
 	public Site getSiteForHostOrUrl(String host_or_url) {
 
-		return mapperFacade.map(getGrid().getSiteForUrl(host_or_url),
+		return getMapperFacade().map(getGrid().getSiteForUrl(host_or_url),
 				Site.class);
 	}
 
@@ -330,7 +350,7 @@ public class GrinformationManager implements InformationManager {
 			return Sets.newLinkedHashSet();
 		}
 
-		return mapperFacade.mapAsSet(queue.getDirectories(), Directory.class);
+		return getMapperFacade().mapAsSet(queue.getDirectories(), Directory.class);
 	}
 
 	public List<Version> getVersionsOfApplicationOnSite(
@@ -346,7 +366,7 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return mapperFacade.mapAsList(versions, Version.class);
+		return getMapperFacade().mapAsList(versions, Version.class);
 
 	}
 
@@ -364,13 +384,13 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return mapperFacade.mapAsList(versions, Version.class);
+		return getMapperFacade().mapAsList(versions, Version.class);
 
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see grisu.jcommons.interfaces.InformationManager#refresh()
 	 */
 	public void refresh() {
