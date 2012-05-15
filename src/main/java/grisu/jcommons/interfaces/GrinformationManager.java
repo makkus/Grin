@@ -6,6 +6,7 @@ import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.jcommons.model.info.AbstractResource;
 import grisu.model.info.dto.Application;
 import grisu.model.info.dto.Directory;
+import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.info.dto.Package;
 import grisu.model.info.dto.Queue;
 import grisu.model.info.dto.Site;
@@ -86,6 +87,18 @@ public class GrinformationManager implements InformationManager {
 		myLogger.debug("Grinformationmanager created.");
 	}
 
+	public List<JobQueueMatch> findMatches(
+			Map<JobSubmissionProperty, String> job, String fqan) {
+
+		Collection<grisu.jcommons.model.info.JobQueueMatch> queues = getGrid()
+				.findMatches(job, fqan);
+		if (CollectionUtils.isEmpty(queues)) {
+			return Lists.newArrayList();
+		}
+
+		return getMapperFacade().mapAsList(queues, JobQueueMatch.class);
+	}
+
 	public List<Queue> findQueues(Map<JobSubmissionProperty, String> job,
 			String fqan) {
 
@@ -111,6 +124,7 @@ public class GrinformationManager implements InformationManager {
 		return apps;
 	}
 
+
 	public List<Application> getAllApplicationsOnGrid() {
 
 		Collection<grisu.jcommons.model.info.Application> result = getGrid()
@@ -122,7 +136,6 @@ public class GrinformationManager implements InformationManager {
 		return getMapperFacade().mapAsList(result, Application.class);
 
 	}
-
 
 	public List<Application> getAllApplicationsOnGridForVO(String fqan) {
 		grisu.jcommons.model.info.Group g = getGrid().getGroup(fqan);
@@ -136,6 +149,7 @@ public class GrinformationManager implements InformationManager {
 		return getMapperFacade().mapAsList(result, Application.class);
 	}
 
+
 	public List<Queue> getAllQueues() {
 
 		Collection<grisu.jcommons.model.info.Queue> queues = getGrid()
@@ -147,7 +161,6 @@ public class GrinformationManager implements InformationManager {
 		return getMapperFacade().mapAsList(queues, Queue.class);
 
 	}
-
 
 	public Collection<Queue> getAllQueues(String application,
 			String version) {
@@ -225,6 +238,7 @@ public class GrinformationManager implements InformationManager {
 		return getMapperFacade().mapAsList(versions, Version.class);
 	}
 
+
 	public Set<VO> getAllVOs() {
 		Set<grisu.jcommons.model.info.VO> vos = getGrid().getVos();
 		if (CollectionUtils.isEmpty(vos)) {
@@ -247,7 +261,6 @@ public class GrinformationManager implements InformationManager {
 		return getMapperFacade().mapAsList(apps, Application.class);
 	}
 
-
 	public List<Directory> getDirectoriesForVO(String fqan) {
 		Collection<grisu.jcommons.model.info.Directory> directories = getGrid()
 				.getResources(grisu.jcommons.model.info.Directory.class,
@@ -262,10 +275,10 @@ public class GrinformationManager implements InformationManager {
 		return ym.getGrid();
 	}
 
+
 	public String getJobmanagerOfQueueAtSite(String site, String queue) {
 		throw new NotImplementedException();
 	}
-
 
 	private synchronized MapperFacade getMapperFacade() {
 		if (mapperFacade == null) {
@@ -330,12 +343,12 @@ public class GrinformationManager implements InformationManager {
 		return null;
 	}
 
+
 	public <T extends AbstractResource> Collection<T> getResources(
 			Class<T> resourceClass, AbstractResource... filters) {
 
 		return getGrid().getResources(resourceClass, filters);
 	}
-
 
 	public Site getSiteForHostOrUrl(String host_or_url) {
 
@@ -390,7 +403,7 @@ public class GrinformationManager implements InformationManager {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see grisu.jcommons.interfaces.InformationManager#refresh()
 	 */
 	public void refresh() {

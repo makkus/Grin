@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
@@ -38,15 +39,15 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 	private int cpus = Integer.MAX_VALUE;
 
 	private long memory = Long.MAX_VALUE;
-
 	private long virtualMemory = Long.MAX_VALUE;
 	private int walltimeInMinutes = Integer.MAX_VALUE;
 	private int hosts = Integer.MAX_VALUE;
-	private int cpusPerHost = Integer.MAX_VALUE;
 
+	private int cpusPerHost = Integer.MAX_VALUE;
 	// other queue properties, not considered when calculating whether a job
 	// would run on this queue or not
 	private String description = "n/a";
+
 	private Long clockspeedInHz = Long.MAX_VALUE;
 
 	private final List<DynamicInfo> dynamicInfo = Lists.newLinkedList();
@@ -79,7 +80,6 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 	}
 
 	public boolean acceptsJob(Map<JobSubmissionProperty, String> jobProperties) {
-
 
 		for (JobSubmissionProperty p : jobProperties.keySet()) {
 			switch (p) {
@@ -126,15 +126,32 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 
 		}
 
-
 		return true;
 
 	}
 
+
 	public int compareTo(Queue o) {
-		return ComparisonChain.start().compare(getSite(), o.getSite())
+		return ComparisonChain.start()
+				.compare(getGateway().getSite(), o.getGateway().getSite())
 				.compare(getName(), getName()).result();
 	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Queue other = (Queue) obj;
+		return Objects.equal(this.toString(), other.toString());
+	}
+
+
 
 	public Collection<Package> filterPackages(Application application) {
 
@@ -261,7 +278,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 
 	/**
 	 * In bytes.
-	 * 
+	 *
 	 * @return
 	 */
 	public long getMemory() {
@@ -295,7 +312,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 
 	/**
 	 * In bytes.
-	 * 
+	 *
 	 * @return
 	 */
 	public long getVirtualMemory() {
@@ -304,6 +321,11 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 
 	public int getWalltimeInMinutes() {
 		return walltimeInMinutes;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(toString());
 	}
 
 	public boolean providesPackage(Package p) {

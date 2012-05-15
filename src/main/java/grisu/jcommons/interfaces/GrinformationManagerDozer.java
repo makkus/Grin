@@ -6,6 +6,7 @@ import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.jcommons.model.info.AbstractResource;
 import grisu.model.info.dto.Application;
 import grisu.model.info.dto.Directory;
+import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.info.dto.Package;
 import grisu.model.info.dto.Queue;
 import grisu.model.info.dto.Site;
@@ -33,7 +34,7 @@ import com.google.common.collect.Sets;
 
 public class GrinformationManagerDozer implements InformationManager {
 
-	private class DozerTransformer<S, T> implements Function<S, T> {
+	public class DozerTransformer<S, T> implements Function<S, T> {
 
 		public T apply(S input) {
 			try {
@@ -51,6 +52,14 @@ public class GrinformationManagerDozer implements InformationManager {
 	static final Logger myLogger = LoggerFactory
 			.getLogger(GrinformationManagerDozer.class.getName());
 
+	private static final Mapper mapper = new DozerBeanMapper();
+
+	public static Mapper getMapper() {
+		return mapper;
+	}
+
+	//	private final MapperFactory factory;
+
 	public static void main (String[] args) {
 
 		GrinformationManagerDozer gm = new GrinformationManagerDozer("testbed");
@@ -63,41 +72,41 @@ public class GrinformationManagerDozer implements InformationManager {
 		System.exit(0);
 	}
 
-	private final Mapper mapper = new DozerBeanMapper();
-
-	//	private final MapperFactory factory;
-
 	private final YnfoManager ym;
 
 	private final String path;
-
-	public GrinformationManagerDozer(Map<String, String> config) {
-		this(config.get("path"));
-	}
 
 	// public GrinformationManager(Grid grid) {
 	// this.grid = grid;
 	// this.path = null;
 	// }
 
+	public GrinformationManagerDozer(Map<String, String> config) {
+		this(config.get("path"));
+	}
+
 	public GrinformationManagerDozer(String path) {
 		this.path = path;
 
-		//		factory = new DefaultMapperFactory.Builder().build();
-
-		// // configure mapper
-		// factory.registerClassMap(ClassMapBuilder
-		// .map(grisu.jcommons.model.info.Queue.class, Queue.class)
-		// .byDefault().toClassMap());
-		// factory.registerClassMap(ClassMapBuilder
-		// .map(grisu.jcommons.model.info.Application.class,
-		// Application.class).byDefault().toClassMap());
-		//
-		// factory.build();
-		//		mapperFacade = factory.getMapperFacade();
-
 		ym = new YnfoManager(path);
 		myLogger.debug("Grinformationmanager created.");
+	}
+
+	public List<JobQueueMatch> findMatches(
+			Map<JobSubmissionProperty, String> job, String fqan) {
+
+		Collection<grisu.jcommons.model.info.JobQueueMatch> queues = getGrid()
+				.findMatches(job, fqan);
+		if (CollectionUtils.isEmpty(queues)) {
+			return Lists.newArrayList();
+		}
+
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								queues,
+								new DozerTransformer<grisu.jcommons.model.info.JobQueueMatch, JobQueueMatch>()));
+
 	}
 
 	public List<Queue> findQueues(Map<JobSubmissionProperty, String> job,
@@ -135,6 +144,7 @@ public class GrinformationManagerDozer implements InformationManager {
 
 		return apps;
 	}
+
 
 	public List<Application> getAllApplicationsOnGrid() {
 
@@ -205,7 +215,6 @@ public class GrinformationManagerDozer implements InformationManager {
 								queues,
 								new DozerTransformer<grisu.jcommons.model.info.Queue, Queue>()));
 	}
-
 
 	public List<Queue> getAllQueuesForApplication(
 			String application) {
@@ -280,6 +289,7 @@ public class GrinformationManagerDozer implements InformationManager {
 								new DozerTransformer<grisu.jcommons.model.info.Version, Version>()));
 	}
 
+
 	public Set<VO> getAllVOs() {
 		Set<grisu.jcommons.model.info.VO> vos = getGrid().getVos();
 		if (CollectionUtils.isEmpty(vos)) {
@@ -289,6 +299,7 @@ public class GrinformationManagerDozer implements InformationManager {
 		return Sets.newTreeSet(Collections2.transform(vos,
 				new DozerTransformer<grisu.jcommons.model.info.VO, VO>()));
 	}
+
 
 	public List<Application> getApplicationsThatProvideExecutable(
 			String executable) {
@@ -306,7 +317,6 @@ public class GrinformationManagerDozer implements InformationManager {
 								new DozerTransformer<grisu.jcommons.model.info.Application, Application>()));
 	}
 
-
 	public List<Directory> getDirectoriesForVO(String fqan) {
 		Collection<grisu.jcommons.model.info.Directory> directories = getGrid()
 				.getResources(grisu.jcommons.model.info.Directory.class,
@@ -321,20 +331,15 @@ public class GrinformationManagerDozer implements InformationManager {
 								new DozerTransformer<grisu.jcommons.model.info.Directory, Directory>()));
 	}
 
-
 	public Grid getGrid() {
 		return ym.getGrid();
 	}
 
+
+
 	public String getJobmanagerOfQueueAtSite(String site, String queue) {
 		throw new NotImplementedException();
 	}
-
-	private Mapper getMapper() {
-		return mapper;
-	}
-
-
 
 	public Package getPackage(String application,
 			String version, String submissionLocation) {
@@ -391,12 +396,12 @@ public class GrinformationManagerDozer implements InformationManager {
 		return null;
 	}
 
+
 	public <T extends AbstractResource> Collection<T> getResources(
 			Class<T> resourceClass, AbstractResource... filters) {
 
 		return getGrid().getResources(resourceClass, filters);
 	}
-
 
 	public Site getSiteForHostOrUrl(String host_or_url) {
 
@@ -463,7 +468,7 @@ public class GrinformationManagerDozer implements InformationManager {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see grisu.jcommons.interfaces.InformationManager#refresh()
 	 */
 	public void refresh() {

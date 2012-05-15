@@ -11,17 +11,21 @@ import grisu.jcommons.model.info.FileSystem;
 import grisu.jcommons.model.info.Filters;
 import grisu.jcommons.model.info.Gateway;
 import grisu.jcommons.model.info.Group;
+import grisu.jcommons.model.info.JobQueueMatch;
 import grisu.jcommons.model.info.Middleware;
 import grisu.jcommons.model.info.Package;
 import grisu.jcommons.model.info.Queue;
 import grisu.jcommons.model.info.Site;
 import grisu.jcommons.model.info.VO;
 import grisu.jcommons.model.info.Version;
+import grisu.model.info.dto.DtoProperties;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class Grid {
@@ -144,6 +149,40 @@ public class Grid {
 		vos.add(vo);
 	}
 
+	public List<JobQueueMatch> findMatches(
+			final Map<JobSubmissionProperty, String> jobProps, String group) {
+
+		ArrayList<JobQueueMatch> result = Lists.newArrayList();
+
+		final Group g = getGroup(group);
+
+		Collection<Queue> availQueues = getResources(Queue.class, g);
+		// necessary because connections can include wrong groups
+		Collection<grisu.jcommons.model.info.Queue> filtered = Collections2
+				.filter(getQueues(),
+						new Predicate<grisu.jcommons.model.info.Queue>() {
+
+					public boolean apply(
+							grisu.jcommons.model.info.Queue input) {
+						return input.getGroups().contains(g);
+					}
+				});
+
+		for (Queue q : filtered) {
+
+			JobQueueMatch match = new JobQueueMatch(
+					q,
+					DtoProperties
+					.createPropertiesFromJobSubmissionProperties(jobProps));
+
+			result.add(match);
+		}
+
+		return result;
+
+	}
+
+
 	public Collection<Queue> findQueues(
 			Map<JobSubmissionProperty, String> jobProps, String group) {
 
@@ -155,7 +194,6 @@ public class Grid {
 		return q;
 
 	}
-
 
 	public Application getApplication(String string) {
 

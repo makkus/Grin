@@ -22,11 +22,19 @@ public class Filters {
 			this.group = g;
 		}
 
+		public AcceptsJobFilter(Map<JobSubmissionProperty, String> p, Group g,
+				JobQueueMatch match) {
+			this.jobProps = p;
+			this.group = g;
+		}
+
 		public boolean apply(Queue q) {
 
 			if (!q.getGroups().contains(group)) {
+
 				return false;
 			}
+
 			return q.acceptsJob(jobProps);
 		}
 

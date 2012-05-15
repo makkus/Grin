@@ -793,7 +793,8 @@ canterbury_dev8_1 = new Queue(
 		directories:[canterbury_ng2hpc_home],
 		name:'dev8_1',
 		groups:[uoc],
-		packages:ng2hpc_local_software
+		packages:ng2hpc_local_software,
+		walltimeInMinutes:60
 		)
 
 
@@ -810,5 +811,6 @@ small_canterbury_ng2 = new Queue(
 		memoryInBytes:2147483648,
 		virtualMemoryInBytes:2147483648,
 		clockspeedInHz:3000000000,
-		description:'Suitable for testing and serial jobs'
+		description:'Suitable for testing and serial jobs',
+		walltimeInMinutes:30240
 		)
