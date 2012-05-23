@@ -34,75 +34,87 @@ class YnfoManager  {
 	static void main (args) {
 
 		//def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/main/resources/nesi.groovy')
-		def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/main/resources/testbed.groovy')
+		//		def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/main/resources/testbed.groovy')
+		//		def ym = new YnfoManager('https://raw.github.com/nesi/nesi-grid-info/develop/nesi.groovy')
 		//		def ym = new YnfoManager(null)
 		//		def ym = new YnfoManager('/home/markus/Workspaces/Goji/grin/src/test/resources/test_2_sites.config.groovy')
 
 		//		ym.startPeriodicRefresh(2)
+
+		if (args.length == 0 ) {
+			println 'No url specified, using default testbed config...'
+			args = [
+				'https://raw.github.com/nesi/nesi-grid-info/develop/testbed.groovy'
+			]
+		}
+
+		def url = args[0]
+		println 'Using info config from: "'+url+'..."'
+		def ym = new YnfoManager(url)
 
 		Grid grid = ym.getGrid()
 
 		println 'Sites:'
 		for ( def site : grid.getSites() ) {
 			println '\t'+site.toString()
-			printConnections(site)
+			//			printConnections(site)
 		}
 
 		println 'VOs:'
 		for ( def vo : grid.getVos() ) {
 			println '\t'+vo.getVoName()
-			printConnections(vo)
+			//			printConnections(vo)
 		}
 
 		println 'Groups:'
 		for ( def group : grid.getGroups() ) {
 			println '\t' + group.getFqan()
-			printConnections(group)
+			//			printConnections(group)
 		}
 
 		println 'Filesystems:'
 		for ( def fs : grid.getFilesystems() ) {
 			println '\t' + fs.getUrl()
-			printConnections(fs)
+			//			printConnections(fs)
 		}
 
 		println 'Directories:'
 		for ( def dir : grid.getDirectorys() ) {
 			println '\t' + dir.getUrl()
-			printConnections(dir)
+			//			printConnections(dir)
 		}
 
 		println 'Gateways:'
 		for ( def gw : grid.getGateways() ) {
 			println '\t' + gw.toString()
-			printConnections(gw)
+			//			printConnections(gw)
 		}
 
 		println 'Queues:'
 		for ( def q : grid.getQueues() ) {
 			println '\t' + q.toString()
-			printConnections(q)
+			//			printConnections(q)
 		}
 
 		println 'Applications:'
 		for ( def app : grid.getApplications() ) {
 			println '\t' + app.getName()
-			printConnections(app)
+			//			printConnections(app)
 		}
 
 		println 'Versions:'
 		for ( def v : grid.getVersions() ) {
 			println '\t' + v.getVersion()
-			printConnections(v)
+			//			printConnections(v)
 		}
 
 		println 'Packages:'
 		for ( def p : grid.getPackages() ) {
 			println '\t' + p.getName()
-			printConnections(p)
+			//			printConnections(p)
 		}
 
-		//		System.exit(0)
+		System.exit(0)
 	}
 
 
@@ -111,7 +123,7 @@ class YnfoManager  {
 
 
 	def grid = new Grid()
-	def path = null
+	String path = null
 
 	def timer = new Timer()
 	def task
@@ -122,7 +134,7 @@ class YnfoManager  {
 		this(null)
 	}
 
-	public YnfoManager(def pathToConfig) {
+	public YnfoManager(String pathToConfig) {
 		path = pathToConfig
 		initialize(path)
 	}
@@ -183,14 +195,25 @@ class YnfoManager  {
 				myLogger.debug('Updating info for path/alias: '+pathToConfig)
 
 				if ( "testbed".equals(pathToConfig) ) {
-					InputStream is = getClass().getResourceAsStream('/testbed.groovy')
-					config = new ConfigSlurper().parse(is.getText())
+					//					InputStream is = getClass().getResourceAsStream('/testbed.groovy')
+					//					config = new ConfigSlurper().parse(is.getText())
+					//					config = new ConfigSlurper().parse(new URL('https://raw.github.com/nesi/nesi-grid-info/develop/testbed.groovy'))
+					pathToConfig = 'https://raw.github.com/nesi/nesi-grid-info/master/testbed.groovy'
 				} else if ("nesi".equals(pathToConfig)) {
-					InputStream is = getClass().getResourceAsStream('/nesi.groovy')
-					config = new ConfigSlurper().parse(is.getText())
+					//					InputStream is = getClass().getResourceAsStream('/nesi.groovy')
+					//					config = new ConfigSlurper().parse(is.getText())
+					//					config = new ConfigSlurper().parse(new URL('https://raw.github.com/nesi/nesi-grid-info/develop/nesi.groovy'))
+					pathToConfig = 'https://raw.github.com/nesi/nesi-grid-info/master/nesi.groovy'
+
+				}
+				if ( pathToConfig.startsWith('http') ) {
+					myLogger.debug 'Retrieving remote config from "'+pathToConfig+'"...'
+					config = new ConfigSlurper().parse(new URL(pathToConfig))
 				} else {
+					myLogger.debug 'Using local config from "'+pathToConfig+'"...'
 					config = new ConfigSlurper().parse(new File(pathToConfig).toURL())
 				}
+
 
 
 
@@ -227,6 +250,15 @@ class YnfoManager  {
 			this.grid = gridtemp
 			lastUpdated = new Date()
 		}
+	}
+
+	def download(String address)
+	{
+		tempfile = new FileOutputStream(File.createTempFile("temp", address.tokenize("/")[-1]))
+		def out = new BufferedOutputStream(file)
+		out << new URL(address).openStream()
+		out.close()
+		tempfile
 	}
 
 
