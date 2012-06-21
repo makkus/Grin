@@ -44,7 +44,7 @@ class YnfoManager  {
 		if (args.length == 0 ) {
 			println 'No url specified, using default testbed config...'
 			args = [
-				'https://raw.github.com/nesi/nesi-grid-info/develop/testbed.groovy'
+				'https://raw.github.com/nesi/nesi-grid-info/develop/testbed_info.groovy'
 			]
 		}
 
@@ -198,12 +198,12 @@ class YnfoManager  {
 					//					InputStream is = getClass().getResourceAsStream('/testbed.groovy')
 					//					config = new ConfigSlurper().parse(is.getText())
 					//					config = new ConfigSlurper().parse(new URL('https://raw.github.com/nesi/nesi-grid-info/develop/testbed.groovy'))
-					pathToConfig = 'https://raw.github.com/nesi/nesi-grid-info/master/testbed.groovy'
+					pathToConfig = 'https://raw.github.com/nesi/nesi-grid-info/master/testbed_info.groovy'
 				} else if ("nesi".equals(pathToConfig)) {
 					//					InputStream is = getClass().getResourceAsStream('/nesi.groovy')
 					//					config = new ConfigSlurper().parse(is.getText())
 					//					config = new ConfigSlurper().parse(new URL('https://raw.github.com/nesi/nesi-grid-info/develop/nesi.groovy'))
-					pathToConfig = 'https://raw.github.com/nesi/nesi-grid-info/master/nesi.groovy'
+					pathToConfig = 'https://raw.github.com/nesi/nesi-grid-info/master/nesi_info.groovy'
 
 				}
 				if ( pathToConfig.startsWith('http') ) {

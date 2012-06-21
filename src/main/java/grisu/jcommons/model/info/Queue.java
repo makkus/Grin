@@ -408,7 +408,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 		this.hosts = h;
 	}
 
-	private void setMemoryInBytes(long m) {
+	private void setMemory(long m) {
 		this.memory = m;
 	}
 
@@ -428,7 +428,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 		this.updater.addQueue(this);
 	}
 
-	private void setVirtualMemoryInBytes(long m) {
+	private void setVirtualMemory(long m) {
 		this.virtualMemory = m;
 	}
 
