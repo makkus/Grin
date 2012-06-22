@@ -45,16 +45,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>11.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.0.6</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
@@ -94,14 +84,15 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>1.6.4</version>
-		</dependency>
-		<dependency>
 			<groupId>net.sf.dozer</groupId>
 			<artifactId>dozer</artifactId>
 			<version>5.3.2</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -165,12 +156,12 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin> <artifactId>maven-assembly-plugin</artifactId> <executions> 
-				<execution> <phase>package</phase> <configuration> <descriptors> <descriptor>ynfo.assembly.xml</descriptor> 
-				</descriptors> <finalName>ynfo</finalName> <archive> <index>true</index> 
-				<manifest> <mainClass>grisu.info.Ynfo</mainClass> </manifest> <manifestEntries> 
-				<Class-Path>bcprov.jar bcprov-jdk15-143.jar</Class-Path> </manifestEntries> 
-				</archive> </configuration> <goals> <goal>attached</goal> </goals> </execution> 
+			<!-- <plugin> <artifactId>maven-assembly-plugin</artifactId> <executions>
+				<execution> <phase>package</phase> <configuration> <descriptors> <descriptor>ynfo.assembly.xml</descriptor>
+				</descriptors> <finalName>ynfo</finalName> <archive> <index>true</index>
+				<manifest> <mainClass>grisu.info.Ynfo</mainClass> </manifest> <manifestEntries>
+				<Class-Path>bcprov.jar bcprov-jdk15-143.jar</Class-Path> </manifestEntries>
+				</archive> </configuration> <goals> <goal>attached</goal> </goals> </execution>
 				</executions> </plugin> -->
 
 			<plugin>
@@ -192,6 +183,6 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.11</version>
+		<version>0.17</version>
 	</parent>
 </project>
