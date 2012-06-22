@@ -185,4 +185,23 @@
 		<artifactId>nesi</artifactId>
 		<version>0.17</version>
 	</parent>
+	<description>A library to help maintaining and updating information about resources within a grid.</description>
+	<organization>
+		<name>NeSI</name>
+		<url>http://www.nesi.org.nz</url>
+	</organization>
+	<inceptionYear>2012</inceptionYear>
+	<scm>
+		<url>https://github.com/makkus/Grin</url>
+		<connection>scm:git:git://github.com/makkus/Grin.git</connection>
+		<developerConnection>scm:git:git@github.com:makkus/Grin.git</developerConnection>
+	</scm>
+	<issueManagement>
+		<url>https://github.com/makkus/Grin/issues</url>
+		<system>Github</system>
+	</issueManagement>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>https://code.ceres.auckland.ac.nz/jenkins/job/Grin-SNAPSHOT/</url>
+	</ciManagement>
 </project>
