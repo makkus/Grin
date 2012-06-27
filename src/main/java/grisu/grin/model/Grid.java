@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -42,28 +43,28 @@ public class Grid {
 
 	public static final Logger myLogger = LoggerFactory.getLogger(Grid.class);
 
-	private final Set<FileSystem> filesystems = Collections
+	private Set<FileSystem> filesystems = Collections
 			.synchronizedSet(new HashSet<FileSystem>());
-	private final Set<Directory> directories = Collections
+	private Set<Directory> directories = Collections
 			.synchronizedSet(new HashSet<Directory>());
-	private final Set<Site> sites = Collections
+	private Set<Site> sites = Collections
 			.synchronizedSet(new HashSet<Site>());
-	private final Set<Gateway> gateways = Collections
+	private Set<Gateway> gateways = Collections
 			.synchronizedSet(new HashSet<Gateway>());
-	private final Set<Queue> queues = Collections
+	private Set<Queue> queues = Collections
 			.synchronizedSet(new HashSet<Queue>());
-	private final Set<Application> applications = Collections
+	private Set<Application> applications = Collections
 			.synchronizedSet(new HashSet<Application>());
-	private final Set<Package> packages = Collections
+	private Set<Package> packages = Collections
 			.synchronizedSet(new HashSet<Package>());
-	private final Set<Group> groups = Collections
+	private Set<Group> groups = Collections
 			.synchronizedSet(new HashSet<Group>());
-	private final Set<VO> vos = Collections.synchronizedSet(new HashSet<VO>());
-	private final Set<Version> versions = Collections
+	private Set<VO> vos = Collections.synchronizedSet(new HashSet<VO>());
+	private Set<Version> versions = Collections
 			.synchronizedSet(new HashSet<Version>());
-	private final Set<Executable> executables = Collections
+	private Set<Executable> executables = Collections
 			.synchronizedSet(new HashSet<Executable>());
-	private final Set<Middleware> middlewares = Collections
+	private Set<Middleware> middlewares = Collections
 			.synchronizedSet(new HashSet<Middleware>());
 
 	private void addApplication(Application a) {
@@ -162,6 +163,7 @@ public class Grid {
 				.filter(getQueues(),
 						new Predicate<grisu.jcommons.model.info.Queue>() {
 
+					@Override
 					public boolean apply(
 							grisu.jcommons.model.info.Queue input) {
 						return input.getGroups().contains(g);
@@ -433,6 +435,20 @@ public class Grid {
 		validateSet2ndGo(getGroups());
 		validateSet2ndGo(getVos());
 		validateSet2ndGo(getSites());
+
+		// now we make everything immutable
+		filesystems = ImmutableSet.copyOf(filesystems);
+		directories = ImmutableSet.copyOf(directories);
+		sites = ImmutableSet.copyOf(sites);
+		gateways = ImmutableSet.copyOf(gateways);
+		queues = ImmutableSet.copyOf(queues);
+		applications = ImmutableSet.copyOf(applications);
+		packages = ImmutableSet.copyOf(packages);
+		groups = ImmutableSet.copyOf(groups);
+		vos = ImmutableSet.copyOf(vos);
+		versions = ImmutableSet.copyOf(versions);
+		executables = ImmutableSet.copyOf(executables);
+		middlewares = ImmutableSet.copyOf(middlewares);
 
 	}
 
