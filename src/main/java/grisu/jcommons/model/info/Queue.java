@@ -133,8 +133,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 
 	@Override
 	public int compareTo(Queue o) {
-		return ComparisonChain.start()
-				.compare(getGateway().getSite(), o.getGateway().getHost())
+		return ComparisonChain.start().compare(getGateway(), o.getGateway())
 				.compare(getName(), getName()).result();
 	}
 
