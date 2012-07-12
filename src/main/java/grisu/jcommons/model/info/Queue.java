@@ -133,10 +133,14 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 
 	@Override
 	public int compareTo(Queue o) {
-		return ComparisonChain.start().compare(getGateway(), o.getGateway())
-				.compare(getName(), getName()).result();
-	}
 
+		int result = ComparisonChain.start()
+				.compare(getGateway().getSite(), o.getGateway().getSite())
+				.compare(getGateway().getHost(), o.getGateway().getHost())
+				.compare(getName(), o.getName()).result();
+
+		return result;
+	}
 
 
 	@Override
@@ -148,7 +152,11 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 			return false;
 		}
 		final Queue other = (Queue) obj;
-		return Objects.equal(this.toString(), other.toString());
+		return Objects.equal(this.getGateway().getSite(), other.getGateway()
+				.getSite())
+				&& Objects.equal(getGateway().getHost(), other.getGateway()
+						.getHost())
+						&& Objects.equal(getName(), other.getName());
 	}
 
 
@@ -298,12 +306,13 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 	}
 
 	public String getSubmissionLocation() {
-		if (StringUtils.isBlank(factoryType)
-				|| PBS_FACTORY_TYPE.equals(factoryType)) {
-			return getName() + ":" + getGateway().getHost();
-		} else {
-			return getName() + ":" + getGateway().getHost() + "#" + factoryType;
-		}
+		return getName() + ":" + getGateway().getHost();
+		// if (StringUtils.isBlank(factoryType)
+		// || PBS_FACTORY_TYPE.equals(factoryType)) {
+		// return getName() + ":" + getGateway().getHost();
+		// } else {
+		// return getName() + ":" + getGateway().getHost() + "#" + factoryType;
+		// }
 	}
 
 	public QueueUpdater getUpdater() {
@@ -325,7 +334,8 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(toString());
+		return Objects.hashCode(getName(), getGateway().getSite(), getGateway()
+				.getHost());
 	}
 
 	public boolean providesPackage(Package p) {

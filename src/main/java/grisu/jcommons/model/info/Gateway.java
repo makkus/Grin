@@ -32,6 +32,7 @@ Comparable<Gateway> {
 		setMiddleware(mw);
 	}
 
+	@Override
 	public int compareTo(Gateway o) {
 		return ComparisonChain.start().compare(getSite(), o.getSite())
 				.compare(getHost(), o.getHost()).result();
@@ -39,7 +40,6 @@ Comparable<Gateway> {
 
 	@Override
 	public boolean equals(Object obj) {
-
 		if (obj == null) {
 			return false;
 		}
@@ -47,10 +47,8 @@ Comparable<Gateway> {
 			return false;
 		}
 		final Gateway other = (Gateway) obj;
-
-		return com.google.common.base.Objects.equal(getSite(), other.getSite())
-				&& com.google.common.base.Objects.equal(this.getHost(),
-						other.getHost());
+		return Objects.equal(this.getSite(), other.getSite())
+				&& Objects.equal(getHost(), other.getHost());
 
 	}
 
