@@ -305,7 +305,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 		return getGateway().getSite();
 	}
 
-	public String getSubmissionLocation() {
+	public String calculateSubmissionLocation() {
 		return getName() + ":" + getGateway().getHost();
 		// if (StringUtils.isBlank(factoryType)
 		// || PBS_FACTORY_TYPE.equals(factoryType)) {
@@ -448,7 +448,7 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 
 	@Override
 	public String toString() {
-		return getSubmissionLocation();
+		return calculateSubmissionLocation();
 	}
 
 }
