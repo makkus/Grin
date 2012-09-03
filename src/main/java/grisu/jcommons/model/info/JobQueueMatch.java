@@ -6,6 +6,7 @@ import grisu.jcommons.utils.MemoryUtils;
 import grisu.jcommons.utils.WalltimeUtils;
 import grisu.model.info.dto.DtoProperties;
 
+import java.util.Collection;
 import java.util.Map;
 
 import com.google.common.base.Objects;
@@ -19,6 +20,21 @@ import com.google.common.collect.ComparisonChain;
  * 
  */
 public class JobQueueMatch implements Comparable<JobQueueMatch> {
+
+	public static JobQueueMatch getMatch(Collection<JobQueueMatch> matches,
+			String submissionLocation) {
+
+		if (matches == null) {
+			return null;
+		}
+
+		for (JobQueueMatch m : matches) {
+			if (m.getQueue().toString().equals(submissionLocation)) {
+				return m;
+			}
+		}
+		return null;
+	}
 
 	private Queue queue;
 	private DtoProperties job;
@@ -79,7 +95,7 @@ public class JobQueueMatch implements Comparable<JobQueueMatch> {
 								"Walltime too long (max: "
 										+ WalltimeUtils.convertSeconds(queue
 												.getWalltimeInMinutes() * 60)
-										+ ")");
+												+ ")");
 					}
 					break;
 				case NO_CPUS:
@@ -102,7 +118,7 @@ public class JobQueueMatch implements Comparable<JobQueueMatch> {
 								"Job specifies too much memory, only "
 										+ MemoryUtils.humanReadableByteCount(
 												queue.getMemory(), true)
-										+ " available.");
+												+ " available.");
 					}
 					break;
 				case VIRTUAL_MEMORY_IN_B:
@@ -114,7 +130,7 @@ public class JobQueueMatch implements Comparable<JobQueueMatch> {
 								"Job specifies too much memory, only "
 										+ MemoryUtils.humanReadableByteCount(
 												queue.getVirtualMemory(), true)
-										+ " available.");
+												+ " available.");
 					}
 					break;
 				case APPLICATIONNAME:
@@ -133,7 +149,7 @@ public class JobQueueMatch implements Comparable<JobQueueMatch> {
 						addPropertyDetail(
 								JobSubmissionProperty.APPLICATIONNAME,
 								"Package " + packageString
-										+ " not available on this queue.");
+								+ " not available on this queue.");
 					}
 					break;
 				case HOSTCOUNT:
@@ -156,6 +172,7 @@ public class JobQueueMatch implements Comparable<JobQueueMatch> {
 		return valid;
 	}
 
+	@Override
 	public int compareTo(JobQueueMatch o) {
 		return ComparisonChain.start().compare(getRank(), o.getRank())
 				.compare(getQueue(), getQueue()).result();
