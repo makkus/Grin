@@ -183,7 +183,7 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.19</version>
+		<version>0.20</version>
 	</parent>
 	<description>A library to help maintaining and updating information about resources within a grid.</description>
 	<organization>
