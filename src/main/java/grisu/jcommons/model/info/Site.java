@@ -1,4 +1,4 @@
-package grisu.grin.model.resources;
+package grisu.jcommons.model.info;
 
 import java.util.Set;
 
@@ -7,6 +7,8 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
 
 public class Site extends AbstractResource implements Comparable<Site> {
+
+	public static final Site ANY_SITE = new Site("any");
 
 	private String name;
 

@@ -16,7 +16,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package grisu.grin.model.resources;
+package grisu.jcommons.model.info;
+
+import grisu.jcommons.constants.Constants;
 
 import java.util.Set;
 
@@ -35,6 +37,8 @@ import com.google.common.collect.Sets;
  * 
  */
 public class VO extends AbstractResource implements Comparable<VO> {
+
+	public static VO NON_VO = new VO(Constants.NON_VO_NAME, "", -1, "");
 
 	private String voName = null;
 	private String host = null;
@@ -83,12 +87,14 @@ public class VO extends AbstractResource implements Comparable<VO> {
 	public int compareTo(VO vo) {
 
 		int result = voName.compareTo(vo.getVoName());
-		if (result != 0)
+		if (result != 0) {
 			return result;
+		}
 
 		result = host.compareTo(vo.getHost());
-		if (result != 0)
+		if (result != 0) {
 			return result;
+		}
 
 		result = hostDN.compareTo(vo.getHostDN());
 		return result;
@@ -100,7 +106,7 @@ public class VO extends AbstractResource implements Comparable<VO> {
 		if (otherObject instanceof VO) {
 			VO other = (VO) otherObject;
 			if (voName.equals(other.getVoName())
-					&& host.equals(other.getHost()) && port == other.getPort()
+					&& host.equals(other.getHost()) && (port == other.getPort())
 					&& hostDN.equals(other.hostDN)) {
 
 				return true;

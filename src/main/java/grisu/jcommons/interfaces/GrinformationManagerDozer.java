@@ -19,28 +19,50 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.impl.DefaultMapperFactory;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
+import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public class GrinformationManager implements InformationManager {
+public class GrinformationManagerDozer implements InformationManager {
+
+	public class DozerTransformer<S, T> implements Function<S, T> {
+
+		public T apply(S input) {
+			try {
+				return (T) getMapper().map(
+						input,
+						Class.forName("grisu.model.info.dto."
+								+ input.getClass().getSimpleName()));
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+		}
+	}
 
 	static final Logger myLogger = LoggerFactory
-			.getLogger(GrinformationManager.class.getName());
+			.getLogger(GrinformationManagerDozer.class.getName());
+
+	private static final Mapper mapper = new DozerBeanMapper();
+
+	public static Mapper getMapper() {
+		return mapper;
+	}
+
+	//	private final MapperFactory factory;
 
 	public static void main (String[] args) {
 
-		GrinformationManager gm = new GrinformationManager("testbed");
+		GrinformationManagerDozer gm = new GrinformationManagerDozer("testbed");
 
 		for (VO vo : gm.getAllVOs()) {
 			System.out.println("VO: " + vo);
@@ -50,38 +72,21 @@ public class GrinformationManager implements InformationManager {
 		System.exit(0);
 	}
 
-	//	private final MapperFactory factory;
-
 	private final YnfoManager ym;
 
-	private MapperFacade mapperFacade = null;
-
 	private final String path;
-
-	public GrinformationManager(Map<String, String> config) {
-		this(config.get("path"));
-	}
 
 	// public GrinformationManager(Grid grid) {
 	// this.grid = grid;
 	// this.path = null;
 	// }
 
-	public GrinformationManager(String path) {
+	public GrinformationManagerDozer(Map<String, String> config) {
+		this(config.get("path"));
+	}
+
+	public GrinformationManagerDozer(String path) {
 		this.path = path;
-
-		//		factory = new DefaultMapperFactory.Builder().build();
-
-		// // configure mapper
-		// factory.registerClassMap(ClassMapBuilder
-		// .map(grisu.jcommons.model.info.Queue.class, Queue.class)
-		// .byDefault().toClassMap());
-		// factory.registerClassMap(ClassMapBuilder
-		// .map(grisu.jcommons.model.info.Application.class,
-		// Application.class).byDefault().toClassMap());
-		//
-		// factory.build();
-		//		mapperFacade = factory.getMapperFacade();
 
 		ym = new YnfoManager(path);
 		myLogger.debug("Grinformationmanager created.");
@@ -96,7 +101,12 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return getMapperFacade().mapAsList(queues, JobQueueMatch.class);
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								queues,
+								new DozerTransformer<grisu.jcommons.model.info.JobQueueMatch, JobQueueMatch>()));
+
 	}
 
 	public List<Queue> findQueues(Map<JobSubmissionProperty, String> job,
@@ -107,7 +117,13 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(queues)) {
 			return Lists.newArrayList();
 		}
-		return getMapperFacade().mapAsList(queues, Queue.class);
+
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								queues,
+								new DozerTransformer<grisu.jcommons.model.info.Queue, Queue>()));
+
 	}
 
 	public List<Application> getAllApplicationsAtSite(String site) {
@@ -119,8 +135,13 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(result)) {
 			return Lists.newArrayList();
 		}
-		List<Application> apps = getMapperFacade().mapAsList(result,
-				Application.class);
+
+		List<Application> apps = Lists
+				.newArrayList(Collections2
+						.transform(
+								result,
+								new DozerTransformer<grisu.jcommons.model.info.Application, Application>()));
+
 		return apps;
 	}
 
@@ -133,8 +154,13 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return getMapperFacade().mapAsList(result, Application.class);
+		List<Application> apps = Lists
+				.newArrayList(Collections2
+						.transform(
+								result,
+								new DozerTransformer<grisu.jcommons.model.info.Application, Application>()));
 
+		return apps;
 	}
 
 	public List<Application> getAllApplicationsOnGridForVO(String fqan) {
@@ -146,7 +172,13 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return getMapperFacade().mapAsList(result, Application.class);
+		List<Application> apps = Lists
+				.newArrayList(Collections2
+						.transform(
+								result,
+								new DozerTransformer<grisu.jcommons.model.info.Application, Application>()));
+
+		return apps;
 	}
 
 
@@ -158,7 +190,11 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return getMapperFacade().mapAsList(queues, Queue.class);
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								queues,
+								new DozerTransformer<grisu.jcommons.model.info.Queue, Queue>()));
 
 	}
 
@@ -173,7 +209,11 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return getMapperFacade().mapAsList(queues, Queue.class);
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								queues,
+								new DozerTransformer<grisu.jcommons.model.info.Queue, Queue>()));
 	}
 
 	public List<Queue> getAllQueuesForApplication(
@@ -185,8 +225,11 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(queues)) {
 			return Lists.newArrayList();
 		}
-
-		return getMapperFacade().mapAsList(queues, Queue.class);
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								queues,
+								new DozerTransformer<grisu.jcommons.model.info.Queue, Queue>()));
 	}
 
 	public List<Queue> getAllQueuesForVO(String fqan) {
@@ -211,9 +254,12 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(filtered)) {
 			return Lists.newArrayList();
 		}
-		// filter queues again, because recursive connections can include groups
-		// that belong to Directories
-		return getMapperFacade().mapAsList(filtered, Queue.class);
+
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								filtered,
+								new DozerTransformer<grisu.jcommons.model.info.Queue, Queue>()));
 
 	}
 
@@ -223,7 +269,8 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return getMapperFacade().mapAsList(sites, Site.class);
+		return Lists.newArrayList(Collections2.transform(sites,
+				new DozerTransformer<grisu.jcommons.model.info.Site, Site>()));
 	}
 
 	public List<Version> getAllVersionsOfApplicationOnGrid(
@@ -235,7 +282,11 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return getMapperFacade().mapAsList(versions, Version.class);
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								versions,
+								new DozerTransformer<grisu.jcommons.model.info.Version, Version>()));
 	}
 
 
@@ -245,7 +296,8 @@ public class GrinformationManager implements InformationManager {
 			return Sets.newHashSet();
 		}
 
-		return getMapperFacade().mapAsSet(vos, VO.class);
+		return Sets.newTreeSet(Collections2.transform(vos,
+				new DozerTransformer<grisu.jcommons.model.info.VO, VO>()));
 	}
 
 
@@ -258,7 +310,11 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(apps)) {
 			return Lists.newArrayList();
 		}
-		return getMapperFacade().mapAsList(apps, Application.class);
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								apps,
+								new DozerTransformer<grisu.jcommons.model.info.Application, Application>()));
 	}
 
 	public List<Directory> getDirectoriesForVO(String fqan) {
@@ -268,7 +324,11 @@ public class GrinformationManager implements InformationManager {
 		if (CollectionUtils.isEmpty(directories)) {
 			return Lists.newArrayList();
 		}
-		return getMapperFacade().mapAsList(directories, Directory.class);
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								directories,
+								new DozerTransformer<grisu.jcommons.model.info.Directory, Directory>()));
 	}
 
 	public Grid getGrid() {
@@ -276,16 +336,9 @@ public class GrinformationManager implements InformationManager {
 	}
 
 
+
 	public String getJobmanagerOfQueueAtSite(String site, String queue) {
 		throw new NotImplementedException();
-	}
-
-	private synchronized MapperFacade getMapperFacade() {
-		if (mapperFacade == null) {
-			MapperFactory f = new DefaultMapperFactory.Builder().build();
-			mapperFacade = f.getMapperFacade();
-		}
-		return mapperFacade;
 	}
 
 	public Package getPackage(String application,
@@ -301,11 +354,11 @@ public class GrinformationManager implements InformationManager {
 			return null;
 		}
 
-		return getMapperFacade().map(p.iterator().next(), Package.class);
+		return getMapper().map(p.iterator().next(), Package.class);
 	}
 
 	public Queue getQueue(String submissionLocation) {
-		return getMapperFacade().map(getGrid().getQueue(submissionLocation),
+		return getMapper().map(getGrid().getQueue(submissionLocation),
 				Queue.class);
 	}
 
@@ -329,7 +382,7 @@ public class GrinformationManager implements InformationManager {
 
 			for (AbstractResource ar : result) {
 				if (ar.toString().equals(name)) {
-					return getMapperFacade().map(ar, type);
+					return getMapper().map(ar, type);
 				}
 			}
 
@@ -352,7 +405,7 @@ public class GrinformationManager implements InformationManager {
 
 	public Site getSiteForHostOrUrl(String host_or_url) {
 
-		return getMapperFacade().map(getGrid().getSiteForUrl(host_or_url),
+		return getMapper().map(getGrid().getSiteForUrl(host_or_url),
 				Site.class);
 	}
 
@@ -363,7 +416,11 @@ public class GrinformationManager implements InformationManager {
 			return Sets.newLinkedHashSet();
 		}
 
-		return getMapperFacade().mapAsSet(queue.getDirectories(), Directory.class);
+		return Sets
+				.newHashSet(Collections2
+						.transform(
+								queue.getDirectories(),
+								new DozerTransformer<grisu.jcommons.model.info.Directory, Directory>()));
 	}
 
 	public List<Version> getVersionsOfApplicationOnSite(
@@ -379,7 +436,11 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return getMapperFacade().mapAsList(versions, Version.class);
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								versions,
+								new DozerTransformer<grisu.jcommons.model.info.Version, Version>()));
 
 	}
 
@@ -397,7 +458,11 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 
-		return getMapperFacade().mapAsList(versions, Version.class);
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								versions,
+								new DozerTransformer<grisu.jcommons.model.info.Version, Version>()));
 
 	}
 

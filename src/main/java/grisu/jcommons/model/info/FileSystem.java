@@ -1,16 +1,17 @@
-package grisu.grin.model.resources;
+package grisu.jcommons.model.info;
+
+import grisu.jcommons.utils.FileSystemHelpers;
 
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.bestgrid.goji.utils.FileSystemHelpers;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
-public class FileSystem extends AbstractResource implements
+public class FileSystem extends AbstractPhysicalResource implements
 		Comparable<FileSystem> {
 
 	public static final int DEFAULT_PORT = 2811;
@@ -22,7 +23,7 @@ public class FileSystem extends AbstractResource implements
 
 	private Site site = null;
 
-	private String alias = null;
+	private final String alias = null;
 
 	private FileSystem() {
 	}
@@ -80,11 +81,9 @@ public class FileSystem extends AbstractResource implements
 		}
 	}
 
-	public String getAlias() {
-		if (StringUtils.isBlank(alias)) {
-			return host;
-		}
-		return alias;
+	@Override
+	public String getContactString() {
+		return getUrl();
 	}
 
 	@Override
@@ -111,6 +110,7 @@ public class FileSystem extends AbstractResource implements
 		return protocol;
 	}
 
+	@Override
 	public Site getSite() {
 		return this.site;
 	}
@@ -126,10 +126,6 @@ public class FileSystem extends AbstractResource implements
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(host, protocol, port);
-	}
-
-	private void setAlias(String a) {
-		this.alias = a;
 	}
 
 	private void setHost(String host) {

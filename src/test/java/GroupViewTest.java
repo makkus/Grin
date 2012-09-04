@@ -1,6 +1,4 @@
-import grisu.grin.YnfoManager;
 import grisu.grin.model.Grid;
-import grisu.grin.model.resources.Group;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -22,11 +20,11 @@ public class GroupViewTest {
 
 	@Before
 	public void setUp() throws Exception {
-		YnfoManager ym = new YnfoManager(
-				"/home/markus/Workspaces/Goji/grin/src/main/resources/default_config.groovy");
-
-		grid = ym.getGrid();
-		Group group = grid.getGroups().iterator().next();
+		// YnfoManager ym = new YnfoManager(
+		// "/home/markus/Workspaces/Goji/grin/src/main/resources/default_config.groovy");
+		//
+		// grid = ym.getGrid();
+		// Group group = grid.getGroups().iterator().next();
 	}
 
 	@After

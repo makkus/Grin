@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nz.nesi</groupId>
 	<artifactId>grin</artifactId>
@@ -17,8 +16,25 @@
 		</developer>
 	</developers>
 
+	<repositories>
+		<repository>
+			<id>bestgrid.public.release</id>
+			<url>http://code.ceres.auckland.ac.nz/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 
-	<version>0.0.1-SNAPSHOT</version>
+
+	<version>0.1.1</version>
 	<name>grid-info</name>
 	<dependencies>
 		<dependency>
@@ -28,16 +44,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>11.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
@@ -45,7 +51,47 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-			<version>1.8.0</version>
+			<version>${groovy.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<version>1.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>grisu</groupId>
+			<artifactId>grid-jcommons</artifactId>
+			<version>${grid-jcommons.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ma.glasnost.orika</groupId>
+			<artifactId>orika-core</artifactId>
+			<version>1.1.2</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-simple</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.dozer</groupId>
+			<artifactId>dozer</artifactId>
+			<version>5.3.2</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -109,12 +155,12 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin> <artifactId>maven-assembly-plugin</artifactId> <executions> 
-				<execution> <phase>package</phase> <configuration> <descriptors> <descriptor>ynfo.assembly.xml</descriptor> 
-				</descriptors> <finalName>ynfo</finalName> <archive> <index>true</index> 
-				<manifest> <mainClass>grisu.info.Ynfo</mainClass> </manifest> <manifestEntries> 
-				<Class-Path>bcprov.jar bcprov-jdk15-143.jar</Class-Path> </manifestEntries> 
-				</archive> </configuration> <goals> <goal>attached</goal> </goals> </execution> 
+			<!-- <plugin> <artifactId>maven-assembly-plugin</artifactId> <executions>
+				<execution> <phase>package</phase> <configuration> <descriptors> <descriptor>ynfo.assembly.xml</descriptor>
+				</descriptors> <finalName>ynfo</finalName> <archive> <index>true</index>
+				<manifest> <mainClass>grisu.info.Ynfo</mainClass> </manifest> <manifestEntries>
+				<Class-Path>bcprov.jar bcprov-jdk15-143.jar</Class-Path> </manifestEntries>
+				</archive> </configuration> <goals> <goal>attached</goal> </goals> </execution>
 				</executions> </plugin> -->
 
 			<plugin>
@@ -125,6 +171,7 @@
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<pushChanges>false</pushChanges>
 					<localCheckout>true</localCheckout>
+					<tagNameFormat>@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
 
@@ -133,4 +180,28 @@
 
 
 
+	<parent>
+		<groupId>nz.org.nesi</groupId>
+		<artifactId>nesi</artifactId>
+		<version>0.20</version>
+	</parent>
+	<description>A library to help maintaining and updating information about resources within a grid.</description>
+	<organization>
+		<name>NeSI</name>
+		<url>http://www.nesi.org.nz</url>
+	</organization>
+	<inceptionYear>2012</inceptionYear>
+	<scm>
+		<url>https://github.com/makkus/Grin</url>
+		<connection>scm:git:git://github.com/makkus/Grin.git</connection>
+		<developerConnection>scm:git:git@github.com:makkus/Grin.git</developerConnection>
+	</scm>
+	<issueManagement>
+		<url>https://github.com/makkus/Grin/issues</url>
+		<system>Github</system>
+	</issueManagement>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>https://code.ceres.auckland.ac.nz/jenkins/job/Grin-SNAPSHOT/</url>
+	</ciManagement>
 </project>

@@ -1,6 +1,7 @@
-package grisu.grin.model.resources;
+package grisu.jcommons.model.info;
 
 import java.util.Set;
+import java.util.UUID;
 
 import com.google.common.collect.Sets;
 
@@ -29,6 +30,8 @@ public abstract class AbstractResource {
 		return result;
 	}
 
+	private String alias = UUID.randomUUID().toString();
+
 	private final Set<AbstractResource> connections = Sets.newHashSet();
 
 	protected void addConnection(AbstractResource res) {
@@ -45,13 +48,17 @@ public abstract class AbstractResource {
 
 	}
 
+	final public String getAlias() {
+		return alias;
+	}
+
 	public Set<AbstractResource> getConnections() {
 
 		return connections;
 
 	}
 
-	public abstract Set<AbstractResource> getDirectConnections();
+	protected abstract Set<AbstractResource> getDirectConnections();
 
 	public final void popluateConnections() {
 
@@ -74,6 +81,10 @@ public abstract class AbstractResource {
 			}
 		}
 
+	}
+
+	final public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 }

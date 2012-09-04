@@ -1,12 +1,30 @@
-package grisu.grin.model.resources;
+package grisu.jcommons.model.info;
 
+import grisu.jcommons.constants.Constants;
+
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class Application extends AbstractResource implements
 		Comparable<Application> {
+
+	public static final Application GENERIC_APPLICATION = new Application(
+			Constants.GENERIC_APPLICATION_NAME);
+
+	private final static Map<String, Application> cached = Maps.newHashMap();
+
+	public static synchronized Application get(String application) {
+
+		if (cached.get(application) == null) {
+			cached.put(application, new Application(application));
+		}
+
+		return cached.get(application);
+	}
 
 	private String name;
 

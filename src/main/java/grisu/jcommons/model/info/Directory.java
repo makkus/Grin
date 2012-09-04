@@ -1,11 +1,9 @@
-package grisu.grin.model.resources;
+package grisu.jcommons.model.info;
 
-import grisu.grin.model.GroupRestrictions;
+import grisu.jcommons.utils.EndpointHelpers;
 
 import java.util.Collection;
 import java.util.Set;
-
-import org.bestgrid.goji.utils.EndpointHelpers;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
@@ -19,8 +17,8 @@ import com.google.common.collect.Sets;
  * @author Markus Binsteiner
  * 
  */
-public class Directory extends AbstractResource implements
-		Comparable<Directory>, GroupRestrictions {
+public class Directory extends AbstractPhysicalResource implements
+		Comparable<Directory> {
 
 	private static String fixMdsLegacies(String path) {
 
@@ -48,9 +46,11 @@ public class Directory extends AbstractResource implements
 	}
 
 	private FileSystem filesystem;
-	private String path;
-	private Collection<Group> groups;
-	private String alias;
+	private String path = "/~/";
+	private Collection<Group> groups = Sets.newHashSet(Group.NO_VO_GROUP);
+
+	private boolean isVolatileDirectory = false;
+	private boolean isShared = false;
 
 	private Directory() {
 	}
@@ -100,8 +100,9 @@ public class Directory extends AbstractResource implements
 		return false;
 	}
 
-	public String getAlias() {
-		return alias;
+	@Override
+	public String getContactString() {
+		return getUrl();
 	}
 
 	@Override
@@ -121,6 +122,10 @@ public class Directory extends AbstractResource implements
 		return groups;
 	}
 
+	public String getHost() {
+		return getFilesystem().getHost();
+	}
+
 	public String getPath() {
 		return path;
 	}
@@ -130,7 +135,7 @@ public class Directory extends AbstractResource implements
 			String username = EndpointHelpers.extractUsername(url);
 			String epName = EndpointHelpers.extractEndpointName(url);
 
-			if (!epName.equals(EndpointHelpers.extractEndpointName(alias))) {
+			if (!epName.equals(EndpointHelpers.extractEndpointName(getAlias()))) {
 				throw new IllegalStateException(
 						"Url not in this directory filespace.");
 			}
@@ -158,6 +163,11 @@ public class Directory extends AbstractResource implements
 		}
 	}
 
+	@Override
+	public Site getSite() {
+		return getFilesystem().getSite();
+	}
+
 	public String getUrl() {
 		return filesystem.toString() + path;
 	}
@@ -167,8 +177,12 @@ public class Directory extends AbstractResource implements
 		return Objects.hashCode(filesystem, path, groups);
 	}
 
-	private void setAlias(String alias) {
-		this.alias = alias;
+	public boolean isShared() {
+		return isShared;
+	}
+
+	public boolean isVolatileDirectory() {
+		return isVolatileDirectory;
 	}
 
 	private void setFileSystem(FileSystem fs) {
@@ -181,6 +195,14 @@ public class Directory extends AbstractResource implements
 
 	private void setPath(String path) {
 		this.path = path;
+	}
+
+	public void setShared(boolean shared) {
+		this.isShared = shared;
+	}
+
+	private void setVolatileDirectory(boolean v) {
+		this.isVolatileDirectory = v;
 	}
 
 	@Override

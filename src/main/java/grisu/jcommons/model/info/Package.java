@@ -1,6 +1,4 @@
-package grisu.grin.model.resources;
-
-import grisu.grin.model.GroupRestrictions;
+package grisu.jcommons.model.info;
 
 import java.util.Set;
 
@@ -8,24 +6,37 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
 
-public class Package extends AbstractResource implements Comparable<Package>,
-		GroupRestrictions {
+public class Package extends AbstractResource implements Comparable<Package> {
+
+	public static final Package GENERIC = new Package(
+			Application.GENERIC_APPLICATION, Version.ANY_VERSION);
 
 	private Application application;
 
 	private Version version;
 
-	private Set<Group> groups = Sets.newTreeSet();
+	private Set<Executable> executables = Sets.newTreeSet();
 
-	private Set<Queue> queues = Sets.newTreeSet();
+	private Module module;
 
 	private Package() {
 	}
 
-	public Package(Application app, Version version, Set<Queue> q) {
+	public Package(Application app, Version version) {
 		this.application = app;
 		this.version = version;
-		this.queues = q;
+
+	}
+
+	public Package(Application app, Version version, Set<Executable> e, Module m) {
+		this(app, version);
+		this.executables = e;
+		this.module = m;
+	}
+
+	public Package(String app, String version) {
+		this(Application.get(app), Version.get(version));
+
 	}
 
 	public int compareTo(Package o) {
@@ -33,8 +44,7 @@ public class Package extends AbstractResource implements Comparable<Package>,
 				.start()
 				.compare(getApplication().getName(),
 						o.getApplication().getName())
-				.compare(getVersion(), o.getVersion())
-				.compare(getQueues().size(), o.getQueues().size()).result();
+				.compare(getVersion(), o.getVersion()).result();
 	}
 
 	@Override
@@ -48,11 +58,8 @@ public class Package extends AbstractResource implements Comparable<Package>,
 		final Package other = (Package) obj;
 
 		return Objects.equal(getApplication(), other.getApplication())
-				&& Objects.equal(this.getVersion(), other.getVersion())
-				&& (Sets.symmetricDifference(getGroups(), other.getGroups())
-						.size() == 0)
-				&& (Sets.symmetricDifference(this.getQueues(),
-						other.getQueues()).size() == 0);
+				&& Objects.equal(this.getVersion(), other.getVersion());
+
 	}
 
 	public Application getApplication() {
@@ -65,39 +72,22 @@ public class Package extends AbstractResource implements Comparable<Package>,
 		Set<AbstractResource> result = Sets.newHashSet();
 		result.add(getVersion());
 		result.add(getApplication());
-		result.addAll(getQueues());
+		result.addAll(getExecutables());
 
 		return result;
 
 	}
 
-	public Set<Gateway> getGateways() {
-		Set<Gateway> gws = Sets.newTreeSet();
-		for (Queue q : getQueues()) {
-			gws.add(q.getGateway());
-		}
-		return gws;
+	public Set<Executable> getExecutables() {
+		return this.executables;
 	}
 
-	public Set<Group> getGroups() {
-
-		return groups;
+	public Module getModule() {
+		return module;
 	}
 
 	public String getName() {
 		return getApplication().getName() + "_" + getVersion();
-	}
-
-	public Set<Queue> getQueues() {
-		return queues;
-	}
-
-	public Set<Site> getSites() {
-		Set<Site> sites = Sets.newTreeSet();
-		for (Queue q : getQueues()) {
-			sites.add(q.getSite());
-		}
-		return sites;
 	}
 
 	public Version getVersion() {
@@ -106,20 +96,19 @@ public class Package extends AbstractResource implements Comparable<Package>,
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(getApplication(), getVersion(), getGroups(),
-				getQueues());
+		return Objects.hashCode(getApplication(), getVersion());
 	}
 
 	private void setApplication(Application a) {
 		this.application = a;
 	}
 
-	private void setGroups(Set<Group> groups) {
-		this.groups = groups;
+	private void setExecutables(Set<Executable> exes) {
+		this.executables = exes;
 	}
 
-	private void setQueues(Set<Queue> queues) {
-		this.queues = queues;
+	private void setModule(Module module) {
+		this.module = module;
 	}
 
 	private void setVersion(Version version) {

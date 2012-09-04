@@ -1,4 +1,5 @@
-package grisu.grin.model.resources;
+package grisu.jcommons.model.info;
+
 
 import java.util.Set;
 
@@ -6,19 +7,32 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
 
-public class Gateway extends AbstractResource implements Comparable<Gateway> {
+public class Gateway extends AbstractPhysicalResource implements
+Comparable<Gateway> {
+
+	// public static final Gateway ANY_GATEWAY = new Gateway(Site.ANY_SITE,
+	// "any",
+	// Middleware.ANY_MIDDLEWARE);
+
+	public static Gateway create(Site site, String host, Middleware mw) {
+		return new Gateway(site, host, mw);
+	}
 
 	private Site site;
 	private String host;
 
+	private Middleware middleware = Middleware.DEFAULT_MIDDLEWARE;
+
 	private Gateway() {
 	}
 
-	public Gateway(Site site, String host) {
+	public Gateway(Site site, String host, Middleware mw) {
 		setSite(site);
 		setHost(host);
+		setMiddleware(mw);
 	}
 
+	@Override
 	public int compareTo(Gateway o) {
 		return ComparisonChain.start().compare(getSite(), o.getSite())
 				.compare(getHost(), o.getHost()).result();
@@ -26,7 +40,6 @@ public class Gateway extends AbstractResource implements Comparable<Gateway> {
 
 	@Override
 	public boolean equals(Object obj) {
-
 		if (obj == null) {
 			return false;
 		}
@@ -34,10 +47,14 @@ public class Gateway extends AbstractResource implements Comparable<Gateway> {
 			return false;
 		}
 		final Gateway other = (Gateway) obj;
+		return Objects.equal(this.getSite(), other.getSite())
+				&& Objects.equal(getHost(), other.getHost());
 
-		return com.google.common.base.Objects.equal(getSite(), other.getSite())
-				&& com.google.common.base.Objects.equal(this.getHost(),
-						other.getHost());
+	}
+
+	@Override
+	public String getContactString() {
+		return getHost();
 
 	}
 
@@ -53,6 +70,11 @@ public class Gateway extends AbstractResource implements Comparable<Gateway> {
 		return host;
 	}
 
+	public Middleware getMiddleware() {
+		return this.middleware;
+	}
+
+	@Override
 	public Site getSite() {
 		return site;
 	}
@@ -64,6 +86,10 @@ public class Gateway extends AbstractResource implements Comparable<Gateway> {
 
 	private void setHost(String host) {
 		this.host = host;
+	}
+
+	private void setMiddleware(Middleware mw) {
+		this.middleware = mw;
 	}
 
 	private void setSite(Site site) {
