@@ -18,6 +18,10 @@ public class Middleware extends AbstractResource implements
 			DEFAULT_MIDDLEWARE_TYPE, DEFAULT_VERSION);
 
 	private final static Map<String, Middleware> cached = Maps.newHashMap();
+	
+	public static void clearCache() {
+		cached.clear();
+	}
 
 	// public static final Middleware ANY_MIDDLEWARE = new Middleware("any",
 	// "any");

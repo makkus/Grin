@@ -14,6 +14,10 @@ public class Version extends AbstractResource implements Comparable<Version> {
 			Constants.NO_VERSION_INDICATOR_STRING);
 
 	private final static Map<String, Version> cached = Maps.newHashMap();
+	
+	public static void clearCache() {
+		cached.clear();
+	}
 
 	public static synchronized Version get(String applicationVersion) {
 		if (cached.get(applicationVersion) == null) {
