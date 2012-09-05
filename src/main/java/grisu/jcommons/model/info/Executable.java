@@ -20,6 +20,10 @@ public class Executable extends AbstractResource implements
 		}
 		return cached.get(exe);
 	}
+	
+	public static void clearCache() {
+		cached.clear();
+	}
 
 	public static List<Executable> getList(String... exes) {
 		List<Executable> result = Lists.newLinkedList();

@@ -170,6 +170,11 @@ class YnfoManager  {
 
 		if ( !lastUpdated ||  (now.getTime() - lastUpdated.getTime() > (threshold*1000) ) ) {
 
+			Version.clearCache()
+			Middleware.clearCache()
+			Executable.clearCache()
+			Application.clearCache()
+			
 			def gridtemp = new Grid()
 
 			try {

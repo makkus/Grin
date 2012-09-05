@@ -25,6 +25,10 @@ public class Application extends AbstractResource implements
 
 		return cached.get(application);
 	}
+	
+	public static void clearCache() {
+		cached.clear();
+	}
 
 	private String name;
 
