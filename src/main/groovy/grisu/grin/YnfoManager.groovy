@@ -1,5 +1,8 @@
 package grisu.grin
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import grisu.grin.model.Grid
 import grisu.grin.model.resources.*
 import grisu.jcommons.configuration.CommonGridProperties
@@ -7,14 +10,15 @@ import grisu.jcommons.constants.GridEnvironment
 import grisu.jcommons.model.info.*
 import groovy.util.logging.Slf4j
 
-@Slf4j('myLogger')
 class YnfoManager  {
+	
+	static final Logger log = LoggerFactory.getLogger(YnfoManager.class);
 
 	class UpdateInfoTask extends TimerTask {
 		public void run() {
-			myLogger.debug("Kicking of automated info refresh...");
+			log.debug("Kicking of automated info refresh...");
 			refreshAndWait()
-			myLogger.debug("Automated info refresh finished.");
+			log.debug("Automated info refresh finished.");
 		}
 	}
 
@@ -197,7 +201,7 @@ class YnfoManager  {
 					pathToConfig = 'testbed'
 				}
 
-				myLogger.debug('Updating info for path/alias: '+pathToConfig)
+				log.debug('Updating info for path/alias: '+pathToConfig)
 
 				if ( "testbed".equals(pathToConfig) ) {
 					//					InputStream is = getClass().getResourceAsStream('/testbed.groovy')
@@ -212,10 +216,10 @@ class YnfoManager  {
 
 				}
 				if ( pathToConfig.startsWith('http') ) {
-					myLogger.debug 'Retrieving remote config from "'+pathToConfig+'"...'
+					log.debug 'Retrieving remote config from "'+pathToConfig+'"...'
 					config = new ConfigSlurper().parse(new URL(pathToConfig))
 				} else {
-					myLogger.debug 'Using local config from "'+pathToConfig+'"...'
+					log.debug 'Using local config from "'+pathToConfig+'"...'
 					config = new ConfigSlurper().parse(new File(pathToConfig).toURL())
 				}
 
@@ -244,12 +248,12 @@ class YnfoManager  {
 					}
 				}
 
-				myLogger.debug('Grid object created for path/alias: '+pathToConfig+'. Validating...')
+				log.debug('Grid object created for path/alias: '+pathToConfig+'. Validating...')
 
 				gridtemp.validate()
-				myLogger.debug('Grid object validated for path/alias: '+pathToConfig)
+				log.debug('Grid object validated for path/alias: '+pathToConfig)
 			} catch (all) {
-				myLogger.error("Can't build Grid object, probably info config broken: "+all.getLocalizedMessage(), all)
+				log.error("Can't build Grid object, probably info config broken: "+all.getLocalizedMessage(), all)
 				return
 			}
 			this.grid = gridtemp
