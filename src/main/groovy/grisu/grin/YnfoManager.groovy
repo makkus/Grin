@@ -224,8 +224,6 @@ class YnfoManager  {
 				}
 
 
-
-
 				for (def e in config) {
 
 					def name = e.key
@@ -239,10 +237,31 @@ class YnfoManager  {
 					switch(object.class) {
 
 						case Directory.class:
-							gridtemp.addDirectory(object)
+							
+							if ( object.isAvailable() && object.getFilesystem().isAvailable() ) {
+								log.debug "Adding directory: "+object.getUrl()
+								gridtemp.addDirectory(object)
+							} else {
+								log.debug "Directory not available: "+object.getUrl()
+							}
 							break
-
+							
 						case Queue.class:
+							if ( object.getGateway().isAvailable() ) {
+								Set<Directory> temp_dirs = object.getDirectories()
+								
+								if ( temp_dirs.any() { it ->
+									it.isAvailable() && it.getFilesystem().isAvailable()
+								}) {
+									log.debug "Adding queue: "+object.toString()
+									gridtemp.addQueue(object)
+								} else {
+									log.debug("Queue not available because no filesystem: "+object.toString())
+								}
+							} else {
+								log.debug "Queue not available: "+object.toString()
+							}
+
 							gridtemp.addQueue(object)
 							break
 					}

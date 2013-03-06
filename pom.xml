@@ -207,7 +207,7 @@
 	<parent>
 		<groupId>nz.org.nesi</groupId>
 		<artifactId>nesi</artifactId>
-		<version>0.23</version>
+		<version>0.25</version>
 	</parent>
 	<description>A library to help maintaining and updating information about resources within a grid.</description>
 	<organization>
@@ -228,7 +228,4 @@
 		<system>Jenkins</system>
 		<url>https://code.ceres.auckland.ac.nz/jenkins/job/Grin-SNAPSHOT/</url>
 	</ciManagement>
-	<properties>
-		<grid-jcommons.version>2.2</grid-jcommons.version>
-	</properties>
 </project>
