@@ -262,7 +262,6 @@ class YnfoManager  {
 								log.debug "Queue not available: "+object.toString()
 							}
 
-							gridtemp.addQueue(object)
 							break
 					}
 				}
