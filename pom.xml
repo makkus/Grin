@@ -34,7 +34,7 @@
 	</repositories>
 
 
-	<version>0.3-SNAPSHOT</version>
+	<version>0.2.1</version>
 	<name>grid-info</name>
 	<dependencies>
 		<dependency>
