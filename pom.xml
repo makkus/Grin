@@ -34,7 +34,7 @@
 	</repositories>
 
 
-	<version>0.1.4-SNAPSHOT</version>
+	<version>0.2</version>
 	<name>grid-info</name>
 	<dependencies>
 		<dependency>
@@ -191,7 +191,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
