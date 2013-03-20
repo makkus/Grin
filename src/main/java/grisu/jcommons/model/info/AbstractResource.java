@@ -1,8 +1,9 @@
 package grisu.jcommons.model.info;
 
+import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public abstract class AbstractResource {
@@ -30,7 +31,9 @@ public abstract class AbstractResource {
 		return result;
 	}
 
-	private String alias = UUID.randomUUID().toString();
+	protected String alias;
+	
+	private Map<String, String> options = Maps.newTreeMap();
 
 	private final Set<AbstractResource> connections = Sets.newHashSet();
 
@@ -48,8 +51,17 @@ public abstract class AbstractResource {
 
 	}
 
-	final public String getAlias() {
+	public synchronized String getAlias() {
+		
 		return alias;
+	}
+	
+	public Map<String, String> getOptions() {
+		return options;
+	}
+	
+	public void setOptions(Map<String, String> options) {
+		this.options = options;
 	}
 
 	public Set<AbstractResource> getConnections() {
@@ -59,6 +71,7 @@ public abstract class AbstractResource {
 	}
 
 	protected abstract Set<AbstractResource> getDirectConnections();
+	
 
 	public final void popluateConnections() {
 

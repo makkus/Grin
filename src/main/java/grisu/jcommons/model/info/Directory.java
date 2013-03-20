@@ -1,5 +1,6 @@
 package grisu.jcommons.model.info;
 
+import grisu.jcommons.constants.Constants;
 import grisu.jcommons.utils.EndpointHelpers;
 
 import java.util.Collection;
@@ -19,6 +20,18 @@ import com.google.common.collect.Sets;
  */
 public class Directory extends AbstractPhysicalResource implements
 		Comparable<Directory> {
+	
+	public static boolean isShared(Directory d) {
+		String shared = d.getOptions().get(Constants.INFO_DIRECTORY_SHARED_KEY);
+
+		return Boolean.parseBoolean(shared);
+	}
+
+	public static boolean isVolatileDirectory(Directory d) {
+		String vol = d.getOptions().get(Constants.INFO_IS_VOLATILE_KEY);
+
+		return Boolean.parseBoolean(vol);
+	}
 
 	private static String fixMdsLegacies(String path) {
 
@@ -49,9 +62,6 @@ public class Directory extends AbstractPhysicalResource implements
 	private String path = "/~/";
 	private Collection<Group> groups = Sets.newHashSet(Group.NO_VO_GROUP);
 
-	private boolean isVolatileDirectory = false;
-	private boolean isShared = false;
-
 	private Directory() {
 	}
 
@@ -70,6 +80,7 @@ public class Directory extends AbstractPhysicalResource implements
 		// }
 		setAlias(alias);
 	}
+	
 
 	public int compareTo(Directory o) {
 
@@ -99,6 +110,7 @@ public class Directory extends AbstractPhysicalResource implements
 		}
 		return false;
 	}
+	
 
 	@Override
 	public String getContactString() {
@@ -121,7 +133,7 @@ public class Directory extends AbstractPhysicalResource implements
 	public Collection<Group> getGroups() {
 		return groups;
 	}
-
+	
 	public String getHost() {
 		return getFilesystem().getHost();
 	}
@@ -177,14 +189,6 @@ public class Directory extends AbstractPhysicalResource implements
 		return Objects.hashCode(filesystem, path, groups);
 	}
 
-	public boolean isShared() {
-		return isShared;
-	}
-
-	public boolean isVolatileDirectory() {
-		return isVolatileDirectory;
-	}
-
 	private void setFileSystem(FileSystem fs) {
 		this.filesystem = fs;
 	}
@@ -195,14 +199,6 @@ public class Directory extends AbstractPhysicalResource implements
 
 	private void setPath(String path) {
 		this.path = path;
-	}
-
-	public void setShared(boolean shared) {
-		this.isShared = shared;
-	}
-
-	private void setVolatileDirectory(boolean v) {
-		this.isVolatileDirectory = v;
 	}
 
 	@Override

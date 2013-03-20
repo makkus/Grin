@@ -1,5 +1,7 @@
 package grisu.grin
 
+import java.nio.DirectByteBuffer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,8 +232,10 @@ class YnfoManager  {
 					def object = e.value
 
 					if ( object instanceof AbstractResource ) {
-						//println 'setting alias: '+name
-						object.setAlias(name)
+
+						if ( ! object.getAlias() ) {
+							object.setAlias(name)
+						}
 					}
 
 					switch(object.class) {
