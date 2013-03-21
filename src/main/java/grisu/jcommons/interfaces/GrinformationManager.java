@@ -40,10 +40,12 @@ public class GrinformationManager implements InformationManager {
 
 	public static void main (String[] args) {
 
-		GrinformationManager gm = new GrinformationManager("testbed");
+		GrinformationManager gm = new GrinformationManager("/data/src/config/nesi-grid-info/nesi_info.groovy");
 
-		for (VO vo : gm.getAllVOs()) {
-			System.out.println("VO: " + vo);
+		for (Directory d : gm.getDirectoriesForVO("/nz/nesi") ) {
+			
+			System.out.println(d.toUrl()+": "+d.getOptions().size());
+
 		}
 
 

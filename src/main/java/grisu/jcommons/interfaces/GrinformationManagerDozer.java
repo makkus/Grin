@@ -14,6 +14,7 @@ import grisu.model.info.dto.VO;
 import grisu.model.info.dto.Version;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +53,15 @@ public class GrinformationManagerDozer implements InformationManager {
 	static final Logger myLogger = LoggerFactory
 			.getLogger(GrinformationManagerDozer.class.getName());
 
-	private static final Mapper mapper = new DozerBeanMapper();
+	private static DozerBeanMapper mapper;
 
-	public static Mapper getMapper() {
+	public static synchronized Mapper getMapper() {
+		if ( mapper == null ) {
+			List myMappingFiles = new ArrayList();
+			myMappingFiles.add("dozerMapping.xml");
+			mapper = new DozerBeanMapper();
+			mapper.setMappingFiles(myMappingFiles);
+		}
 		return mapper;
 	}
 
@@ -62,10 +69,12 @@ public class GrinformationManagerDozer implements InformationManager {
 
 	public static void main (String[] args) {
 
-		GrinformationManagerDozer gm = new GrinformationManagerDozer("testbed");
+		GrinformationManagerDozer gm = new GrinformationManagerDozer("/data/src/config/nesi-grid-info/nesi_info.groovy");
 
-		for (VO vo : gm.getAllVOs()) {
-			System.out.println("VO: " + vo);
+		for (Directory d : gm.getDirectoriesForVO("/nz/nesi") ) {
+			
+			System.out.println(d.toUrl()+": "+d.getOptions().size());
+
 		}
 
 

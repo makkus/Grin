@@ -1,5 +1,6 @@
 package grisu.jcommons.model.info;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public abstract class AbstractResource {
 
 	protected String alias;
 	
-	private Map<String, String> options = Maps.newTreeMap();
+	private LinkedHashMap<String, String> options = Maps.newLinkedHashMap();
 
 	private final Set<AbstractResource> connections = Sets.newHashSet();
 
@@ -61,7 +62,7 @@ public abstract class AbstractResource {
 	}
 	
 	public void setOptions(Map<String, String> options) {
-		this.options = options;
+		this.options = Maps.newLinkedHashMap(options);
 	}
 
 	public Set<AbstractResource> getConnections() {
