@@ -412,4 +412,15 @@ public class GrinformationManager implements InformationManager {
 		ym.refreshAndWait();
 	}
 
+	@Override
+	public List<Directory> getDirectories() {
+		
+		Collection<grisu.jcommons.model.info.Directory> directories = getGrid().getDirectorys();
+
+		if (CollectionUtils.isEmpty(directories)) {
+			return Lists.newArrayList();
+		}
+		return getMapperFacade().mapAsList(directories, Directory.class);
+	}
+
 }

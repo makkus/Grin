@@ -32,6 +32,11 @@ public class Directory extends AbstractPhysicalResource implements
 
 		return Boolean.parseBoolean(vol);
 	}
+	
+	public static String getOption(Directory d, String key) {
+		String val = d.getOptions().get(Constants.INFO_IS_VOLATILE_KEY);
+		return val;
+	}
 
 	private static String fixMdsLegacies(String path) {
 
@@ -114,7 +119,7 @@ public class Directory extends AbstractPhysicalResource implements
 
 	@Override
 	public String getContactString() {
-		return getUrl();
+		return toUrl();
 	}
 
 	@Override
@@ -163,7 +168,7 @@ public class Directory extends AbstractPhysicalResource implements
 
 		} else {
 
-			String thisUrl = getUrl();
+			String thisUrl = toUrl();
 
 			if (!url.startsWith(thisUrl)) {
 				throw new IllegalStateException(
@@ -180,7 +185,7 @@ public class Directory extends AbstractPhysicalResource implements
 		return getFilesystem().getSite();
 	}
 
-	public String getUrl() {
+	public String toUrl() {
 		return filesystem.toString() + path;
 	}
 
@@ -203,7 +208,7 @@ public class Directory extends AbstractPhysicalResource implements
 
 	@Override
 	public String toString() {
-		return getUrl();
+		return toUrl();
 	}
 
 }

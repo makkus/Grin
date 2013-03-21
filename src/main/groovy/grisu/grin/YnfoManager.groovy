@@ -78,13 +78,13 @@ class YnfoManager  {
 
 		println 'Filesystems:'
 		for ( def fs : grid.getFilesystems() ) {
-			println '\t' + fs.getUrl()
+			println '\t' + fs.toUrl()
 			//			printConnections(fs)
 		}
 
 		println 'Directories:'
 		for ( def dir : grid.getDirectorys() ) {
-			println '\t' + dir.getUrl()
+			println '\t' + dir.toUrl()
 			//			printConnections(dir)
 		}
 
@@ -241,10 +241,10 @@ class YnfoManager  {
 						case Directory.class:
 							
 							if ( object.isAvailable() && object.getFilesystem().isAvailable() ) {
-								log.debug "Adding directory: "+object.getUrl()
+								log.debug "Adding directory: "+object.toUrl()
 								gridtemp.addDirectory(object)
 							} else {
-								log.debug "Directory not available: "+object.getUrl()
+								log.debug "Directory not available: "+object.toUrl()
 							}
 							break
 							

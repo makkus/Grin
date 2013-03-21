@@ -484,4 +484,19 @@ public class GrinformationManagerDozer implements InformationManager {
 		ym.refreshAndWait();
 	}
 
+	@Override
+	public List<Directory> getDirectories() {
+		
+		Collection<grisu.jcommons.model.info.Directory> directories = getGrid().getDirectorys();
+
+		if (CollectionUtils.isEmpty(directories)) {
+			return Lists.newArrayList();
+		}
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								directories,
+								new DozerTransformer<grisu.jcommons.model.info.Directory, Directory>()));
+	}
+
 }

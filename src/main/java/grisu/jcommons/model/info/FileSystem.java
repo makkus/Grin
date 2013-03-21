@@ -54,7 +54,7 @@ public class FileSystem extends AbstractPhysicalResource implements
 	}
 
 	public int compareTo(FileSystem o) {
-		return getUrl().compareTo(o.getUrl());
+		return toUrl().compareTo(o.toUrl());
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class FileSystem extends AbstractPhysicalResource implements
 
 	@Override
 	public String getContactString() {
-		return getUrl();
+		return toUrl();
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class FileSystem extends AbstractPhysicalResource implements
 		return this.site;
 	}
 
-	public String getUrl() {
+	public String toUrl() {
 		if (port != DEFAULT_PORT) {
 			return protocol + "://" + host + ":" + port;
 		} else {
@@ -155,7 +155,7 @@ public class FileSystem extends AbstractPhysicalResource implements
 
 	@Override
 	public String toString() {
-		return getUrl();
+		return toUrl();
 	}
 
 }
