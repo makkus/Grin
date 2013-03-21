@@ -26,7 +26,7 @@ public class DtoPropertiesConverter implements CustomConverter {
 		}
 
 
-		return DtoProperties.createProperties((Map<String, String>) sourceFieldValue);
+		return DtoProperties.createProperties(newMap);
 
 	}
 
