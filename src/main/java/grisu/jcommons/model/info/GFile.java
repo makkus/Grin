@@ -135,5 +135,9 @@ public class GFile implements Comparable<GFile> {
 		.intValue());
 
 	}
+	
+	public String toString() {
+		return getName();
+	}
 
 }
