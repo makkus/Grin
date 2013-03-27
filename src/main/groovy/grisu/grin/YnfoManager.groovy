@@ -129,7 +129,7 @@ class YnfoManager  {
 	def grid = new Grid()
 	String path = null
 
-	def timer = new Timer()
+	def timer = new Timer("Info update timer", true)
 	def task
 
 	Date lastUpdated
