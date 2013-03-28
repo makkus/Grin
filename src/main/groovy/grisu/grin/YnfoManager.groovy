@@ -214,7 +214,7 @@ class YnfoManager  {
 					//					config = new ConfigSlurper().parse(new URL('https://raw.github.com/nesi/nesi-grid-info/develop/nesi.groovy'))
 					pathToConfig = 'https://raw.github.com/nesi/nesi-grid-info/master/nesi_info.groovy'
 
-				}
+				} 
 				if ( pathToConfig.startsWith('http') ) {
 					log.debug 'Retrieving remote config from "'+pathToConfig+'"...'
 					config = new ConfigSlurper().parse(new URL(pathToConfig))

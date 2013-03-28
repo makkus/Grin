@@ -131,6 +131,7 @@ public class GrinformationManager implements InformationManager {
 
 		Collection<grisu.jcommons.model.info.Application> result = getGrid()
 				.getApplications();
+
 		if (CollectionUtils.isEmpty(result)) {
 			return Lists.newArrayList();
 		}
