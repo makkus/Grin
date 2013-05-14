@@ -6,6 +6,7 @@ import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.jcommons.model.info.AbstractResource;
 import grisu.model.info.dto.Application;
 import grisu.model.info.dto.Directory;
+import grisu.model.info.dto.FileSystem;
 import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.info.dto.Package;
 import grisu.model.info.dto.Queue;
@@ -422,6 +423,18 @@ public class GrinformationManager implements InformationManager {
 			return Lists.newArrayList();
 		}
 		return getMapperFacade().mapAsList(directories, Directory.class);
+	}
+
+	@Override
+	public List<FileSystem> getFileSystems() {
+
+		Collection<grisu.jcommons.model.info.FileSystem> fs = getGrid().getFilesystems();
+
+		if (CollectionUtils.isEmpty(fs)) {
+			return Lists.newArrayList();
+		}
+		return getMapperFacade().mapAsList(fs, FileSystem.class);
+		
 	}
 
 }

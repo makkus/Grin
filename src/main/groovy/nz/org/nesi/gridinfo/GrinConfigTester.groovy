@@ -1,0 +1,90 @@
+package nz.org.nesi.gridinfo
+
+
+import grisu.grin.YnfoManager
+import grisu.grin.model.Grid
+
+class GrinConfigTester {
+
+	private final GrinTestParameters params;
+	
+	public GrinConfigTester(GrinTestParameters params) {
+		this.params = params
+	}
+	
+	public void execute() {
+
+		if ( ! params.getPathOrUrl() ) {
+			println '\nNo url or path to config file specified, please use the -c option...'
+			System.exit(1)
+		}
+
+		def url = params.getPathOrUrl()
+		println '\nUsing info config from: "'+url+'...\n"'
+		def ym = new YnfoManager(url)
+
+		Grid grid = ym.getGrid()
+
+		println 'Sites:'
+		for ( def site : grid.getSites() ) {
+			println '\t'+site.toString()
+			//			printConnections(site)
+		}
+
+		println 'VOs:'
+		for ( def vo : grid.getVos() ) {
+			println '\t'+vo.getVoName()
+			//			printConnections(vo)
+		}
+
+		println 'Groups:'
+		for ( def group : grid.getGroups() ) {
+			println '\t' + group.getFqan()
+			//			printConnections(group)
+		}
+
+		println 'Filesystems:'
+		for ( def fs : grid.getFilesystems() ) {
+			println '\t' + fs.toUrl()
+			//			printConnections(fs)
+		}
+
+		println 'Directories:'
+		for ( def dir : grid.getDirectorys() ) {
+			println '\t' + dir.toUrl()
+			//			printConnections(dir)
+		}
+
+		println 'Gateways:'
+		for ( def gw : grid.getGateways() ) {
+			println '\t' + gw.toString()
+			//			printConnections(gw)
+		}
+
+		println 'Queues:'
+		for ( def q : grid.getQueues() ) {
+			println '\t' + q.toString()
+			//			printConnections(q)
+		}
+
+		println 'Applications:'
+		for ( def app : grid.getApplications() ) {
+			println '\t' + app.getName()
+			//			printConnections(app)
+		}
+
+		println 'Versions:'
+		for ( def v : grid.getVersions() ) {
+			println '\t' + v.getVersion()
+			//			printConnections(v)
+		}
+
+		println 'Packages:'
+		for ( def p : grid.getPackages() ) {
+			println '\t' + p.getName()
+			//			printConnections(p)
+		}
+
+		System.exit(0)
+	}
+}

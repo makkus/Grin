@@ -1,0 +1,8 @@
+Package: grin
+Version: VERSION_TOKEN
+Section: misc
+Priority: optional
+Architecture: all
+Depends: java-runtime,nesi-meta
+Maintainer: Markus Binsteiner <m.binsteiner@auckland.ac.nz>
+Description: A UI to do grid info config related tasks

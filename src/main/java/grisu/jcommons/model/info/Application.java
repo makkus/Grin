@@ -2,24 +2,60 @@ package grisu.jcommons.model.info;
 
 import grisu.jcommons.constants.Constants;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 
 public class Application extends AbstractResource implements
 		Comparable<Application> {
 
 	public static final Application GENERIC_APPLICATION = new Application(
 			Constants.GENERIC_APPLICATION_NAME);
+	
+	public static Collection<String> PREFERRED_APPLICATION_NAMES = Sets.newHashSet();
+	
+	public static void setApplicationNameList(String path) {
+		try {
+			List<String> lines = Files.readLines(new File(path), Charsets.UTF_8);
+			Set<String> temp = Sets.newHashSet();
+			for (String line : lines) {
+				if ( StringUtils.isNotBlank(line)) {
+					temp.add(line.trim());
+				}
+			}
+			
+			PREFERRED_APPLICATION_NAMES = temp;
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 
 	private final static Map<String, Application> cached = Maps.newHashMap();
 
 	public static synchronized Application get(String application) {
 
 		if (cached.get(application) == null) {
+			if ( PREFERRED_APPLICATION_NAMES != null ) {
+				for ( String app : PREFERRED_APPLICATION_NAMES ) {
+					if ( app.equalsIgnoreCase(application) ) {
+						application = app;
+						break;
+					}
+				}
+			}
 			cached.put(application, new Application(application));
 		}
 

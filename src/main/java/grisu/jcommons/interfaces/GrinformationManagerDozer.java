@@ -6,6 +6,7 @@ import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.jcommons.model.info.AbstractResource;
 import grisu.model.info.dto.Application;
 import grisu.model.info.dto.Directory;
+import grisu.model.info.dto.FileSystem;
 import grisu.model.info.dto.JobQueueMatch;
 import grisu.model.info.dto.Package;
 import grisu.model.info.dto.Queue;
@@ -497,6 +498,21 @@ public class GrinformationManagerDozer implements InformationManager {
 						.transform(
 								directories,
 								new DozerTransformer<grisu.jcommons.model.info.Directory, Directory>()));
+	}
+
+	@Override
+	public List<FileSystem> getFileSystems() {
+		Collection<grisu.jcommons.model.info.FileSystem> filesystems = getGrid().getFilesystems();
+
+		if (CollectionUtils.isEmpty(filesystems)) {
+			return Lists.newArrayList();
+		}
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								filesystems,
+								new DozerTransformer<grisu.jcommons.model.info.FileSystem, FileSystem>()));
+
 	}
 
 }

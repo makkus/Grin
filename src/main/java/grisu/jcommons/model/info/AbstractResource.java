@@ -3,6 +3,7 @@ package grisu.jcommons.model.info;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -33,6 +34,8 @@ public abstract class AbstractResource {
 	}
 
 	protected String alias;
+	
+	public final UUID uuid = UUID.randomUUID();
 	
 	private LinkedHashMap<String, String> options = Maps.newLinkedHashMap();
 
