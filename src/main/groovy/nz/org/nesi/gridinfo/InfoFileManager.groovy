@@ -1,17 +1,29 @@
 package nz.org.nesi.gridinfo
 
-import grisu.jcommons.model.info.Application
+import grisu.grin.YnfoManager
 import grisu.jcommons.model.info.Package
 
-import org.apache.commons.io.FilenameUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.JCommander
 import com.beust.jcommander.ParameterException
 
 class InfoFileManager {
 	
+	public static final Logger myLogger = LoggerFactory.getLogger(InfoFileManager.class)
 	
 	public static Set<Package> createPackageList(def file_or_folder, boolean app_structure=false, String filter=null) {
+		
+		if ( YnfoManager.CURRENT_LOCAL_CONFIG ) {
+			String current = new File(YnfoManager.CURRENT_LOCAL_CONFIG).getParent()
+			
+			if ( file_or_folder instanceof String && ! new File(file_or_folder).isAbsolute() ) {
+				file_or_folder = current + File.separator + file_or_folder
+				 myLogger.debug("Using relative file: "+file_or_folder)
+			}
+		}
+		
 		InfoFileManager ifm = new InfoFileManager(file_or_folder, app_structure, filter)
 		return ifm.getPackages()
 	}

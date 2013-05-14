@@ -20,7 +20,7 @@ class GrinConfigTester {
 		}
 
 		def url = params.getPathOrUrl()
-		println '\nUsing info config from: "'+url+'...\n"'
+		println '\nUsing info config from: "'+url+'..."\n'
 		def ym = new YnfoManager(url)
 
 		Grid grid = ym.getGrid()

@@ -1,19 +1,27 @@
 package grisu.grin
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import grisu.grin.model.Grid
 import grisu.grin.model.resources.*
 import grisu.jcommons.configuration.CommonGridProperties
 import grisu.jcommons.constants.GridEnvironment
+import grisu.jcommons.git.GitRepoUpdater
 import grisu.jcommons.model.info.*
-import groovy.util.logging.Slf4j
+
+import org.apache.commons.io.FilenameUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+import com.google.common.collect.Maps
+
+
 
 class YnfoManager  {
 	
 	static final Logger log = LoggerFactory.getLogger(YnfoManager.class);
-
+	
+	public static String CURRENT_CONFIG;
+	public static String CURRENT_LOCAL_CONFIG;
+	
 	class UpdateInfoTask extends TimerTask {
 		public void run() {
 			log.debug("Kicking of automated info refresh...");
@@ -167,7 +175,6 @@ class YnfoManager  {
 		task = timer.scheduleAtFixedRate(new UpdateInfoTask(), seconds*1000, seconds*1000)
 	}
 
-
 	protected synchronized void initialize(String pathToConfig) {
 
 		Date now = new Date()
@@ -215,12 +222,25 @@ class YnfoManager  {
 					pathToConfig = 'https://raw.github.com/nesi/nesi-grid-info/master/nesi_info.groovy'
 
 				} 
-				if ( pathToConfig.startsWith('http') ) {
+				
+				CURRENT_CONFIG = pathToConfig
+								
+				if (pathToConfig.startsWith('git://') ) {
+					log.debug 'Checking out/updating config from git: "'+pathToConfig+'"...'
+					
+					File gitRepoFile = GitRepoUpdater.ensureUpdated(pathToConfig)
+					pathToConfig = gitRepoFile.getAbsolutePath()
+					CURRENT_LOCAL_CONFIG = gitRepoFile.getAbsolutePath()
+					config = new ConfigSlurper().parse(new File(pathToConfig).toURL())
+					
+				} else if ( pathToConfig.startsWith('http') ) {
 					log.debug 'Retrieving remote config from "'+pathToConfig+'"...'
 					config = new ConfigSlurper().parse(new URL(pathToConfig))
 				} else {
 					log.debug 'Using local config from "'+pathToConfig+'"...'
-					config = new ConfigSlurper().parse(new File(pathToConfig).toURL())
+					File c = new File(pathToConfig)
+					CURRENT_LOCAL_CONFIG = c.getAbsolutePath()
+					config = new ConfigSlurper().parse(c.toURL())
 				}
 
 
