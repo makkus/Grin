@@ -1,6 +1,7 @@
 package nz.org.nesi.gridinfo
 
 import grisu.grin.YnfoManager
+import grisu.jcommons.git.GitRepoUpdater;
 import grisu.jcommons.model.info.Package
 
 import org.slf4j.Logger
@@ -17,6 +18,15 @@ class InfoFileManager {
 		
 		if ( YnfoManager.CURRENT_LOCAL_CONFIG ) {
 			String current = new File(YnfoManager.CURRENT_LOCAL_CONFIG).getParent()
+			
+			if ( file_or_folder instanceof String ) {
+				
+				if ( file_or_folder.startsWith('git://') ) {
+					file_or_folder = GitRepoUpdater.ensureUpdated(file_or_folder)
+				}
+				
+				
+			}
 			
 			if ( file_or_folder instanceof String && ! new File(file_or_folder).isAbsolute() ) {
 				file_or_folder = current + File.separator + file_or_folder
