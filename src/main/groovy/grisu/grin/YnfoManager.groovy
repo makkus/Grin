@@ -1,7 +1,6 @@
 package grisu.grin
 
 import grisu.grin.model.Grid
-import grisu.grin.model.resources.*
 import grisu.jcommons.configuration.CommonGridProperties
 import grisu.jcommons.constants.GridEnvironment
 import grisu.jcommons.git.GitRepoUpdater
