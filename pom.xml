@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>grin</artifactId>
 
@@ -34,7 +33,7 @@
 	</repositories>
 
 
-	<version>0.2.3-SNAPSHOT</version>
+	<version>0.3</version>
 	<name>grid-info</name>
 	<dependencies>
 		<dependency>
@@ -476,7 +475,8 @@
 		<url>https://github.com/makkus/Grin</url>
 		<connection>scm:git:git://github.com/makkus/Grin.git</connection>
 		<developerConnection>scm:git:git@github.com:makkus/Grin.git</developerConnection>
-	</scm>
+	  <tag>0.3</tag>
+  </scm>
 	<issueManagement>
 		<url>https://github.com/makkus/Grin/issues</url>
 		<system>Github</system>
