@@ -481,8 +481,9 @@ public class GrinformationManagerDozer implements InformationManager {
 	 * 
 	 * @see grisu.jcommons.interfaces.InformationManager#refresh()
 	 */
-	public void refresh() {
+	public String refresh() {
 		ym.refreshAndWait();
+        return ym.getConfigString();
 	}
 
 	@Override

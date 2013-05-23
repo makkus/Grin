@@ -55,7 +55,8 @@ class YnfoManager  {
 		if (args.length == 0 ) {
 			println 'No url specified, using default testbed config...'
 			args = [
-				'https://raw.github.com/nesi/nesi-grid-info/develop/testbed_info.groovy'
+				//'https://raw.github.com/nesi/nesi-grid-info/develop/testbed_info.groovy'
+                    'git://github.com/nesi/nesi-grid-info.git/nesi/nesi_info_dyn.groovy'
 			]
 		}
 
@@ -125,6 +126,8 @@ class YnfoManager  {
 			//			printConnections(p)
 		}
 
+        println ym.getConfigString()
+
 		System.exit(0)
 	}
 
@@ -140,6 +143,8 @@ class YnfoManager  {
 	def task
 
 	Date lastUpdated
+
+    String configString = "n/a"
 
 	public YnfoManager() {
 		this(null)
@@ -228,6 +233,7 @@ class YnfoManager  {
 					log.debug 'Checking out/updating config from git: "'+pathToConfig+'"...'
 					
 					File gitRepoFile = GitRepoUpdater.ensureUpdated(pathToConfig)
+                    configString = gitRepoFile.text
 					pathToConfig = gitRepoFile.getAbsolutePath()
 					CURRENT_LOCAL_CONFIG = gitRepoFile.getAbsolutePath()
 					config = new ConfigSlurper().parse(new File(pathToConfig).toURL())
@@ -235,9 +241,11 @@ class YnfoManager  {
 				} else if ( pathToConfig.startsWith('http') ) {
 					log.debug 'Retrieving remote config from "'+pathToConfig+'"...'
 					config = new ConfigSlurper().parse(new URL(pathToConfig))
+                    configString = "n/a"
 				} else {
 					log.debug 'Using local config from "'+pathToConfig+'"...'
 					File c = new File(pathToConfig)
+                    configString = c.text
 					CURRENT_LOCAL_CONFIG = c.getAbsolutePath()
 					config = new ConfigSlurper().parse(c.toURL())
 				}
@@ -308,6 +316,10 @@ class YnfoManager  {
 		out.close()
 		tempfile
 	}
+
+    public String getConfigString() {
+        return configString
+    }
 
 
 	public Grid getGrid() {
