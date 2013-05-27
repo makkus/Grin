@@ -33,7 +33,7 @@
 	</repositories>
 
 
-	<version>0.4</version>
+	<version>0.5-SNAPSHOT</version>
 	<name>grid-info</name>
 	<dependencies>
 		<dependency>
@@ -475,7 +475,7 @@
 		<url>https://github.com/makkus/Grin</url>
 		<connection>scm:git:git://github.com/makkus/Grin.git</connection>
 		<developerConnection>scm:git:git@github.com:makkus/Grin.git</developerConnection>
-	  <tag>0.4</tag>
+	  <tag>HEAD</tag>
   </scm>
 	<issueManagement>
 		<url>https://github.com/makkus/Grin/issues</url>
