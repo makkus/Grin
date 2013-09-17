@@ -1,12 +1,12 @@
 package grisu.jcommons.model.info;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 public abstract class AbstractResource {
 
@@ -22,7 +22,8 @@ public abstract class AbstractResource {
 		for (AbstractResource temp : r.getDirectConnections()) {
 			if (!temp.getClass().equals(arc)) {
 				result.add(temp);
-				for (AbstractResource tmp2 : getRecursiveConnections(arc, temp)) {
+                Set<AbstractResource> recCon = getRecursiveConnections(arc,temp);
+				for (AbstractResource tmp2 : recCon) {
 					if (!tmp2.getClass().equals(arc)) {
 						result.add(tmp2);
 					}
@@ -34,9 +35,9 @@ public abstract class AbstractResource {
 	}
 
 	protected String alias;
-	
+
 	public final UUID uuid = UUID.randomUUID();
-	
+
 	private LinkedHashMap<String, String> options = Maps.newLinkedHashMap();
 
 	private final Set<AbstractResource> connections = Sets.newHashSet();
@@ -56,14 +57,14 @@ public abstract class AbstractResource {
 	}
 
 	public synchronized String getAlias() {
-		
+
 		return alias;
 	}
-	
+
 	public Map<String, String> getOptions() {
 		return options;
 	}
-	
+
 	public void setOptions(Map<String, String> options) {
 		this.options = Maps.newLinkedHashMap(options);
 	}
@@ -75,7 +76,7 @@ public abstract class AbstractResource {
 	}
 
 	protected abstract Set<AbstractResource> getDirectConnections();
-	
+
 
 	public final void popluateConnections() {
 

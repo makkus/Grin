@@ -1,26 +1,25 @@
 package grisu.jcommons.model.info;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.utils.EndpointHelpers;
 
 import java.util.Collection;
 import java.util.Set;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-
 /**
  * A Directory is an object that points to a url in grid-space (consisting of a
  * {@link FileSystem} and a path.
- * 
+ *
  * It also contains information on which VO is needed to access the url.
- * 
+ *
  * @author Markus Binsteiner
- * 
+ *
  */
 public class Directory extends AbstractPhysicalResource implements
 		Comparable<Directory> {
-	
+
 	public static boolean isShared(Directory d) {
 		String shared = d.getOptions().get(Constants.INFO_DIRECTORY_SHARED_KEY);
 
@@ -32,7 +31,7 @@ public class Directory extends AbstractPhysicalResource implements
 
 		return Boolean.parseBoolean(vol);
 	}
-	
+
 	public static String getOption(Directory d, String key) {
 		String val = d.getOptions().get(Constants.INFO_IS_VOLATILE_KEY);
 		return val;
@@ -85,7 +84,7 @@ public class Directory extends AbstractPhysicalResource implements
 		// }
 		setAlias(alias);
 	}
-	
+
 
 	public int compareTo(Directory o) {
 
@@ -115,7 +114,7 @@ public class Directory extends AbstractPhysicalResource implements
 		}
 		return false;
 	}
-	
+
 
 	@Override
 	public String getContactString() {
@@ -138,7 +137,7 @@ public class Directory extends AbstractPhysicalResource implements
 	public Collection<Group> getGroups() {
 		return groups;
 	}
-	
+
 	public String getHost() {
 		return getFilesystem().getHost();
 	}

@@ -1,12 +1,11 @@
 package grisu.jcommons.model.info;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import grisu.jcommons.constants.Constants;
 
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 public class Version extends AbstractResource implements Comparable<Version> {
 
@@ -33,7 +32,7 @@ public class Version extends AbstractResource implements Comparable<Version> {
 	}
 
 	public int compareTo(Version o) {
-		return version.compareTo(o.getVersion());
+		return version.toLowerCase().compareTo(o.getVersion().toLowerCase());
 	}
 
 	@Override

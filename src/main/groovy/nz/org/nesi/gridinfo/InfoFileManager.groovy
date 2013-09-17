@@ -44,6 +44,7 @@ class InfoFileManager {
 		
 		GrinCreateParameters createParams = new GrinCreateParameters()
 		GrinTestParameters testParams = new GrinTestParameters()
+        GrinInfoDisplayParameters infoDisplayParameters = new GrinInfoDisplayParameters();
 
 		JCommander jc = new JCommander(mainParams)
 		
@@ -51,6 +52,7 @@ class InfoFileManager {
 		
 		jc.addCommand("create", createParams)
 		jc.addCommand("test", testParams)
+        jc.addCommand("info", infoDisplayParameters)
 		
 		try {
 			jc.parse(args)
@@ -69,8 +71,11 @@ class InfoFileManager {
 			GrinConfigTester gct = new GrinConfigTester(testParams)
 			gct.execute()
 			System.exit(0)
-		} else {
-			
+		} else if ( "info" == jc.getParsedCommand()) {
+            GrinInfoDisplay gid = new GrinInfoDisplay(infoDisplayParameters);
+            gid.execute()
+            System.exit(0)
+        } else {
 			jc.usage()
 			System.exit(0)
 		

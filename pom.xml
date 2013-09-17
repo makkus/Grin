@@ -131,7 +131,7 @@
 				</dependencies>
 			</plugin>
 
-			<!-- you can disable the assembly plugin if you want, your builds will 
+			<!-- you can disable the assembly plugin if you want, your builds will
 				be faster I find it quite handy to have maven build an executable jar, though -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -179,7 +179,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -446,9 +446,9 @@
 							<preinstallScriptlet>
 								<script>echo "Installing grin..."</script>
 							</preinstallScriptlet>
-							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile> 
-								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet> 
-								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding> 
+							<!-- <postinstallScriptlet> <scriptFile>src/main/scripts/postinstall</scriptFile>
+								<fileEncoding>utf-8</fileEncoding> </postinstallScriptlet> <preremoveScriptlet>
+								<scriptFile>src/main/scripts/preremove</scriptFile> <fileEncoding>utf-8</fileEncoding>
 								</preremoveScriptlet> -->
 						</configuration>
 					</plugin>
