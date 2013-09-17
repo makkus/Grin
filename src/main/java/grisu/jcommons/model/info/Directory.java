@@ -6,208 +6,230 @@ import grisu.jcommons.constants.Constants;
 import grisu.jcommons.utils.EndpointHelpers;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * A Directory is an object that points to a url in grid-space (consisting of a
  * {@link FileSystem} and a path.
- *
+ * <p/>
  * It also contains information on which VO is needed to access the url.
  *
  * @author Markus Binsteiner
- *
  */
 public class Directory extends AbstractPhysicalResource implements
-		Comparable<Directory> {
+        Comparable<Directory> {
 
-	public static boolean isShared(Directory d) {
-		String shared = d.getOptions().get(Constants.INFO_DIRECTORY_SHARED_KEY);
+    public static boolean isShared(Directory d) {
+        String shared = d.getOptions().get(Constants.INFO_DIRECTORY_SHARED_KEY);
 
-		return Boolean.parseBoolean(shared);
-	}
+        return Boolean.parseBoolean(shared);
+    }
 
-	public static boolean isVolatileDirectory(Directory d) {
-		String vol = d.getOptions().get(Constants.INFO_IS_VOLATILE_KEY);
+    public static boolean isVolatileDirectory(Directory d) {
+        String vol = d.getOptions().get(Constants.INFO_IS_VOLATILE_KEY);
 
-		return Boolean.parseBoolean(vol);
-	}
+        return Boolean.parseBoolean(vol);
+    }
 
-	public static String getOption(Directory d, String key) {
-		String val = d.getOptions().get(Constants.INFO_IS_VOLATILE_KEY);
-		return val;
-	}
+    public static String getOption(Directory d, String key) {
+        String val = d.getOptions().get(Constants.INFO_IS_VOLATILE_KEY);
+        return val;
+    }
 
-	private static String fixMdsLegacies(String path) {
+    private static String fixMdsLegacies(String path) {
 
-		path = path.replace("${GLOBUS_USER_HOME}", "~");
+        path = path.replace("${GLOBUS_USER_HOME}", "~");
 
-		int i = path.indexOf("[");
-		if (i > 0) {
-			path = path.substring(0, i);
-		}
+        int i = path.indexOf("[");
+        if (i > 0) {
+            path = path.substring(0, i);
+        }
 
-		return path;
-	}
+        return path;
+    }
 
-	private static String slash(String path) {
+    private static String slash(String path) {
 
-		if (!path.startsWith("/")) {
-			path = "/" + path;
-		}
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
 
-		if (!path.endsWith("/")) {
-			return path + "/";
-		} else {
-			return path;
-		}
-	}
+        if (!path.endsWith("/")) {
+            return path + "/";
+        } else {
+            return path;
+        }
+    }
 
-	private FileSystem filesystem;
-	private String path = "/~/";
-	private Collection<Group> groups = Sets.newHashSet(Group.NO_VO_GROUP);
+    private FileSystem filesystem;
+    private String path = "/~/";
+    private Collection<Group> groups = Sets.newHashSet(Group.NO_VO_GROUP);
 
-	private Directory() {
-	}
+    private Directory() {
+    }
 
-	public Directory(FileSystem fs, String path, Set<Group> fqans, String alias) {
-		setFileSystem(fs);
-		if (path.endsWith("/")) {
-			setPath(slash(fixMdsLegacies(path.substring(0, path.length() - 1))));
-		} else {
-			setPath(slash(fixMdsLegacies(path)));
-		}
+    public Directory(FileSystem fs, String path, Set<Group> fqans, String alias) {
+        setFileSystem(fs);
+        if (path.endsWith("/")) {
+            setPath(slash(fixMdsLegacies(path.substring(0, path.length() - 1))));
+        } else {
+            setPath(slash(fixMdsLegacies(path)));
+        }
 
-		setGroups(Sets.newTreeSet(fqans));
-		// if (StringUtils.isBlank(alias)) {
-		// alias = EndpointHelpers.translateIntoEndpointName(fs.getHost(),
-		// fqan.getFqan());
-		// }
-		setAlias(alias);
-	}
-
-
-	public int compareTo(Directory o) {
-
-		int r = filesystem.compareTo(o.getFilesystem());
-		if (r == 0) {
-			r = path.compareTo(o.getPath());
-			if (r == 0) {
-
-				// TODO compare both groups
-				// r = groups.compareTo(o.getGroups());
-			}
-		}
-		return r;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof Directory) {
-			Directory other = (Directory) o;
-
-			if (getFilesystem().equals(other.getFilesystem())
-					&& path.equals(other.getPath())) {
-				// TODO equals for groups
-				// && groups.equals(other.getGroup())) {
-				return true;
-			}
-		}
-		return false;
-	}
+        setGroups(Sets.newTreeSet(fqans));
+        // if (StringUtils.isBlank(alias)) {
+        // alias = EndpointHelpers.translateIntoEndpointName(fs.getHost(),
+        // fqan.getFqan());
+        // }
+        setAlias(alias);
+    }
 
 
-	@Override
-	public String getContactString() {
-		return toUrl();
-	}
+    public int compareTo(Directory o) {
 
-	@Override
-	public Set<AbstractResource> getDirectConnections() {
+        int r = filesystem.compareTo(o.getFilesystem());
+        if (r == 0) {
+            r = path.compareTo(o.getPath());
+            if (r == 0) {
 
-		Set<AbstractResource> result = Sets.newHashSet();
-		result.addAll(getGroups());
-		result.add(getFilesystem());
-		return result;
-	}
+                // TODO compare both groups
+                // r = groups.compareTo(o.getGroups());
+            }
+        }
+        return r;
+    }
 
-	public FileSystem getFilesystem() {
-		return filesystem;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Directory) {
+            Directory other = (Directory) o;
 
-	public Collection<Group> getGroups() {
-		return groups;
-	}
+            if (getFilesystem().equals(other.getFilesystem())
+                    && path.equals(other.getPath())) {
+                // TODO equals for groups
+                // && groups.equals(other.getGroup())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public String getHost() {
-		return getFilesystem().getHost();
-	}
 
-	public String getPath() {
-		return path;
-	}
+    @Override
+    public String getContactString() {
+        return toUrl();
+    }
 
-	public String getRelativePath(String url) {
-		if (EndpointHelpers.isGlobusOnlineUrl(url)) {
-			String username = EndpointHelpers.extractUsername(url);
-			String epName = EndpointHelpers.extractEndpointName(url);
+    @Override
+    protected void addConnection(AbstractResource res) {
 
-			if (!epName.equals(EndpointHelpers.extractEndpointName(getAlias()))) {
-				throw new IllegalStateException(
-						"Url not in this directory filespace.");
-			}
+        if (res.getClass().equals(this.getClass())) {
+            return;
+        }
 
-			String otherPath = EndpointHelpers.extractPathPart(url);
+        System.out.println("Adding: "+res);
+        if (!connections.contains(res)) {
+            connections.add(res);
+        }
 
-			if (!otherPath.startsWith(path)) {
-				throw new IllegalStateException(
-						"Url not in this directory filespace.");
-			}
+        res.connections.add(this);
 
-			return otherPath.substring(path.length());
+    }
 
-		} else {
+    @Override
+    public Set<AbstractResource> getDirectConnections() {
 
-			String thisUrl = toUrl();
+        Set<AbstractResource> result = Sets.newHashSet();
+        result.addAll(getGroups());
+        result.add(getFilesystem());
+        return result;
+    }
 
-			if (!url.startsWith(thisUrl)) {
-				throw new IllegalStateException(
-						"Url not in this directory filespace.");
-			}
+    public FileSystem getFilesystem() {
+        return filesystem;
+    }
 
-			return url.substring(thisUrl.length());
+    public Collection<Group> getGroups() {
+        return groups;
+    }
 
-		}
-	}
+    public String getHost() {
+        return getFilesystem().getHost();
+    }
 
-	@Override
-	public Site getSite() {
-		return getFilesystem().getSite();
-	}
+    public String getPath() {
+        return path;
+    }
 
-	public String toUrl() {
-		return filesystem.toString() + path;
-	}
+    protected Set<Class> getExcludeConnections() {
+        HashSet<Class> temp = new HashSet<Class>();
+        temp.add(Group.class);
+        return temp;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(filesystem, path, groups);
-	}
+    public String getRelativePath(String url) {
+        if (EndpointHelpers.isGlobusOnlineUrl(url)) {
+            String username = EndpointHelpers.extractUsername(url);
+            String epName = EndpointHelpers.extractEndpointName(url);
 
-	private void setFileSystem(FileSystem fs) {
-		this.filesystem = fs;
-	}
+            if (!epName.equals(EndpointHelpers.extractEndpointName(getAlias()))) {
+                throw new IllegalStateException(
+                        "Url not in this directory filespace.");
+            }
 
-	private void setGroups(Set<Group> fqans) {
-		this.groups = Sets.newTreeSet(fqans);
-	}
+            String otherPath = EndpointHelpers.extractPathPart(url);
 
-	private void setPath(String path) {
-		this.path = path;
-	}
+            if (!otherPath.startsWith(path)) {
+                throw new IllegalStateException(
+                        "Url not in this directory filespace.");
+            }
 
-	@Override
-	public String toString() {
-		return toUrl();
-	}
+            return otherPath.substring(path.length());
+
+        } else {
+
+            String thisUrl = toUrl();
+
+            if (!url.startsWith(thisUrl)) {
+                throw new IllegalStateException(
+                        "Url not in this directory filespace.");
+            }
+
+            return url.substring(thisUrl.length());
+
+        }
+    }
+
+    @Override
+    public Site getSite() {
+        return getFilesystem().getSite();
+    }
+
+    public String toUrl() {
+        return filesystem.toString() + path;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(filesystem, path, groups);
+    }
+
+    private void setFileSystem(FileSystem fs) {
+        this.filesystem = fs;
+    }
+
+    private void setGroups(Set<Group> fqans) {
+        this.groups = Sets.newTreeSet(fqans);
+    }
+
+    private void setPath(String path) {
+        this.path = path;
+    }
+
+    @Override
+    public String toString() {
+        return toUrl();
+    }
 
 }

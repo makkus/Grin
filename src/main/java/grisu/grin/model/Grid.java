@@ -1,43 +1,22 @@
 package grisu.grin.model;
 
-import grisu.jcommons.constants.Constants;
-import grisu.jcommons.constants.JobSubmissionProperty;
-import grisu.jcommons.model.info.AbstractPhysicalResource;
-import grisu.jcommons.model.info.AbstractResource;
-import grisu.jcommons.model.info.Application;
-import grisu.jcommons.model.info.Directory;
-import grisu.jcommons.model.info.Executable;
-import grisu.jcommons.model.info.FileSystem;
-import grisu.jcommons.model.info.Filters;
-import grisu.jcommons.model.info.Gateway;
-import grisu.jcommons.model.info.Group;
-import grisu.jcommons.model.info.JobQueueMatch;
-import grisu.jcommons.model.info.Middleware;
-import grisu.jcommons.model.info.Package;
-import grisu.jcommons.model.info.Queue;
-import grisu.jcommons.model.info.Site;
-import grisu.jcommons.model.info.VO;
-import grisu.jcommons.model.info.Version;
-import grisu.model.info.dto.DtoProperties;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import grisu.jcommons.constants.Constants;
+import grisu.jcommons.constants.JobSubmissionProperty;
+import grisu.jcommons.model.info.*;
+import grisu.jcommons.model.info.Package;
+import grisu.jcommons.model.info.Queue;
+import grisu.model.info.dto.DtoProperties;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class Grid {
 
@@ -425,16 +404,26 @@ public class Grid {
 		validateSet(getVos());
 		validateSet(getSites());
 
+        System.out.println("2nd go");
+
 		validateSet2ndGo(getPackages());
 		validateSet2ndGo(getApplications());
 		validateSet2ndGo(getVersions());
 		validateSet2ndGo(getQueues());
 		validateSet2ndGo(getGateways());
+//        for ( Directory d : getDirectorys() ) {
+//            System.out.println("DIR: "+d.toString());
+//            for (AbstractResource ar : d.getConnections() ) {
+//                System.out.println("\t"+ar);
+//            }
+//        }
 		validateSet2ndGo(getDirectorys());
-		validateSet2ndGo(getFilesystems());
+        validateSet2ndGo(getFilesystems());
 		validateSet2ndGo(getGroups());
 		validateSet2ndGo(getVos());
 		validateSet2ndGo(getSites());
+
+
 
 		// now we make everything immutable
 		filesystems = ImmutableSet.copyOf(filesystems);

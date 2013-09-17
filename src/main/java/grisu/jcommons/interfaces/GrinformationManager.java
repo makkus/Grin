@@ -259,6 +259,7 @@ public class GrinformationManager implements InformationManager {
 		Collection<grisu.jcommons.model.info.Directory> directories = getGrid()
 				.getResources(grisu.jcommons.model.info.Directory.class,
 						getGrid().getGroup(fqan));
+
 		if (CollectionUtils.isEmpty(directories)) {
 			return Lists.newArrayList();
 		}
