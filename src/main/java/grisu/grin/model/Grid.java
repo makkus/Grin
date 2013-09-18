@@ -404,19 +404,11 @@ public class Grid {
 		validateSet(getVos());
 		validateSet(getSites());
 
-        System.out.println("2nd go");
-
 		validateSet2ndGo(getPackages());
 		validateSet2ndGo(getApplications());
 		validateSet2ndGo(getVersions());
 		validateSet2ndGo(getQueues());
 		validateSet2ndGo(getGateways());
-//        for ( Directory d : getDirectorys() ) {
-//            System.out.println("DIR: "+d.toString());
-//            for (AbstractResource ar : d.getConnections() ) {
-//                System.out.println("\t"+ar);
-//            }
-//        }
 		validateSet2ndGo(getDirectorys());
         validateSet2ndGo(getFilesystems());
 		validateSet2ndGo(getGroups());

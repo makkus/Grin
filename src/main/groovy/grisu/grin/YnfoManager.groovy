@@ -1,26 +1,19 @@
 package grisu.grin
-
 import grisu.grin.model.Grid
 import grisu.jcommons.configuration.CommonGridProperties
 import grisu.jcommons.constants.GridEnvironment
 import grisu.jcommons.git.GitRepoUpdater
 import grisu.jcommons.model.info.*
-
-import org.apache.commons.io.FilenameUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import com.google.common.collect.Maps
-
-
-
 class YnfoManager  {
-	
+
 	static final Logger log = LoggerFactory.getLogger(YnfoManager.class);
-	
+
 	public static String CURRENT_CONFIG;
 	public static String CURRENT_LOCAL_CONFIG;
-	
+
 	class UpdateInfoTask extends TimerTask {
 		public void run() {
 			log.debug("Kicking of automated info refresh...");
@@ -189,7 +182,7 @@ class YnfoManager  {
 			Middleware.clearCache()
 			Executable.clearCache()
 			Application.clearCache()
-			
+
 			def gridtemp = new Grid()
 
 			try {
@@ -225,19 +218,19 @@ class YnfoManager  {
 					//					config = new ConfigSlurper().parse(new URL('https://raw.github.com/nesi/nesi-grid-info/develop/nesi.groovy'))
 					pathToConfig = 'https://raw.github.com/nesi/nesi-grid-info/master/nesi_info.groovy'
 
-				} 
-				
+				}
+
 				CURRENT_CONFIG = pathToConfig
-								
+
 				if (pathToConfig.startsWith('git://') ) {
 					log.debug 'Checking out/updating config from git: "'+pathToConfig+'"...'
-					
+
 					File gitRepoFile = GitRepoUpdater.ensureUpdated(pathToConfig)
                     configString = gitRepoFile.text
 					pathToConfig = gitRepoFile.getAbsolutePath()
 					CURRENT_LOCAL_CONFIG = gitRepoFile.getAbsolutePath()
 					config = new ConfigSlurper().parse(new File(pathToConfig).toURL())
-					
+
 				} else if ( pathToConfig.startsWith('http') ) {
 					log.debug 'Retrieving remote config from "'+pathToConfig+'"...'
 					config = new ConfigSlurper().parse(new URL(pathToConfig))
@@ -266,24 +259,28 @@ class YnfoManager  {
 					switch(object.class) {
 
 						case Directory.class:
-							
+
 							if ( object.isAvailable() && object.getFilesystem().isAvailable() ) {
-								log.debug "Adding directory: "+object.toUrl()
+                                log.debug "Adding directory: "+object.toUrl()
 								gridtemp.addDirectory(object)
 							} else {
 								log.debug "Directory not available: "+object.toUrl()
 							}
 							break
-							
+
 						case Queue.class:
 							if ( object.getGateway().isAvailable() ) {
 								Set<Directory> temp_dirs = object.getDirectories()
-								
+
 								if ( temp_dirs.any() { it ->
 									it.isAvailable() && it.getFilesystem().isAvailable()
 								}) {
 									log.debug "Adding queue: "+object.toString()
 									gridtemp.addQueue(object)
+                                    for ( def dir : temp_dirs ) {
+                                        log.debug "Adding directory: "+dir.toUrl()
+                                        gridtemp.addDirectory(dir)
+                                    }
 								} else {
 									log.debug("Queue not available because no filesystem: "+object.toString())
 								}

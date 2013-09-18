@@ -122,22 +122,6 @@ public class Directory extends AbstractPhysicalResource implements
     }
 
     @Override
-    protected void addConnection(AbstractResource res) {
-
-        if (res.getClass().equals(this.getClass())) {
-            return;
-        }
-
-        System.out.println("Adding: "+res);
-        if (!connections.contains(res)) {
-            connections.add(res);
-        }
-
-        res.connections.add(this);
-
-    }
-
-    @Override
     public Set<AbstractResource> getDirectConnections() {
 
         Set<AbstractResource> result = Sets.newHashSet();
@@ -162,11 +146,8 @@ public class Directory extends AbstractPhysicalResource implements
         return path;
     }
 
-    protected Set<Class> getExcludeConnections() {
-        HashSet<Class> temp = new HashSet<Class>();
-        temp.add(Group.class);
-        return temp;
-    }
+
+
 
     public String getRelativePath(String url) {
         if (EndpointHelpers.isGlobusOnlineUrl(url)) {
@@ -200,6 +181,13 @@ public class Directory extends AbstractPhysicalResource implements
 
         }
     }
+
+    protected Set<Class> getExcludeConnections() {
+        HashSet<Class> temp = new HashSet<Class>();
+        temp.add(Group.class);
+        return temp;
+    }
+
 
     @Override
     public Site getSite() {

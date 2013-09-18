@@ -15,6 +15,7 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +32,20 @@ public class GrinformationManager implements InformationManager {
 
 	public static void main (String[] args) {
 
-		GrinformationManager gm = new GrinformationManager("/home/markus/src/config/nesi-grid-info/nesi/uoa_proj.groovy");
+		GrinformationManager gm = new GrinformationManager("/home/markus/src/config/nesi-grid-info/nesi/nesi_info_dyn.groovy");
 
 		for (Directory d : gm.getDirectoriesForVO("/nz/uoa/projects/uoa99998") ) {
 
 			System.out.println(d.toUrl()+": "+d.getOptions().size());
-
+            System.out.println("\t"+ StringUtils.join(d.getGroups(), " - "));
 		}
+
+
+//        for (Directory d : gm.getDirectories() ) {
+//            System.out.println("DIR: "+d.toString());
+//            System.out.println("\t"+ StringUtils.join(d.getGroups(), " - "));
+//
+//        }
 
 
 		System.exit(0);
