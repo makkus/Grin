@@ -183,7 +183,7 @@ public class Grid {
 		}
 
 		for (Application a : getApplications()) {
-			if (a.getName().equals(string)) {
+			if (a.getName().equalsIgnoreCase(string)) {
 				return a;
 			}
 		}
@@ -339,7 +339,7 @@ public class Grid {
 		}
 
 		for (Version v : getVersions()) {
-			if (v.getVersion().equals(version)) {
+			if (v.getVersion().equalsIgnoreCase(version)) {
 				return v;
 			}
 		}

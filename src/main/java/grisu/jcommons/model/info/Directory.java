@@ -4,6 +4,8 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import grisu.jcommons.constants.Constants;
 import grisu.jcommons.utils.EndpointHelpers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,6 +21,8 @@ import java.util.Set;
  */
 public class Directory extends AbstractPhysicalResource implements
         Comparable<Directory> {
+
+    public static final Logger myLogger = LoggerFactory.getLogger(Directory.class);
 
     public static boolean isShared(Directory d) {
         String shared = d.getOptions().get(Constants.INFO_DIRECTORY_SHARED_KEY);
@@ -208,6 +212,7 @@ public class Directory extends AbstractPhysicalResource implements
     }
 
     private void setGroups(Set<Group> fqans) {
+        myLogger.debug("Directory {}: setting groups {}", this.toUrl(), fqans);
         this.groups = Sets.newTreeSet(fqans);
     }
 
