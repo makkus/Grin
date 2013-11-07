@@ -1,12 +1,13 @@
 package grisu.jcommons.model.info;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
+
+import java.util.Map;
+import java.util.Set;
 
 public class Middleware extends AbstractResource implements
 		Comparable<Middleware> {
@@ -18,7 +19,7 @@ public class Middleware extends AbstractResource implements
 			DEFAULT_MIDDLEWARE_TYPE, DEFAULT_VERSION);
 
 	private final static Map<String, Middleware> cached = Maps.newHashMap();
-	
+
 	public static void clearCache() {
 		cached.clear();
 	}
@@ -47,7 +48,9 @@ public class Middleware extends AbstractResource implements
 
 	public int compareTo(Middleware o) {
 		return ComparisonChain.start().compare(getName(), o.getName())
-				.compare(getVersion(), o.getVersion()).result();
+				.compare(getVersion(), o.getVersion())
+                .compare(getOptions().keySet(), o.getOptions().keySet(), Ordering.<String>natural().lexicographical())
+                .result();
 	}
 
 	@Override
@@ -61,7 +64,9 @@ public class Middleware extends AbstractResource implements
 		final Middleware other = (Middleware) obj;
 
 		return Objects.equal(getName(), other.getName())
-				&& Objects.equal(getVersion(), getVersion());
+				&& Objects.equal(getVersion(), other.getVersion())
+                && Objects.equal(getOptions(), other.getOptions());
+
 	}
 
 	@Override
@@ -79,7 +84,7 @@ public class Middleware extends AbstractResource implements
 	}
 
 	public int hastCode() {
-		return Objects.hashCode(getName(), getVersion());
+		return Objects.hashCode(getName(), getVersion(), getOptions());
 	}
 
 	private void setName(String name) {

@@ -1,26 +1,17 @@
 package grisu.jcommons.interfaces;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import grisu.grin.YnfoManager;
 import grisu.grin.model.Grid;
 import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.jcommons.model.info.AbstractResource;
-import grisu.model.info.dto.Application;
-import grisu.model.info.dto.Directory;
-import grisu.model.info.dto.FileSystem;
-import grisu.model.info.dto.JobQueueMatch;
+import grisu.model.info.dto.*;
 import grisu.model.info.dto.Package;
 import grisu.model.info.dto.Queue;
-import grisu.model.info.dto.Site;
-import grisu.model.info.dto.VO;
-import grisu.model.info.dto.Version;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.dozer.DozerBeanMapper;
@@ -28,11 +19,8 @@ import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class GrinformationManagerDozer implements InformationManager {
 
@@ -70,14 +58,23 @@ public class GrinformationManagerDozer implements InformationManager {
 
 	public static void main (String[] args) {
 
-		GrinformationManagerDozer gm = new GrinformationManagerDozer("/data/src/config/nesi-grid-info/nesi_info.groovy");
+        //GrinformationManagerDozer gm = new GrinformationManagerDozer("/data/src/config/nesi-grid-info/nesi_info.groovy");
+        GrinformationManagerDozer gm = new GrinformationManagerDozer("/home/markus/src/config/nesi-grid-info/testbed_info.groovy");
 
-		for (Directory d : gm.getDirectoriesForVO("/nz/nesi") ) {
-			
-			System.out.println(d.toUrl()+": "+d.getOptions().size());
+//		for (Directory d : gm.getDirectoriesForVO("/none") ) {
+//
+//			System.out.println(d.toUrl()+": "+d.getOptions().size());
+//
+//		}
 
-		}
-
+        for (Queue q : gm.getAllQueues()) {
+            System.out.println(q.toString());
+            System.out.println("\t"+q.getGateway().toString());
+            System.out.println("\t"+q.getGateway().getMiddleware().toString());
+            for ( DtoProperty p : q.getGateway().getMiddleware().getOptions().getProperties() ) {
+                System.out.println("\t\t"+p.getKey()+" : "+p.getValue());
+            }
+        }
 
 		System.exit(0);
 	}
@@ -478,7 +475,7 @@ public class GrinformationManagerDozer implements InformationManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see grisu.jcommons.interfaces.InformationManager#refresh()
 	 */
 	public String refresh() {
@@ -488,7 +485,7 @@ public class GrinformationManagerDozer implements InformationManager {
 
 	@Override
 	public List<Directory> getDirectories() {
-		
+
 		Collection<grisu.jcommons.model.info.Directory> directories = getGrid().getDirectorys();
 
 		if (CollectionUtils.isEmpty(directories)) {
