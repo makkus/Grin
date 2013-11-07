@@ -1,10 +1,10 @@
 package grisu.jcommons.model.info;
 
-import java.util.Set;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
+
+import java.util.Set;
 
 public class Package extends AbstractResource implements Comparable<Package> {
 
@@ -43,7 +43,7 @@ public class Package extends AbstractResource implements Comparable<Package> {
 		return ComparisonChain
 				.start()
 				.compare(getApplication().getName(),
-						o.getApplication().getName())
+						o.getApplication().getName(), String.CASE_INSENSITIVE_ORDER)
 				.compare(getVersion(), o.getVersion()).result();
 	}
 

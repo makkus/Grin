@@ -1,20 +1,24 @@
 package grisu.grin
-
 import grisu.grin.model.Grid
-import grisu.grin.model.resources.*
 import grisu.jcommons.configuration.CommonGridProperties
 import grisu.jcommons.constants.GridEnvironment
+import grisu.jcommons.git.GitRepoUpdater
 import grisu.jcommons.model.info.*
-import groovy.util.logging.Slf4j
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-@Slf4j('myLogger')
 class YnfoManager  {
+
+	static final Logger log = LoggerFactory.getLogger(YnfoManager.class);
+
+	public static String CURRENT_CONFIG;
+	public static String CURRENT_LOCAL_CONFIG;
 
 	class UpdateInfoTask extends TimerTask {
 		public void run() {
-			myLogger.debug("Kicking of automated info refresh...");
+			log.debug("Kicking of automated info refresh...");
 			refreshAndWait()
-			myLogger.debug("Automated info refresh finished.");
+			log.debug("Automated info refresh finished.");
 		}
 	}
 
@@ -44,7 +48,8 @@ class YnfoManager  {
 		if (args.length == 0 ) {
 			println 'No url specified, using default testbed config...'
 			args = [
-				'https://raw.github.com/nesi/nesi-grid-info/develop/testbed_info.groovy'
+				//'https://raw.github.com/nesi/nesi-grid-info/develop/testbed_info.groovy'
+                    'git://github.com/nesi/nesi-grid-info.git/nesi/nesi_info_dyn.groovy'
 			]
 		}
 
@@ -74,13 +79,13 @@ class YnfoManager  {
 
 		println 'Filesystems:'
 		for ( def fs : grid.getFilesystems() ) {
-			println '\t' + fs.getUrl()
+			println '\t' + fs.toUrl()
 			//			printConnections(fs)
 		}
 
 		println 'Directories:'
 		for ( def dir : grid.getDirectorys() ) {
-			println '\t' + dir.getUrl()
+			println '\t' + dir.toUrl()
 			//			printConnections(dir)
 		}
 
@@ -114,6 +119,8 @@ class YnfoManager  {
 			//			printConnections(p)
 		}
 
+        println ym.getConfigString()
+
 		System.exit(0)
 	}
 
@@ -125,10 +132,12 @@ class YnfoManager  {
 	def grid = new Grid()
 	String path = null
 
-	def timer = new Timer()
+	def timer = new Timer("Info update timer", true)
 	def task
 
 	Date lastUpdated
+
+    String configString = "n/a"
 
 	public YnfoManager() {
 		this(null)
@@ -163,7 +172,6 @@ class YnfoManager  {
 		task = timer.scheduleAtFixedRate(new UpdateInfoTask(), seconds*1000, seconds*1000)
 	}
 
-
 	protected synchronized void initialize(String pathToConfig) {
 
 		Date now = new Date()
@@ -174,7 +182,7 @@ class YnfoManager  {
 			Middleware.clearCache()
 			Executable.clearCache()
 			Application.clearCache()
-			
+
 			def gridtemp = new Grid()
 
 			try {
@@ -197,7 +205,7 @@ class YnfoManager  {
 					pathToConfig = 'testbed'
 				}
 
-				myLogger.debug('Updating info for path/alias: '+pathToConfig)
+				log.debug('Updating info for path/alias: '+pathToConfig)
 
 				if ( "testbed".equals(pathToConfig) ) {
 					//					InputStream is = getClass().getResourceAsStream('/testbed.groovy')
@@ -211,15 +219,29 @@ class YnfoManager  {
 					pathToConfig = 'https://raw.github.com/nesi/nesi-grid-info/master/nesi_info.groovy'
 
 				}
-				if ( pathToConfig.startsWith('http') ) {
-					myLogger.debug 'Retrieving remote config from "'+pathToConfig+'"...'
-					config = new ConfigSlurper().parse(new URL(pathToConfig))
-				} else {
-					myLogger.debug 'Using local config from "'+pathToConfig+'"...'
+
+				CURRENT_CONFIG = pathToConfig
+
+				if (pathToConfig.startsWith('git://') ) {
+					log.debug 'Checking out/updating config from git: "'+pathToConfig+'"...'
+
+					File gitRepoFile = GitRepoUpdater.ensureUpdated(pathToConfig)
+                    configString = gitRepoFile.text
+					pathToConfig = gitRepoFile.getAbsolutePath()
+					CURRENT_LOCAL_CONFIG = gitRepoFile.getAbsolutePath()
 					config = new ConfigSlurper().parse(new File(pathToConfig).toURL())
+
+				} else if ( pathToConfig.startsWith('http') ) {
+					log.debug 'Retrieving remote config from "'+pathToConfig+'"...'
+					config = new ConfigSlurper().parse(new URL(pathToConfig))
+                    configString = "n/a"
+				} else {
+					log.debug 'Using local config from "'+pathToConfig+'"...'
+					File c = new File(pathToConfig)
+                    configString = c.text
+					CURRENT_LOCAL_CONFIG = c.getAbsolutePath()
+					config = new ConfigSlurper().parse(c.toURL())
 				}
-
-
 
 
 				for (def e in config) {
@@ -228,28 +250,54 @@ class YnfoManager  {
 					def object = e.value
 
 					if ( object instanceof AbstractResource ) {
-						//println 'setting alias: '+name
-						object.setAlias(name)
+
+						if ( ! object.getAlias() ) {
+							object.setAlias(name)
+						}
 					}
 
 					switch(object.class) {
 
 						case Directory.class:
-							gridtemp.addDirectory(object)
+
+							if ( object.isAvailable() && object.getFilesystem().isAvailable() ) {
+                                log.debug "Adding directory: "+object.toUrl()
+								gridtemp.addDirectory(object)
+							} else {
+								log.debug "Directory not available: "+object.toUrl()
+							}
 							break
 
 						case Queue.class:
-							gridtemp.addQueue(object)
+							if ( object.getGateway().isAvailable() ) {
+								Set<Directory> temp_dirs = object.getDirectories()
+
+								if ( temp_dirs.any() { it ->
+									it.isAvailable() && it.getFilesystem().isAvailable()
+								}) {
+									log.debug "Adding queue: "+object.toString()
+									gridtemp.addQueue(object)
+                                    for ( def dir : temp_dirs ) {
+                                        log.debug "Adding directory: "+dir.toUrl()
+                                        gridtemp.addDirectory(dir)
+                                    }
+								} else {
+									log.debug("Queue not available because no filesystem: "+object.toString())
+								}
+							} else {
+								log.debug "Queue not available: "+object.toString()
+							}
+
 							break
 					}
 				}
 
-				myLogger.debug('Grid object created for path/alias: '+pathToConfig+'. Validating...')
+				log.debug('Grid object created for path/alias: '+pathToConfig+'. Validating...')
 
 				gridtemp.validate()
-				myLogger.debug('Grid object validated for path/alias: '+pathToConfig)
+				log.debug('Grid object validated for path/alias: '+pathToConfig)
 			} catch (all) {
-				myLogger.error("Can't build Grid object, probably info config broken: "+all.getLocalizedMessage(), all)
+				log.error("Can't build Grid object, probably info config broken: "+all.getLocalizedMessage(), all)
 				return
 			}
 			this.grid = gridtemp
@@ -265,6 +313,10 @@ class YnfoManager  {
 		out.close()
 		tempfile
 	}
+
+    public String getConfigString() {
+        return configString
+    }
 
 
 	public Grid getGrid() {

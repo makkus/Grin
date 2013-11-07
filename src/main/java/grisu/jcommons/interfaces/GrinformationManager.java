@@ -1,37 +1,29 @@
 package grisu.jcommons.interfaces;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import grisu.grin.YnfoManager;
 import grisu.grin.model.Grid;
 import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.jcommons.model.info.AbstractResource;
-import grisu.model.info.dto.Application;
-import grisu.model.info.dto.Directory;
-import grisu.model.info.dto.JobQueueMatch;
+import grisu.model.info.dto.*;
 import grisu.model.info.dto.Package;
-import grisu.model.info.dto.Queue;
-import grisu.model.info.dto.Site;
-import grisu.model.info.dto.VO;
-import grisu.model.info.dto.Version;
+import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.impl.DefaultMapperFactory;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.NotImplementedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class GrinformationManager implements InformationManager {
 
@@ -40,11 +32,20 @@ public class GrinformationManager implements InformationManager {
 
 	public static void main (String[] args) {
 
-		GrinformationManager gm = new GrinformationManager("testbed");
+		GrinformationManager gm = new GrinformationManager("/home/markus/src/config/nesi-grid-info/nesi/nesi_info_dyn.groovy");
 
-		for (VO vo : gm.getAllVOs()) {
-			System.out.println("VO: " + vo);
+		for (Directory d : gm.getDirectoriesForVO("/nz/uoa/projects/uoa99998") ) {
+
+			System.out.println(d.toUrl()+": "+d.getOptions().size());
+            System.out.println("\t"+ StringUtils.join(d.getGroups(), " - "));
 		}
+
+
+//        for (Directory d : gm.getDirectories() ) {
+//            System.out.println("DIR: "+d.toString());
+//            System.out.println("\t"+ StringUtils.join(d.getGroups(), " - "));
+//
+//        }
 
 
 		System.exit(0);
@@ -129,6 +130,7 @@ public class GrinformationManager implements InformationManager {
 
 		Collection<grisu.jcommons.model.info.Application> result = getGrid()
 				.getApplications();
+
 		if (CollectionUtils.isEmpty(result)) {
 			return Lists.newArrayList();
 		}
@@ -265,6 +267,7 @@ public class GrinformationManager implements InformationManager {
 		Collection<grisu.jcommons.model.info.Directory> directories = getGrid()
 				.getResources(grisu.jcommons.model.info.Directory.class,
 						getGrid().getGroup(fqan));
+
 		if (CollectionUtils.isEmpty(directories)) {
 			return Lists.newArrayList();
 		}
@@ -403,11 +406,35 @@ public class GrinformationManager implements InformationManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see grisu.jcommons.interfaces.InformationManager#refresh()
 	 */
-	public void refresh() {
+	public String refresh() {
 		ym.refreshAndWait();
+        return ym.getConfigString();
+	}
+
+	@Override
+	public List<Directory> getDirectories() {
+
+		Collection<grisu.jcommons.model.info.Directory> directories = getGrid().getDirectorys();
+
+		if (CollectionUtils.isEmpty(directories)) {
+			return Lists.newArrayList();
+		}
+		return getMapperFacade().mapAsList(directories, Directory.class);
+	}
+
+	@Override
+	public List<FileSystem> getFileSystems() {
+
+		Collection<grisu.jcommons.model.info.FileSystem> fs = getGrid().getFilesystems();
+
+		if (CollectionUtils.isEmpty(fs)) {
+			return Lists.newArrayList();
+		}
+		return getMapperFacade().mapAsList(fs, FileSystem.class);
+
 	}
 
 }

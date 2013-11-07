@@ -1,24 +1,17 @@
 package grisu.jcommons.interfaces;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import grisu.grin.YnfoManager;
 import grisu.grin.model.Grid;
 import grisu.jcommons.constants.JobSubmissionProperty;
 import grisu.jcommons.model.info.AbstractResource;
-import grisu.model.info.dto.Application;
-import grisu.model.info.dto.Directory;
-import grisu.model.info.dto.JobQueueMatch;
+import grisu.model.info.dto.*;
 import grisu.model.info.dto.Package;
 import grisu.model.info.dto.Queue;
-import grisu.model.info.dto.Site;
-import grisu.model.info.dto.VO;
-import grisu.model.info.dto.Version;
-
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.dozer.DozerBeanMapper;
@@ -26,11 +19,8 @@ import org.dozer.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class GrinformationManagerDozer implements InformationManager {
 
@@ -52,9 +42,15 @@ public class GrinformationManagerDozer implements InformationManager {
 	static final Logger myLogger = LoggerFactory
 			.getLogger(GrinformationManagerDozer.class.getName());
 
-	private static final Mapper mapper = new DozerBeanMapper();
+	private static DozerBeanMapper mapper;
 
-	public static Mapper getMapper() {
+	public static synchronized Mapper getMapper() {
+		if ( mapper == null ) {
+			List myMappingFiles = new ArrayList();
+			myMappingFiles.add("dozerMapping.xml");
+			mapper = new DozerBeanMapper();
+			mapper.setMappingFiles(myMappingFiles);
+		}
 		return mapper;
 	}
 
@@ -62,12 +58,23 @@ public class GrinformationManagerDozer implements InformationManager {
 
 	public static void main (String[] args) {
 
-		GrinformationManagerDozer gm = new GrinformationManagerDozer("testbed");
+        //GrinformationManagerDozer gm = new GrinformationManagerDozer("/data/src/config/nesi-grid-info/nesi_info.groovy");
+        GrinformationManagerDozer gm = new GrinformationManagerDozer("/home/markus/src/config/nesi-grid-info/testbed_info.groovy");
 
-		for (VO vo : gm.getAllVOs()) {
-			System.out.println("VO: " + vo);
-		}
+//		for (Directory d : gm.getDirectoriesForVO("/none") ) {
+//
+//			System.out.println(d.toUrl()+": "+d.getOptions().size());
+//
+//		}
 
+        for (Queue q : gm.getAllQueues()) {
+            System.out.println(q.toString());
+            System.out.println("\t"+q.getGateway().toString());
+            System.out.println("\t"+q.getGateway().getMiddleware().toString());
+            for ( DtoProperty p : q.getGateway().getMiddleware().getOptions().getProperties() ) {
+                System.out.println("\t\t"+p.getKey()+" : "+p.getValue());
+            }
+        }
 
 		System.exit(0);
 	}
@@ -468,11 +475,42 @@ public class GrinformationManagerDozer implements InformationManager {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see grisu.jcommons.interfaces.InformationManager#refresh()
 	 */
-	public void refresh() {
+	public String refresh() {
 		ym.refreshAndWait();
+        return ym.getConfigString();
+	}
+
+	@Override
+	public List<Directory> getDirectories() {
+
+		Collection<grisu.jcommons.model.info.Directory> directories = getGrid().getDirectorys();
+
+		if (CollectionUtils.isEmpty(directories)) {
+			return Lists.newArrayList();
+		}
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								directories,
+								new DozerTransformer<grisu.jcommons.model.info.Directory, Directory>()));
+	}
+
+	@Override
+	public List<FileSystem> getFileSystems() {
+		Collection<grisu.jcommons.model.info.FileSystem> filesystems = getGrid().getFilesystems();
+
+		if (CollectionUtils.isEmpty(filesystems)) {
+			return Lists.newArrayList();
+		}
+		return Lists
+				.newArrayList(Collections2
+						.transform(
+								filesystems,
+								new DozerTransformer<grisu.jcommons.model.info.FileSystem, FileSystem>()));
+
 	}
 
 }

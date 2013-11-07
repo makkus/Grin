@@ -1,21 +1,16 @@
 package grisu.jcommons.model.info;
 
-import grisu.jcommons.constants.Constants;
-import grisu.jcommons.constants.JobSubmissionProperty;
-import grisu.jcommons.model.info.DynamicInfo.TYPE;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import grisu.jcommons.constants.Constants;
+import grisu.jcommons.constants.JobSubmissionProperty;
+import grisu.jcommons.model.info.DynamicInfo.TYPE;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.*;
 
 public class Queue extends AbstractResource implements Comparable<Queue> {
 
@@ -158,6 +153,13 @@ public class Queue extends AbstractResource implements Comparable<Queue> {
 						.getHost())
 						&& Objects.equal(getName(), other.getName());
 	}
+
+    protected Set<Class> getExcludeConnections() {
+        HashSet<Class> temp = new HashSet<Class>();
+        temp.add(Group.class);
+        temp.add(Directory.class);
+        return temp;
+    }
 
 
 

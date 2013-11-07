@@ -1,90 +1,121 @@
 package grisu.jcommons.model.info;
 
-import java.util.Set;
-import java.util.UUID;
-
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import java.util.*;
 
 public abstract class AbstractResource {
 
-	public final static Set<AbstractResource> getRecursiveConnections(
-			Class<AbstractResource> arc, AbstractResource r) {
 
-		if (r.getClass() == arc) {
-			return Sets.newHashSet();
-		}
+    public final static Set<AbstractResource> getRecursiveConnections(
+            Class<AbstractResource> arc, AbstractResource r, Set<Class> excludes) {
 
-		Set<AbstractResource> result = Sets.newHashSet(r);
+        if (r.getClass() == arc || excludes.contains(r.getClass())) {
+            return Sets.newHashSet();
+        }
 
-		for (AbstractResource temp : r.getDirectConnections()) {
-			if (!temp.getClass().equals(arc)) {
-				result.add(temp);
-				for (AbstractResource tmp2 : getRecursiveConnections(arc, temp)) {
-					if (!tmp2.getClass().equals(arc)) {
-						result.add(tmp2);
-					}
-				}
-			}
-		}
+        Set<AbstractResource> result = Sets.newHashSet(r);
 
-		return result;
-	}
+        for (AbstractResource temp : r.getDirectConnections()) {
+            if (!temp.getClass().equals(arc)) {
+                if ( excludes.contains(temp.getClass()) ) {
+                    continue;
+                }
+                result.add(temp);
 
-	private String alias = UUID.randomUUID().toString();
+                Set<AbstractResource> recCon = getRecursiveConnections(arc, temp, excludes);
+                for (AbstractResource tmp2 : recCon) {
+                    if (!tmp2.getClass().equals(arc)) {
+                        if ( excludes.contains(tmp2.getClass()) ) {
+                            continue;
+                        }
+                        result.add(tmp2);
 
-	private final Set<AbstractResource> connections = Sets.newHashSet();
+                    }
+                }
+            }
+        }
 
-	protected void addConnection(AbstractResource res) {
+        return result;
+    }
 
-		if (res.getClass().equals(this.getClass())) {
-			return;
-		}
+    protected String alias;
 
-		if (!connections.contains(res)) {
-			connections.add(res);
-		}
+    public final UUID uuid = UUID.randomUUID();
 
-		res.connections.add(this);
+    private LinkedHashMap<String, String> options = Maps.newLinkedHashMap();
 
-	}
+    protected final Set<AbstractResource> connections = Sets.newHashSet();
 
-	final public String getAlias() {
-		return alias;
-	}
+    protected void addConnection(AbstractResource res) {
 
-	public Set<AbstractResource> getConnections() {
+        if (res.getClass().equals(this.getClass())) {
+            return;
+        }
 
-		return connections;
+        if (!connections.contains(res)) {
+            connections.add(res);
+        }
 
-	}
+        res.connections.add(this);
 
-	protected abstract Set<AbstractResource> getDirectConnections();
+    }
 
-	public final void popluateConnections() {
+    public synchronized String getAlias() {
 
-		for (AbstractResource ar : getDirectConnections()) {
-			ar.addConnection(this);
-		}
+        return alias;
+    }
 
-	}
+    public Map<String, String> getOptions() {
+        return options;
+    }
 
-	public final void populateConnections2() {
+    public void setOptions(Map<String, String> options) {
+        this.options = Maps.newLinkedHashMap(options);
+    }
 
-		Set<AbstractResource> temp = Sets.newHashSet(connections);
+    public Set<AbstractResource> getConnections() {
 
-		for (AbstractResource ar : temp) {
-			Set<AbstractResource> set = getRecursiveConnections(
-					(Class<AbstractResource>) this.getClass(), ar);
-			connections.addAll(set);
-			for (AbstractResource r : set) {
-				addConnection(r);
-			}
-		}
+        return connections;
 
-	}
+    }
 
-	final public void setAlias(String alias) {
-		this.alias = alias;
-	}
+    protected abstract Set<AbstractResource> getDirectConnections();
+
+    protected Set<Class> getExcludeConnections() {
+        HashSet<Class> tem = new HashSet<Class>();
+        return tem;
+    }
+
+
+    public final void popluateConnections() {
+
+        for (AbstractResource ar : getDirectConnections()) {
+            ar.addConnection(this);
+        }
+
+    }
+
+    public final void populateConnections2() {
+
+        Set<AbstractResource> temp = Sets.newHashSet(connections);
+
+        for (AbstractResource ar : temp) {
+            Set<AbstractResource> set = getRecursiveConnections(
+                    (Class<AbstractResource>) this.getClass(), ar, getExcludeConnections());
+            connections.addAll(set);
+            for (AbstractResource r : set) {
+                if ( ! r.getExcludeConnections().contains(this.getClass())) {
+                    addConnection(r);
+                }
+            }
+        }
+
+    }
+
+    final public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
 }

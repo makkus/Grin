@@ -1,0 +1,23 @@
+[Desktop Entry]
+Categories=
+Comment=This starts an instance of grin
+Comment[en]=This starts an instance of grin
+Encoding=UTF-8
+Exec=/usr/bin/grin 
+GenericName=
+GenericName[en]=
+Icon=/usr/local/lib/grisu/icons/grin.png
+MimeType=
+Name=gee
+Name[en]=gee
+Path=
+ServiceTypes=
+SwallowExec=
+SwallowTitle=
+Terminal=true
+TerminalOptions=
+Type=Application
+URL=
+X-KDE-SubstituteUID=false
+X-KDE-Username=root
+
